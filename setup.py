@@ -32,9 +32,9 @@
 
 # Basic dependencies, required to run pyDCOP:
 deps = [
-        'PuLP==2.0',
+        'PuLP>=2.0',
         'numpy',
-        'networkx',
+        'networkx>=2.6.3',
         'pyyaml==5.4.1',
         'requests',
         'websocket-server',
@@ -44,7 +44,7 @@ deps = [
 # Extra dependencies, used to run tests
 test_deps = [
     'coverage',
-    'pytest',
+    'pytest>=4.4',
     'mypy'
 ]
 
@@ -96,6 +96,9 @@ setup(
     author_email='rpgoldmand@sift.net',
 
     keywords=['dcop', 'MAS'],
+
+
+    python_requires=">=3.8",
 
     install_requires=deps,
     tests_require=test_deps,

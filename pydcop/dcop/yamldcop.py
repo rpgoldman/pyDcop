@@ -225,7 +225,7 @@ def _build_constraints(loaded, dcop, main_dir) -> Dict[str, RelationProtocol]:
                     'mandatory and only "intention" is '
                     "supported for now".format(c_name)
                 )
-            elif c["type"] == "intention":
+            elif c["type"] in ["intention", "intensional"]:
                 if "source" in c:
                     src_path = c["source"] \
                         if pathlib.Path(c["source"]).is_absolute() \
