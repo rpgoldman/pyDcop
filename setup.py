@@ -32,7 +32,7 @@
 
 # Basic dependencies, required to run pyDCOP:
 deps = [
-        'pulp==2.0',
+        'PuLP==2.0',
         'numpy',
         'networkx',
         'pyyaml==5.4.1',
