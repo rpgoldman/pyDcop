@@ -36,11 +36,10 @@ where pseudo-parent and pseudo-children links are added to the tree.
  This model is typically used for the dpop algorithm.
 """
 import functools
-from typing import Callable, Dict, Literal
-from typing import Iterable
+from typing import Callable, Dict, List, Iterable
+from typing_extensions import Literal
 
 from collections import defaultdict
-from typing import List
 
 from pydcop.computations_graph.objects import ComputationNode, ComputationGraph, Link
 from pydcop.dcop.objects import Variable
