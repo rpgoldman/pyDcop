@@ -1,5 +1,5 @@
 networkx==2.3
-numpy==1.16.3
+numpy<=2, >=1.16
 PuLP==1.6.9
 pytest==4.4.1
 PyYAML==5.1

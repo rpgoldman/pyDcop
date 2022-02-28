@@ -77,7 +77,7 @@ with open(path.join(here, 'pydcop', 'version.py'), encoding='utf-8') as f:
 setup(
     name='pydcop',
     version=__version__,
-    description='Several dcop algo implementation',
+    description='Several dcop algorithm implementations',
 
     long_description=long_description,
     long_description_content_type='text/markdown', 
@@ -88,12 +88,12 @@ setup(
         "License :: OSI Approved :: BSD License",
 
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.5",    
+        "Programming Language :: Python :: 3.7",    
 
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    author='Pierre Rust (Orange)',
-    author_email='pierre.rust@orange.com',
+    author='Robert P. Goldman (rpgoldman)',
+    author_email='rpgoldmand@sift.net',
 
     keywords=['dcop', 'MAS'],
 
@@ -110,7 +110,7 @@ setup(
 
     project_urls={
         'Documentation':  'http://pydcop.readthedocs.io',
-        'Source': 'https://github.com/Orange-OpenSource/pyDcop',
-        'Bug Reports': 'https://github.com/Orange-OpenSource/pyDcop/issues'
+        'Source': 'https://github.com/rpgoldman/pyDcop',
+        'Bug Reports': 'https://github.com/rpgoldman/pyDcop/issues'
     }    
 )

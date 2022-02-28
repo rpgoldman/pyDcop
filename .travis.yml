@@ -1,6 +1,7 @@
 language: python
 python:
-  - "3.6"
+  - "3.7"
+  - "3.8"
 
 
 # Glpk solver must be install though apt, as it is not a python package  
