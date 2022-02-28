@@ -11,7 +11,7 @@ before_install:
 
 # Install python dependencies
 install:
-  - pip install --install-option test -e .
+  - pip install -r requirements.txt
 
 # Run tests
 script:
