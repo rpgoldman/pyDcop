@@ -53,19 +53,19 @@ does no use the distribution hints (if some are given, they are just ignored).
 
 
 import logging
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Optional
 from itertools import combinations
 
 from pulp.constants import LpBinary, LpMinimize, LpStatusOptimal
 from pulp.pulp import LpVariable, LpProblem, lpSum, value, \
     LpAffineExpression
-from pulp.solvers import GLPK_CMD
 
 from pydcop.computations_graph.objects import ComputationGraph, Link, \
     ComputationNode
 from pydcop.dcop.objects import AgentDef
 from pydcop.distribution.objects import DistributionHints, \
     ImpossibleDistributionException, Distribution
+from pydcop.utils.glpk_api import glpk_solve
 
 logger = logging.getLogger('distribution.ilp_compref')
 
@@ -193,8 +193,7 @@ def lp_model(cg: ComputationGraph,
             'Computation {} hosted'.format(c)
 
     # solve using GLPK
-    status = pb.solve(solver=GLPK_CMD(keepFiles=1, msg=False,
-                                      options=['--pcost']))
+    status = glpk_solve(pb)
 
     if status != LpStatusOptimal:
         raise ImpossibleDistributionException("No possible optimal"
