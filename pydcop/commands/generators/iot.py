@@ -38,7 +38,7 @@ This generator generates both a dcop and its initial distribution.
 import logging, os
 from importlib import import_module
 from random import randint
-from typing import List, Tuple, Dict, Callable
+from typing import List, Tuple, Dict, Callable, Optional
 
 import networkx as nx
 from collections import defaultdict
@@ -46,7 +46,6 @@ from collections import defaultdict
 import yaml
 from pulp.constants import LpBinary, LpMinimize, LpStatusOptimal
 from pulp.pulp import LpVariable, LpProblem, lpSum, value, LpAffineExpression
-from pulp.solvers import GLPK_CMD
 
 from pydcop.algorithms import load_algorithm_module
 from pydcop.computations_graph.factor_graph import (
@@ -65,6 +64,7 @@ from pydcop.dcop.relations import (
 from pydcop.dcop.yamldcop import dcop_yaml
 from pydcop.distribution import ilp_compref
 from pydcop.distribution.objects import Distribution, ImpossibleDistributionException
+from pydcop.utils.glpk_api import glpk_solve
 
 logger = logging.getLogger("pydcop.generate")
 
@@ -342,7 +342,8 @@ def distribute_factors(
     pb += lpSum([RATIO_HOST_COMM * comm, (1 - RATIO_HOST_COMM) * hosting])
 
     # solve using GLPK and convert to mapping { agt_name : [factors names]}
-    status = pb.solve(solver=GLPK_CMD(keepFiles=1, msg=False, options=["--pcost"]))
+    status = glpk_solve(pb)
+
     if status != LpStatusOptimal:
         raise ImpossibleDistributionException(
             "No possible optimal distribution for factors"
