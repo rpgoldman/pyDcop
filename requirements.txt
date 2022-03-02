@@ -1,17 +1,9 @@
-networkx==2.3
-numpy==1.16.3
-PuLP==1.6.9
-pytest==4.4.1
-PyYAML==5.1
-requests==2.21.0
-Sphinx==2.0.1
-sphinx-rtd-theme==0.4.3
-sphinxcontrib-applehelp==1.0.1
-sphinxcontrib-bibtex==0.4.2
-sphinxcontrib-devhelp==1.0.1
-sphinxcontrib-htmlhelp==1.0.2
-sphinxcontrib-jsmath==1.0.1
-sphinxcontrib-qthelp==1.0.2
-sphinxcontrib-serializinghtml==1.1.3
-tqdm==4.31.1
-websocket-server==0.4
+networkx>=2.3
+numpy>=1.16.3
+PuLP==1.6.9; python_version <= "3.7"
+PuLP>=2; python_version > "3.7"
+pytest>=4.4.1
+PyYAML>=5.4.1
+requests>=2.21.0
+tqdm>=4.31.1
+websocket-server>=0.4

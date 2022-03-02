@@ -28,6 +28,17 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# from StackOverflow
+def parse_requirements(filename):
+    """ load requirements from a pip requirements file """
+    lineiter = (line.strip() for line in open(filename))
+    return [line for line in lineiter if line and not line.startswith("#")]
+
+
+# parse_requirements() returns generator of pip.req.InstallRequirement objects
+install_reqs = parse_requirements('requirements.txt')
+test_deps = parse_requirements('test-requirements.txt')
+doc_deps = parse_requirements('doc-requirements.txt')
 
 
 # Basic dependencies, required to run pyDCOP:
@@ -41,19 +52,6 @@ deps = [
         'tqdm',
     ]
 
-# Extra dependencies, used to run tests
-test_deps = [
-    'coverage',
-    'pytest',
-    'mypy'
-]
-
-# Extra dependencies, used to generate docs
-doc_deps = [
-    'sphinx',
-    'sphinx_rtd_theme',
-    ' sphinxcontrib-bibtex'
-]
 
 # Required to install dev dependencies with pip
 #    pip install -e .[test]
@@ -97,7 +95,7 @@ setup(
 
     keywords=['dcop', 'MAS'],
 
-    install_requires=deps,
+    install_requires=install_reqs,
     tests_require=test_deps,
     extras_require=extras,
 
