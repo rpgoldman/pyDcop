@@ -30,9 +30,10 @@
 
 
 import logging
+import random
 from collections import defaultdict
 from itertools import combinations
-from typing import List, Iterable, Dict, Callable
+from typing import List, Iterable, Dict, Callable, Set
 
 from pulp import LpMinimize, LpVariable, LpProblem, LpBinary, lpSum, \
     GLPK_CMD, value, LpStatusOptimal
@@ -87,13 +88,22 @@ def distribute(computation_graph: ComputationGraph,
 
     agents = list(agentsdef)
 
-    # In order to remove (latter on) distribution hints, we interpret
+    # In order to remove (later on) distribution hints, we interpret
     # hosting costs of 0 as a "must host" relationship
     must_host = defaultdict(lambda : [])
-    for agent in agentsdef:
-        for comp in computation_graph.node_names():
+    for comp in computation_graph.node_names():
+        candidates: List[AgentDef] = []
+        for agent in agentsdef:
             if agent.hosting_cost(comp) == 0:
-                must_host[agent.name].append(comp)
+                candidates.append(agent)
+        nc: int = len(candidates)
+        if nc != 0:
+            if nc == 1:
+                agent = candidates[0]
+            if nc > 1:
+                agent = random.sample(candidates, 1)[0]
+            must_host[agent.name].append(comp)
+
     logger.debug(f"Must host: {must_host}")
 
     return factor_graph_lp_model(computation_graph, agents, must_host,

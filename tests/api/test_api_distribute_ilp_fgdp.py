@@ -70,6 +70,10 @@ def test_api_distribute_maxsum_ilp_fgdp():
 
 
 def test_api_distribute_dsa_ilp_fgdp():
+    import logging
+    logger = logging.getLogger('distribution.ilpfgdp')
+    logger.setLevel(logging.DEBUG)
+
     from pydcop.computations_graph import factor_graph
     from pydcop.distribution import ilp_fgdp
     from pydcop.algorithms import dsa
