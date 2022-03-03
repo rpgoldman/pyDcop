@@ -10,10 +10,10 @@ pyDCOP: DCOP solver in python
 Overview
 --------
 
-pyDCOP is a library and command line application for **Distributed Constraints
-Optimization Problems** (aka DCOP).
+pyDCOP is a library and command line application for **Distributed Constraint
+Optimization Problems** (DCOP).
 
-A Distributed Constraints Optimization Problems is traditionally represented as
+A Distributed Constraint Optimization Problem is traditionally represented as
 a tuple 
 :math:`\langle \mathcal{A}, \mathcal{X}, \mathcal{D}, \mathcal{C}, \mu \rangle`
 , where:
@@ -46,11 +46,11 @@ Features
 - Agents can run on the same computer or on different machines, making real
   distributed experiments easy.
 - Multi-platform : pyDCOP can run on windows, Mac and Linux.
-- pyDCOP is especially suited for IoT use-case and can run
+- pyDCOP is especially suited for the IoT use-case and can run
   agents on single-board computers like the Raspberry Pi.
-- In addition to classical DCOP algorithm, pyDCOP also provide novel approaches
+- In addition to classical DCOP algorithms, pyDCOP also provides novel approaches
   for using DCOP in IoT systems: several strategies are available to distribute
-  DCOP computations on agents and achieve resiliency.
+  DCOP computations on agents and achieve resilience.
 
 
 
@@ -74,12 +74,12 @@ Contributing
 
 We welcome contributions, especially the implementation of DCOP algorithms
 (novel or well-known). Join us on  
-`GitHub <https://github.com/Orange-OpenSource/pyDcop>`_.
+`GitHub <https://github.com/rpgoldman/pyDcop>`_.
 
 Licence 
 -------
 
-pyDCOP is license under the BSD-3-clause license.
+pyDCOP is licensed under the BSD-3-clause license.
 
 
 

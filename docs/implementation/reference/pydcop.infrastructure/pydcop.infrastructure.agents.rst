@@ -1,7 +1,11 @@
-pydcop.infrastructure.agents
+﻿pydcop.infrastructure.agents
 ============================
 
 .. automodule:: pydcop.infrastructure.agents
+
+   
+   
+   
 
    
    
@@ -20,6 +24,7 @@ pydcop.infrastructure.agents
    .. autosummary::
    
       Agent
+      AgentMetrics
       RepairComputation
       RepairComputationRegistration
       ResilientAgent
@@ -35,3 +40,6 @@ pydcop.infrastructure.agents
       AgentException
    
    
+
+
+

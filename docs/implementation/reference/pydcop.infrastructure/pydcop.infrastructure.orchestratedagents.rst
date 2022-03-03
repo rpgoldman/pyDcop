@@ -1,8 +1,17 @@
-pydcop.infrastructure.orchestratedagents
+﻿pydcop.infrastructure.orchestratedagents
 ========================================
 
 .. automodule:: pydcop.infrastructure.orchestratedagents
 
+   
+   
+   
+
+   
+   
+   
+
+   
    
    .. rubric:: Classes
 
@@ -16,3 +25,6 @@ pydcop.infrastructure.orchestratedagents
    
    
    
+
+
+
