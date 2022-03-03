@@ -57,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'pydcop'
-copyright = '2017, Pierre Rust'
-author = 'Pierre Rust'
+copyright = '2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC'
+author = 'Pierre Rust, edits by Robert P. Goldman'
 
 # Read  __version__ from package, to make sure we stay in sync
 from os import path

@@ -5,15 +5,15 @@
 Modeling problems as DCOPs
 ==========================
 
-What we have seen so far in previous tutorials may seems very theoretical
+What we have seen so far in previous tutorials may seem very theoretical
 and it might not be obvious how DCOP could be used to solve
 real-world problems.
 pyDCOP is meant to be domain-independent, but we hope to convince you that
-the DCOP algorithms implemented and studied with it can be applied to
+its DCOP algorithms can be used for
 real applications.
 
-As a topic in the Multi-Agent System field,
-DCOP are obviously best suited to problems that are distributed in nature.
+As a topic in the Multi-Agent Systems field,
+DCOPs are obviously best suited to problems that are distributed in nature.
 They have been applied to a wide variety of applications, including
 disaster evacuation :cite:`kopena_distributed_2008`,
 radio frequency allocation :cite:`monteiro_channel_2012`,
@@ -25,7 +25,7 @@ smart grid :cite:`cerquides_designing_2015`,
 etc.
 
 When using a DCOP approach on a distributed problem, the first steps are always
-to cast your problem into an **optimization problem**
+to cast your problem as an **optimization problem**
 and to **identify your agents**.
 Then you can select, and probably benchmark, the best algorithm for the
 settings of your problem.
@@ -40,23 +40,23 @@ like surveillance and robot navigation, for example.
 The goal of such a system is to detect foreign objects as quickly and as many
 as possible.
 
-The system is made of several sensor scattered in space.
+The system is made of several sensors scattered in space.
 Each sensor, for example a small Doppler effect sensor,
 can only scan a fixed radius around itself at any given time;
-it has to select with area it operates on.
+it has to select which area it operates on.
 
 In an open environment,
-sensors used in tracking systems usually run on battery,
+sensors used in tracking systems usually run on batteries,
 which means they must use as little energy as possible,
 in order to increase the system operation's lifetime.
-This includes switching them-self off and on whenever possible,
-in a way that does not affect the system's detection performance.
+This includes switching themselves off whenever possible,
+without degrading the system's detection performance.
 
 These sensors are also lightweight devices
 with limited memory and computation capability.
-They communicate one with another through radio signals,
+They communicate with each other through radio signals,
 which may not be reliable.
-Each sensor can only only communicates with neighboring sensors
+Each sensor can only communicate with neighboring sensors
 and has no global information on the whole system.
 
 The overall goal is thus to provide the **best detection** possible,
@@ -71,25 +71,25 @@ Example: Target tracking DCOP model
 -----------------------------------
 
 Each sensor is controlled by one agent,
-which decides the sector the sensor is scanning.
+which decides which sector the sensor will scan.
 These agents coordinate in order to plan an efficient scanning strategy ;
-this problem is actually a distributed planning system.
+this problem is actually a distributed planning problem.
 
 Let :math:`S = \{ S_1, ... S_n \}` be the set of **n sensors**.
 Each agent :math:`S_i` can select the area
-to scan among **k sectors** :math:`s_i = \{ s_i^1, ... s_i^k \}`.
+to scan from **k sectors** :math:`s_i = \{ s_i^1, ... s_i^k \}`.
 
 The agents plan their action over a horizon :math:`T` made of
 :math:`|T| = t` time slots.
 For each time slot,
 each agent :math:`S_i` has to select one
-action : either scan one of it's :math:`s_i^j` sectors or sleep.
+action : either scan one of its :math:`s_i^j` sectors or sleep.
 
 The :math:`s_i^k` are our **decision variables**,
-whose value represents the sector scanned by a sensor at a given time.
+whose value represent the sector scanned by a sensor at a given time.
 These variables take their value from a domain
-:math:`D = \{ 1, ... t\}` ;
-when the variable :math:`s_i^k` takes the value :math:`t`,
+:math:`D = \{ 1, ... t\}` .
+When the variable :math:`s_i^k` takes the value :math:`t`,
 it means that the sensor :math:`S_i` will scan the sector :math:`s_i^k`
 during the time slot :math:`t`.
 
@@ -104,8 +104,8 @@ that two sectors from the same sensor cannot take the same value:
   \Rightarrow s_i^p  \neq s_i^q
 
 
-For an efficient scanning process, we want to avoid several sensors scanning
-simultaneously the same sector.
+For an efficient scanning process, we want to avoid having more than one sensor scanning
+the same sector simultaneously.
 For this we define a function :math:`w` between a pair of sectors
 :math:`s_i^p, s_j^q`
 where :math:`w(s_i^p, s_j^q)` is the surface of the area common to these two
@@ -125,7 +125,7 @@ if the sensors of these two sector at scanning at the same time.
   \end{cases}
 
 
-With all these definitions, we can formulate the target tracking problem
+Using these definitions, we can formulate the target tracking problem
 as a DCOP
 :math:`\langle \mathcal{A}, \mathcal{X}, \mathcal{D}, \mathcal{C}, \mu \rangle`
 , where:
@@ -146,7 +146,7 @@ Of course, the choice of the algorithm depends on the problem and the environmen
 characteristics; given that sensors have limited cpu and memory and that
 the communication channel has a low bandwidth,
 lightweight local search algorithm like DSA and MGM are good candidates.
-The original article this model comes from, :cite:`zhang_analysis_2003`,
+The original article this model comes from, by Weixiong Zhang, *et al.* :cite:`zhang_analysis_2003`,
 evaluates DSA and DBA and shows that,
 if controlled properly, DSA is significantly superior to DBA,
 finding better solutions with less computational cost

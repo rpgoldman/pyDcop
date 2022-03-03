@@ -9,6 +9,6 @@ DPOP, MGM, etc.) and allows you to develop your own algorithms.
 
 pyDCOP runs on python >= 3.6.
 
-Documentation is hosted on 
-[ReadTheDoc](https://pydcop.readthedocs.io)
+Documentation is hosted on
+[my personal website](https://rpgoldman.goldman-tribe.org/pyDcop/)
  

@@ -6,7 +6,7 @@ python:
   - "3.9"
 
 
-# Glpk solver must be install though apt, as it is not a python package  
+# Glpk solver must be installed through apt, as it is not a python package
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y glpk-utils
