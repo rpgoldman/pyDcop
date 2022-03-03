@@ -41,18 +41,6 @@ test_deps = parse_requirements('test-requirements.txt')
 doc_deps = parse_requirements('doc-requirements.txt')
 
 
-# Basic dependencies, required to run pyDCOP:
-deps = [
-        'pulp==2.0',
-        'numpy',
-        'networkx',
-        'pyyaml==5.4.1',
-        'requests',
-        'websocket-server',
-        'tqdm',
-    ]
-
-
 # Required to install dev dependencies with pip
 #    pip install -e .[test]
 extras = {
@@ -90,8 +78,8 @@ setup(
 
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    author='Pierre Rust (Orange)',
-    author_email='pierre.rust@orange.com',
+    author='Original author: Pierre Rust (Orange); adopter Robert P. Goldman (rpgoldman @ SIFT)',
+    author_email='rpgoldman@sift.net',
 
     keywords=['dcop', 'MAS'],
 
