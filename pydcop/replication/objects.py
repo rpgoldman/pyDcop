@@ -29,12 +29,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from typing import Dict, List
-
 from collections import defaultdict
-
-from pydcop.algorithms import ComputationDef
-from pydcop.infrastructure.computations import Message
+from typing import Dict, List
 
 
 class ReplicaDistribution(object):
@@ -53,8 +49,8 @@ class ReplicaDistribution(object):
         self._agent_replicas = \
             defaultdict(lambda: [])  # type: Dict[str, List[str]]
 
-        for c in self._mapping:
-            for a in self._mapping[a]:
+        for c, value in self._mapping.items():
+            for a in value:
 
                 if c in self._agent_replicas[a]:
                     raise ValueError('Agent {} is hosting several replica '
@@ -66,7 +62,7 @@ class ReplicaDistribution(object):
             return list(self._agent_replicas[agt])
         except KeyError as ke:
             if raise_on_unknown:
-                raise ke
+                raise ke from ke
             return []
 
     def agents_for_computation(self, computation: str):

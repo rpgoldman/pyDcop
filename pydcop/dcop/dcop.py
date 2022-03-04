@@ -29,17 +29,15 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import collections
-from typing import List, Tuple, Dict, Iterable, Union, Mapping
+from collections.abc import Mapping as CollectionsMapping
+from typing import Dict, Iterable, List, Mapping, Set, Tuple, Union
 
-from pydcop.dcop.objects import AgentDef, Variable, VariableDomain, \
-    ExternalVariable, Domain
-from pydcop.dcop.relations import RelationProtocol, constraint_from_str, \
-    Constraint, filter_assignment_dict
+from pydcop.dcop.objects import AgentDef, Domain, ExternalVariable, Variable
+from pydcop.dcop.relations import Constraint, RelationProtocol, constraint_from_str, filter_assignment_dict
 
 
 class DCOP(object):
-    """A DCOP representation.
+    r"""A DCOP representation.
 
     A DCOP is a Constraints Optimization Problem distribution on a set of
     agents: agents send messages to each other to find a solution to the
@@ -57,12 +55,12 @@ class DCOP(object):
 
     """
 
-    def __init__(self, name: str=None,
-                 objective: str='min', description: str='',
-                 domains: Dict[str, Domain]=None,
-                 variables: Dict[str, Variable]=None,
-                 constraints: Dict[str, Constraint]=None,
-                 agents: Dict[str, AgentDef]=None):
+    def __init__(self, name: str = None,
+                 objective: str = 'min', description: str = '',
+                 domains: Dict[str, Domain] = None,
+                 variables: Dict[str, Variable] = None,
+                 constraints: Dict[str, Constraint] = None,
+                 agents: Dict[str, AgentDef] = None):
         self.name = name
         self.description = description
         self.objective = objective
@@ -207,7 +205,7 @@ class DCOP(object):
     def add_agents(self,
                    agents: Union[AgentDef,
                                  Iterable[AgentDef],
-                                 Mapping[str, AgentDef]])-> None:
+                                 Mapping[str, AgentDef]]) -> None:
         """Add agents to the DCOP.
 
         Agents are given as AgentDef objects.
@@ -235,7 +233,7 @@ class DCOP(object):
         """
         if isinstance(agents, AgentDef):
             self._agents_def[agents.name] = agents
-        elif isinstance(agents, collections.Mapping):
+        elif isinstance(agents, CollectionsMapping):
             self._agents_def.update(agents)
         else:
             for agt in agents:
@@ -348,8 +346,8 @@ def solution_cost(relations, variables, assignment, infinity):
             r_cost = r(**filter_assignment_dict(assignment, r.dimensions))
         except NameError as ne:
             raise ValueError('Cannot compute solution cost : incomplete '
-                             'assignment ' + str(ne))
-        # logging.debug('Cost for relation %s : %s ', r.name, r_cost)
+                             'assignment ' + str(ne)) from ne
+            # logging.debug('Cost for relation %s : %s ', r.name, r_cost)
         if r_cost != infinity:
             cost_soft += r_cost
         else:
@@ -390,20 +388,16 @@ def filter_dcop(dcop: DCOP, accept_unary=False):
 
     # find variables that are not involved in any constraint:
     for c in dcop.constraints.values():
-        scope = set(v.name for v in c.dimensions)
-        if len(scope) == 1:
-            if accept_unary:
-                variables_alone = variables_alone - set(v.name for v in c.dimensions)
-            else:
-                continue
+        scope: Set[str] = {v.name for v in c.dimensions}
+        if len(scope) == 1 and accept_unary or len(scope) != 1:
+            variables_alone = variables_alone - {v.name for v in c.dimensions}
         else:
-            variables_alone = variables_alone - set(v.name for v in c.dimensions)
-
+            continue
     # If we found alone variables, remove their unary constrint if any
     if not accept_unary:
         keep_constraints = {}
         for c_name, c in dcop.constraints.items():
-            scope = set(v.name for v in c.dimensions)
+            scope = {v.name for v in c.dimensions}
             if len(scope) == 1 and scope.issubset(variables_alone):
                 continue
             keep_constraints[c_name] = c
@@ -412,11 +406,9 @@ def filter_dcop(dcop: DCOP, accept_unary=False):
 
     variables = {k: v for k, v in dcop.variables.items()
                  if k not in variables_alone}
-    filtered = DCOP( dcop.name,
-                 dcop.objective, dcop.description,
-                 dcop.domains,
-                 variables,
-                 keep_constraints,
-                 dcop.agents)
-    return filtered
-
+    return DCOP(dcop.name,
+                    dcop.objective, dcop.description,
+                    dcop.domains,
+                    variables,
+                    keep_constraints,
+                    dcop.agents)
