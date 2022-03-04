@@ -17,4 +17,14 @@ install:
 
 # Run tests
 script:
+  - pytest ./tests/api
+  - pytest --ignore='./tests/dcop_cli/test_distribute.py' --ignore='./tests/dcop_cli/test_solve.py' ./tests/dcop_cli
+  - pytest ./tests/instances
+  - pytest ./tests/integration
   - pytest ./tests/unit
+  - pytest ./tests/utils
+  # fail:
+  allow_failures:
+    - pytest './tests/dcop_cli/test_distribute.py'
+    - pytest './tests/dcop_cli/test_solve.py'
+
