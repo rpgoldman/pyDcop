@@ -70,7 +70,8 @@ def distribute(computation_graph: ComputationGraph,
                agentsdef: Iterable[AgentDef],
                hints: DistributionHints=None,
                computation_memory=None,
-               communication_load=None):
+               communication_load=None,
+               timeout=None):
     """
     Generate a distribution for the dcop.
 
@@ -81,6 +82,7 @@ def distribute(computation_graph: ComputationGraph,
       argument and return the memory footprint for this
     :param link_communication: a function that takes a Link as an argument 
       and return the communication cost of this edge
+    :param timeout: ignored
     """
     if computation_memory is None or communication_load is None:
         raise ImpossibleDistributionException('LinearProg distribution requires '

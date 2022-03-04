@@ -72,6 +72,7 @@ def distribute(
     hints: DistributionHints = None,
     computation_memory: Callable[[ComputationNode], float] = None,
     communication_load: Callable[[ComputationNode, str], float] = None,
+    timeout=None, # not used
 ) -> Distribution:
     """
 
