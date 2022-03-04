@@ -27,8 +27,7 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
-
+import copy
 from collections import defaultdict
 from typing import Dict, List, Iterable, Union
 
@@ -46,18 +45,19 @@ class Distribution(object):
         several agents.
 
     """
+
     def __init__(self, mapping: Dict[str, List[str]]):
         # { agent_name : {list of comp_name]}
         self._mapping = mapping  # type: Dict[str, List[str]]
         # {comp_name : agent_name }
         self._computation_agent = {}  # type: Dict[str, str]
-        for a in self._mapping:
-            for v in self._mapping[a]:
+        for a, value in self._mapping.items():
+            for v in value:
                 if v in self._computation_agent:
                     raise ValueError(
                         'Inconsistent distribution : several agents hosting '
                         'computation {} : {} and {}'
-                        .format(v, a, self._computation_agent[v]))
+                            .format(v, a, self._computation_agent[v]))
                 self._computation_agent[v] = a
 
     @property
@@ -84,7 +84,10 @@ class Distribution(object):
             A list containing the names of the computations distributed in this
             distribution.
         """
-        return [c for l in self._mapping.values() for c in l]
+        retval = []
+        for l in self._mapping.values():
+            retval += copy.copy(l)
+        return retval
 
     def mapping(self) -> Dict[str, List[str]]:
         """
@@ -97,7 +100,7 @@ class Distribution(object):
         """
         return dict(self._mapping)
 
-    def agent_for(self, computation: str)-> str:
+    def agent_for(self, computation: str) -> str:
         """
         Agent hosting one given computation
         Parameters
@@ -116,7 +119,7 @@ class Distribution(object):
         else:
             return self._computation_agent[computation]
 
-    def computations_hosted(self, agent: str)-> List[str]:
+    def computations_hosted(self, agent: str) -> List[str]:
         """
         Computations hosted on an agent.
 
@@ -172,7 +175,7 @@ class Distribution(object):
         for v in computations:
             if v in self._computation_agent:
                 raise ValueError('Computation {} is already hosted on agent '
-                                 '{}'. format(v, self._computation_agent[v]))
+                                 '{}'.format(v, self._computation_agent[v]))
         if agent not in self._mapping:
             self._mapping[agent] = computations
         else:
@@ -180,11 +183,11 @@ class Distribution(object):
         for v in computations:
             self._computation_agent[v] = agent
 
-    def is_hosted(dist, computations: Union[str, Iterable[str]]):
+    def is_hosted(self, computations: Union[str, Iterable[str]]):
         """
         Indicates if some computations are hosted.
 
-        This methods does not care on which agent the computations are hosted.
+        This method does not care on which agent the computations are hosted.
 
         Parameters
         ----------
@@ -201,7 +204,7 @@ class Distribution(object):
             computations = [computations]
         for computation in computations:
             try:
-                dist.agent_for(computation)
+                self.agent_for(computation)
             except KeyError:
                 return False
         return True
@@ -245,7 +248,7 @@ class DistributionHints(object):
             self._host_with = {n: list(host_with_tmp[n])
                                for n in host_with_tmp}
 
-    def must_host(self, agt_name: str)-> List[str]:
+    def must_host(self, agt_name: str) -> List[str]:
         """
         :param agt_name: The name of the agent.
          
@@ -259,7 +262,7 @@ class DistributionHints(object):
         else:
             return []
 
-    def host_with(self, name: str)-> List[str]:
+    def host_with(self, name: str) -> List[str]:
         if name in self._host_with:
             return self._host_with[name][:]
         else:
@@ -267,5 +270,4 @@ class DistributionHints(object):
 
 
 class ImpossibleDistributionException(Exception):
-
     pass

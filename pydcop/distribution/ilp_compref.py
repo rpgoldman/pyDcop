@@ -80,7 +80,8 @@ def distribute(computation_graph: ComputationGraph,
                agentsdef: Iterable[AgentDef],
                hints: DistributionHints=None,
                computation_memory=None,
-               communication_load=None) -> Distribution:
+               communication_load=None,
+               timeout=None) -> Distribution:
     """
     Generate a distribution for the given computation graph.
 

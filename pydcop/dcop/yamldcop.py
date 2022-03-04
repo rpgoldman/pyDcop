@@ -28,32 +28,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 import pathlib
+from collections.abc import Iterable as CollectionIterable
 from collections import defaultdict
-from collections import Iterable as CollectionIterable
-from typing import Dict, Iterable, Union, List
+from typing import Dict, Iterable, List, Union
 
 import yaml
 
-from pydcop.dcop.objects import (
-    VariableDomain,
-    Variable,
-    ExternalVariable,
-    VariableWithCostFunc,
-    VariableNoisyCostFunc,
-    AgentDef,
-)
-from pydcop.dcop.scenario import EventAction, DcopEvent, Scenario
 from pydcop.dcop.dcop import DCOP
-from pydcop.dcop.relations import (
-    relation_from_str,
-    RelationProtocol,
-    NAryMatrixRelation,
-    assignment_matrix,
-    generate_assignment_as_dict, constraint_from_str,
-    constraint_from_external_definition,
-)
-from pydcop.utils.expressionfunction import ExpressionFunction
+from pydcop.dcop.objects import (AgentDef, ExternalVariable, Variable, VariableDomain, VariableNoisyCostFunc,
+                                 VariableWithCostFunc)
+from pydcop.dcop.relations import (NAryMatrixRelation, RelationProtocol, assignment_matrix,
+                                   constraint_from_external_definition, constraint_from_str,
+                                   generate_assignment_as_dict)
+from pydcop.dcop.scenario import DcopEvent, EventAction, Scenario
 from pydcop.distribution.objects import DistributionHints
+from pydcop.utils.expressionfunction import ExpressionFunction
 
 
 class DcopInvalidFormatError(Exception):
@@ -117,7 +106,6 @@ def load_dcop(dcop_str: str, main_dir=None) -> DCOP:
 
 
 def dcop_yaml(dcop: DCOP) -> str:
-
     dcop_dict = {"name": dcop.name, "objective": dcop.objective}
     dcop_str = yaml.dump(dcop_dict, default_flow_style=False)
     dcop_str += "\n"
@@ -133,10 +121,12 @@ def dcop_yaml(dcop: DCOP) -> str:
 
 
 def _yaml_domains(domains):
-    d_dict = {}
-    for domain in domains:
-        d_dict[domain.name] = {"values": list(domain.values), "type": domain.type}
-    return yaml.dump({"domains": d_dict})  #  , default_flow_style=False)
+    d_dict = {
+        domain.name: {"values": list(domain.values), "type": domain.type}
+        for domain in domains
+    }
+
+    return yaml.dump({"domains": d_dict})  # , default_flow_style=False)
 
 
 def _build_domains(loaded) -> Dict[str, VariableDomain]:
@@ -314,7 +304,6 @@ def _yaml_constraints(constraints: Iterable[RelationProtocol]):
 
 
 def _build_agents(loaded) -> Dict[str, AgentDef]:
-
     # Read agents list, without creating AgentDef object yet.
     # We need the preferences to create the AgentDef objects
     agents_list = {}
@@ -358,18 +347,18 @@ def _build_agents(loaded) -> Dict[str, AgentDef]:
     default_agt_costs = {}
     if "hosting_costs" in loaded:
         costs = loaded["hosting_costs"]
-        for a in costs:
+        for a, cost in costs.items():
             if a == "default":
-                default_cost = costs["default"]
+                default_cost = cost
                 continue
             if a not in agents_list:
                 raise DcopInvalidFormatError("hosting_costs for unknown " "agent " + a)
-            a_costs = costs[a]
+            a_costs = cost
             if "default" in a_costs:
                 default_agt_costs[a] = a_costs["default"]
             if "computations" in a_costs:
-                for c in a_costs["computations"]:
-                    hosting_costs[(a, c)] = a_costs["computations"][c]
+                for c, cost in a_costs["computations"].items():
+                    hosting_costs[(a, c)] = cost
 
     # Now that we parsed all agents info, we can build the objects:
     agents = {}
@@ -377,7 +366,10 @@ def _build_agents(loaded) -> Dict[str, AgentDef]:
         d = default_cost
         if a in default_agt_costs:
             d = default_agt_costs[a]
-        p = {c: hosting_costs[b, c] for (b, c) in hosting_costs if b == a}
+        p = dict()
+        for (agt, comp), cost in hosting_costs.items():
+            if agt == a:
+                p[c] = cost
 
         routes_a = {a2: v for (a1, a2), v in routes.items() if a1 == a}
         routes_a.update({a1: v for (a1, a2), v in routes.items() if a2 == a})
@@ -480,7 +472,7 @@ def str_2_domain_values(domain_str):
     """
     Deserialize a domain expressed as a string.
 
-    If all variable in the domain can be interpreted as a int, the list is a
+    If all variable in the domain can be interpreted as an int, the list is a
     list of int, otherwise it is a list of strings.
 
     :param domain_str: a string like 0..5 of A, B, C, D
@@ -490,8 +482,8 @@ def str_2_domain_values(domain_str):
     try:
         sep_index = domain_str.index("..")
         # Domain str is : [0..5]
-        min_d = int(domain_str[0:sep_index])
-        max_d = int(domain_str[sep_index + 2 :])
+        min_d = int(domain_str[:sep_index])
+        max_d = int(domain_str[sep_index + 2:])
         return list(range(min_d, max_d + 1))
     except ValueError:
         values = [v.strip() for v in domain_str[1:].split(",")]

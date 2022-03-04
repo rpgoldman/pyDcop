@@ -53,7 +53,7 @@ Functions
 
 """
 
-from typing import List, Dict, Iterable, Callable
+from typing import Any, List, Dict, Iterable, Callable
 from collections import defaultdict
 
 from pydcop.computations_graph.objects import ComputationGraph, ComputationNode
@@ -67,7 +67,8 @@ def distribution_cost(distribution: Distribution,
                       agentsdef: Iterable[AgentDef],
                       computation_memory: Callable[[ComputationNode], float],
                       communication_load: Callable[[ComputationNode, str],
-                                                   float]) -> float:
+                                                   float],
+                      timeout: Any = None) -> float:
     """
     As the ``oneagent`` distribution does not define any notion of
     distribution cost, this function always returns 0.

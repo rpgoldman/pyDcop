@@ -31,6 +31,8 @@
 
 """Api tests for ILP_FGPD distribution method.
 """
+import random
+
 from pydcop.dcop.dcop import DCOP
 from pydcop.dcop.objects import Domain, create_variables, create_agents
 from tests.api.instances_and_utils import dcop_graphcoloring_3
@@ -57,6 +59,9 @@ def test_api_distribute_maxsum_ilp_fgdp():
     from pydcop.distribution import ilp_fgdp
     from pydcop.algorithms import amaxsum
 
+    # make repeatable
+    random.seed(372223)
+
     dcop = dcop_graphcoloring_3()
     agents = create_agents('a', range(1, 4), capacity=100)
     dcop._agents_def = agents
@@ -70,9 +75,16 @@ def test_api_distribute_maxsum_ilp_fgdp():
 
 
 def test_api_distribute_dsa_ilp_fgdp():
+    import logging
+    logger = logging.getLogger('distribution.ilpfgdp')
+    logger.setLevel(logging.DEBUG)
+
     from pydcop.computations_graph import factor_graph
     from pydcop.distribution import ilp_fgdp
     from pydcop.algorithms import dsa
+
+    # make this repeatable
+    random.seed(856372)
 
     dcop = dcop_graphcoloring_3()
     agents = create_agents('a', range(1, 4), capacity=100)

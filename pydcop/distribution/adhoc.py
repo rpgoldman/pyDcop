@@ -57,7 +57,8 @@ def distribute(computation_graph: ComputationGraph,
                agentsdef: Iterable[AgentDef],
                hints: DistributionHints=None,
                computation_memory=None,
-               communication_load=None):
+               communication_load=None,
+               timeout=None):
     """
     Generate a distribution for the dcop.
     This method uses a simple heuristic for distribution, with no guaranty of
@@ -69,6 +70,11 @@ def distribute(computation_graph: ComputationGraph,
     When using a dcop that represents an secp, given the correct 
     DistributionHint the same distribution should be generated that with the 
     adhoc secp distribution method.
+
+    Notes
+    -----
+    The timeout argument is supported to honor the protocol in ``pydcop distribute``
+    but ignored.
 
     """
     if computation_memory is None:
