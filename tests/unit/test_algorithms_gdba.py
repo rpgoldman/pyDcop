@@ -63,7 +63,7 @@ class GdbaAlgoTest(unittest.TestCase):
         x1 = Variable('x1', domain)
         x2 = Variable('x2', domain)
 
-        m = numpy.matrix('1 0 ; 0 1')
+        m = numpy.array([[1, 0] ,[0,1]]) # numpy.matrix('1 0 ; 0 1')
         mat = NAryMatrixRelation([x1, x2], m)
 
         g = GdbaComputation(x1, [mat], comp_def=MagicMock())
