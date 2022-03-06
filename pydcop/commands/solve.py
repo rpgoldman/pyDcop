@@ -560,6 +560,7 @@ def run_cmd(args, timer=None, timeout=None):
         orchestrator.stop_agents(5)
         orchestrator.stop()
         _results("ERROR")
+        sys.exit(1)
 
 
 def on_timeout():

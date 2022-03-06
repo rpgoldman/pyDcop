@@ -259,12 +259,17 @@ def run_solve(algo, distribution, filename, timeout: int, mode='thread',
                           mode=mode)
     extra = 4 if mode == 'thread' else 5
     print("Running command ", cmd)
-    output = check_output(cmd, stderr=STDOUT, timeout=timeout+extra,
-                          shell=True)
-    print(output)
+    try:
+        output = check_output(cmd, stderr=STDOUT, timeout=timeout+extra, shell=True)
+    except CalledProcessError as e:
+        print(f'Command {cmd} raised CalledProcessError {e.output}')
+        raise e from e
+    print(f'Output of {cmd} is {output}')
     res = {}
     try:
         res = json.loads(output.decode(encoding='utf-8'))
     except Exception as e:
         print(e)
+        # don't swallow errors
+        raise e from e
     return res
