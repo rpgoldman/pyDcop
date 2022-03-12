@@ -186,7 +186,7 @@ class Variable(SimpleRepr):
     domain: Domain or Iterable
         The domain where this variable can take its value. If an iterable
         is given a Domain object is automatically created (named after
-        the variable name: `d_<var_name>`.
+        the variable name): `d_<var_name>`.
     initial_value: Any
         The initial value assigned to the variable.
 
@@ -407,6 +407,7 @@ def create_binary_variables(
 
 class VariableWithCostDict(Variable):
     has_cost = True
+    _costs: Dict[Any, float]
 
     def __init__(
         self,
@@ -445,7 +446,7 @@ class VariableWithCostDict(Variable):
             self.name == other.name
             and self.initial_value == other.initial_value
             and self.domain == other.domain
-            and self._costs == other._costs
+            and self._costs == other._costs # noqa
         ):
             return True
         return False
@@ -457,6 +458,17 @@ class VariableWithCostDict(Variable):
         return VariableWithCostDict(
             self.name, self.domain, self._costs, initial_value=self.initial_value
         )
+
+    @property
+    def cost_function(self):
+        expr: str = ""
+        for val, cost in self._costs.items():
+            if expr != "":
+                expr += " else "
+            expr += f"{cost} if {self.name} == {val}"
+        expr += ' else None'
+        return ExpressionFunction(expr)
+
 
 
 class VariableWithCostFunc(Variable):
@@ -590,7 +602,7 @@ class VariableNoisyCostFunc(VariableWithCostFunc):
             self.name == other.name
             and self.noise_level == other.noise_level
             and self.domain == other.domain
-            and self._cost_func == other._cost_func
+            and self._cost_func == other._cost_func # noqa
             and self.initial_value == other.initial_value
         ):
             return True
@@ -867,7 +879,7 @@ class AgentDef(SimpleRepr):
         if (
             self.name == other.name
             and self.hosting_costs == other.hosting_costs
-            and self._attr == other._attr
+            and self._attr == other._attr # noqa
             and self.default_hosting_cost == other.default_hosting_cost
         ):
             return True

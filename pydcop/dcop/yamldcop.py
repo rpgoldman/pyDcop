@@ -151,12 +151,15 @@ def _build_domains(loaded) -> Dict[str, VariableDomain]:
     return domains
 
 
+# FIXME: this does not dump the cost function/dict
 def _yaml_variables(variables):
     var_dict = {}
     for v in variables:
         var_dict[v.name] = {"domain": v.domain.name}
         if v.initial_value is not None:
             var_dict[v.name]["initial_value"] = v.initial_value
+        if hasattr(v, 'cost_function'):
+            var_dict[v.name]['cost_function'] = v.cost_function.expression
 
     return yaml.dump({"variables": var_dict}, default_flow_style=False)
 
