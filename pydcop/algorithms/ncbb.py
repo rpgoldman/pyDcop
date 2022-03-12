@@ -321,7 +321,7 @@ class NcbbAlgo(SynchronousComputationMixin, VariableComputation):
         if sender not in self._children:
             raise ComputationException(
                 f"Received cost at {self.name} from {sender}, "
-                f"which is not a children: {self._children}"
+                f"which is not a child: {self._children}"
             )
 
         self._children_costs[sender] = cost

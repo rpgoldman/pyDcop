@@ -5,3 +5,4 @@ pydcop.algorithms.mgm
 =====================
 
 .. automodule:: pydcop.algorithms.mgm
+  :members:

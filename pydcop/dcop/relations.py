@@ -55,7 +55,7 @@ class RelationProtocol(object):
     required to inherit from this class as long as they implement the methods
     defined here.
 
-    Relation objects MUST be immutable and impletemnt `__eq__()` and
+    Relation objects MUST be immutable and implement `__eq__()` and
     `__hash__()`. This means that methods like  `set_value_for_assignment`
     must return a new relation instead of modifying the current one.
     """
@@ -671,22 +671,22 @@ class AsNAryFunctionRelation(object):
 
 class NAryMatrixRelation(AbstractBaseRelation, SimpleRepr):
     """
-    This class represent a n-ary relation other a set of variable xi.
+    This class represents an n-ary relation over a set of variables xi.
 
-    It is a multi dimensional matrix, with one dimension for each variable in
+    It is a multidimensional matrix, with one dimension for each variable in
     the separator of variable the variable sending this messsage.
 
     Notes
     -----
 
     Note: when defining the relation with a matrix, the dimension of the
-    matrix must be in the same order as the variable. For a 2-ary
-    relation, the first variables maps to the column of the matrix,
+    matrix must be in the same order as the variables. For a 2-ary
+    relation, the first variable maps to the column of the matrix,
     and the second variable to the rows.
 
-    The matrix is and array of array (of array... depending on the arity
-    of the relation). The inner most arrays maps to the values of the
-    last variables (and thus have the same size than the domain of the
+    The matrix is an array of array (of array... depending on the arity
+    of the relation). The innermost arrays maps to the values of the
+    last variables (and thus have the same size as the domain of the
     last variables).
 
     For example :
@@ -706,7 +706,7 @@ class NAryMatrixRelation(AbstractBaseRelation, SimpleRepr):
         an optional array or np.array matrix those dimension
         maps the domains of the variables of the relation. If the matrix is
         not given, the relation returns 0.0 for all assignments of the
-        variables. Notice that we use float by default when initializing an
+        variables. Notice that we use floats by default when initializing a
         zeroed relation
     name: str
         an optional name for the relation.

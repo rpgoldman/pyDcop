@@ -5,3 +5,4 @@ pydcop.algorithms.dsatuto
 =========================
 
 .. automodule:: pydcop.algorithms.dsatuto
+  :members:

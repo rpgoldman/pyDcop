@@ -34,7 +34,7 @@
 pydcop generate agents
 ======================
 
-Generate a set of agents, with their capacity and optionaly their hosting and
+Generate a set of agents, with their capacity and optionally their hosting and
 communication costs.
 
 
@@ -56,7 +56,7 @@ Description
 -----------
 
 The agents can be generated for a given optimization problem or by simply specifying a
-numberfof agents.
+number of agents.
 
 
 Options

@@ -29,12 +29,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-import random
-from numbers import Real
-from typing import Callable, Sized
-from typing import Iterable, Any, Dict, Union, Tuple
-
 import itertools
+import random
+from typing import Any, Dict, Iterable, Tuple, Union
+from typing import Callable, Sized
 from typing import List
 
 from pydcop.utils.expressionfunction import ExpressionFunction
@@ -144,7 +142,7 @@ class Domain(Sized, SimpleRepr, Iterable[Any]):
         ----------
         val : str
             a string that should match a value in the domain (which may
-            contains non-string values, eg int)
+            contains non-string values, e.g. int)
 
         Returns
         -------
@@ -176,7 +174,7 @@ class Variable(SimpleRepr):
     """A DCOP variable.
 
     This class represents the definition of a variable : a name, a domain
-    where the variable can take it's value and an optional initial value. It
+    from which the variable can take its value and an optional initial value. It
     is not used to keep track of the current value assigned to the variable.
 
     Parameters
@@ -419,7 +417,7 @@ class VariableWithCostDict(Variable):
     ) -> None:
         """
         :param name: The name of the variable
-        :param domain: A VariableDomain object of a list
+        :param domain: A VariableDomain object or a list
         :param costs: a dict that associates a cost for each value in domain
         :param initial_value: optional, if given must be in the domain
         """

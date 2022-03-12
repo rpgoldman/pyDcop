@@ -5,4 +5,5 @@ pydcop.algorithms.dba
 =====================
 
 .. automodule:: pydcop.algorithms.dba
+  :members:
 

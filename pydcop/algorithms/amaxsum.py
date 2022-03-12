@@ -29,8 +29,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 """
 
-MaxSum: Belief-propagation DCOP algorithm
------------------------------------------
+AMaxSum: Asynchronous belief-propagation DCOP algorithm
+-------------------------------------------------------
 
 Max-Sum :cite:`farinelli_decentralised_2008` is an incomplete inference-based DCOP
 algorithm.
@@ -38,14 +38,36 @@ algorithm.
 This is a **asynchronous implementation** of Max-Sum,
 where factors and variable send messages
 every time they receive a message.
-For an synchronous implementation,
-see. :ref:`Max-Sum<implementation_reference_algorithms_maxsum>`
-
+For a synchronous version, see
+:ref:`MaxSum<api_algorithms_maxsum>`.
 
 
 
 Algorithm Parameters
 ^^^^^^^^^^^^^^^^^^^^
+
+These are the same as for MaxSum
+
+* damping: float, default = 0.5
+
+  Amount of damping [0-1].
+
+* damping_nodes: "vars", "factors", "both" or "none", default = "both"
+
+  Nodes that apply damping to messages.
+
+* stability: float, default = 0.1 (``STABILITY_COEFFICIENT``)
+
+  Stability detection coefficient
+
+* noise: float, default = 0.01
+
+  Noise level for variables
+
+* start_messages: "leafs", "leafs_vars", "all", default = "leafs"
+
+  Nodes that initiate messages.
+
 
 
 Example
@@ -60,7 +82,7 @@ FIXME: add results
 
 See Also
 ^^^^^^^^
-:ref:`Max-Sum<implementation_reference_algorithms_maxsum>`: an synchronous implementation of
+:ref:`Max-Sum<implementation_reference_algorithms_maxsum>`: a synchronous implementation of
 Max-Sum.
 
 

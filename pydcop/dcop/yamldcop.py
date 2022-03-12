@@ -30,7 +30,7 @@
 import pathlib
 from collections.abc import Iterable as CollectionIterable
 from collections import defaultdict
-from typing import Dict, Iterable, List, Union
+from typing import Any, Dict, Iterable, List, Union
 
 import yaml
 
@@ -116,8 +116,15 @@ def dcop_yaml(dcop: DCOP) -> str:
     dcop_str += _yaml_constraints(dcop.constraints.values())
     dcop_str += "\n"
     dcop_str += yaml_agents(dcop.agents.values())
+    if dcop.dist_hints is not None:
+        dcop_str += "\n"
+        dcop_str += _yaml_dist_hints(dcop.dist_hints)
 
     return dcop_str
+
+
+def _yaml_dist_hints(dist_hints: Dict[str, Any]):
+    return yaml.dump({"distribution_hints": dist_hints})
 
 
 def _yaml_domains(domains):
@@ -211,11 +218,11 @@ def _build_constraints(loaded, dcop, main_dir) -> Dict[str, RelationProtocol]:
             c = loaded["constraints"][c_name]
             if "type" not in c:
                 raise ValueError(
-                    "Error in contraints {} definition: type is "
+                    "Error in constraints {} definition: type is "
                     'mandatory and only "intention" is '
                     "supported for now".format(c_name)
                 )
-            elif c["type"] == "intention":
+            elif c["type"] in {"intention", "intensional"}:
                 if "source" in c:
                     src_path = c["source"] \
                         if pathlib.Path(c["source"]).is_absolute() \
@@ -268,7 +275,7 @@ def _build_constraints(loaded, dcop, main_dir) -> Dict[str, RelationProtocol]:
 
             else:
                 raise ValueError(
-                    "Error in contraints {} definition: type is  mandatory "
+                    "Error in constraints {} definition: type is  mandatory "
                     'and must be "intention" or "intensional"'.format(c_name)
                 )
 

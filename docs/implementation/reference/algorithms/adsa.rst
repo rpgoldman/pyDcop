@@ -5,3 +5,4 @@ pydcop.algorithms.adsa
 ======================
 
 .. automodule:: pydcop.algorithms.adsa
+  :members:

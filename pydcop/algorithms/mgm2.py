@@ -36,6 +36,18 @@ Mgm2 algorithm as described in
 'Distributed  Algorithms for DCOP: A Graphical-Game-Base Approach' (R. Maheswaran,
 J. Pearce, M. Tambe, 2004)
 
+Algorithm's parameters:
+----------------------
+* threshold: float
+    the threshold under which the agent is an offerer. This must be
+    between 0 and 1. Defaults to 0.5.
+* favor: str
+     the type of move that is favored by the algorithm : 'unilateral', 'no'
+     or 'coordinated'. Defaults to 'unilateral'.
+* stop_cycle: int
+    number of cycles before stopping. If None, the computation does not
+    stop autonomously.
+
 """
 import logging
 import random
@@ -69,7 +81,7 @@ def computation_memory(computation: VariableComputationNode) -> float:
     Notes
     -----
     With MGM2, a computation must remember the current value and gain for each
-    of it's neighbors.
+    of its neighbors.
 
     Parameters
     ----------

@@ -53,6 +53,7 @@ ComputationMessage = namedtuple(
 )
 
 
+# FIXME: this should be an ABC, not an object class.
 class CommunicationLayer(object):
     """
     Base class for CommunicationLayer objects.
@@ -245,7 +246,6 @@ class InProcessCommunicationLayer(CommunicationLayer):
         When used, this parameter overrides the behavior set when building
         the CommunicationLayer.
         """
-
         on_error = on_error if on_error is not None else self._on_error
         try:
             address = self.discovery.agent_address(dest_agent)

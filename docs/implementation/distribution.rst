@@ -6,8 +6,9 @@ DCOP computation distribution
 
 
 Before running the DCOP, the computation must be deployed on agents.
-We name **distribution** the task of assigning each computation to one agent,
-which will be responsible for hosting and running the computation.
+We call the task of assigning each computation to one agent, **distribution**.
+The agent that a distribution assigns to a computation will be responsible for
+hosting and running the computation
 
 When you look at the standard DCOP definition,
 :math:`\langle \mathcal{A}, \mathcal{X}, \mathcal{D}, \mathcal{C}, \mu \rangle`,
@@ -19,7 +20,7 @@ In classical DCOP approaches, there is exactly one agent for each variable
 and most DCOP algorithms define one computation for each variable.
 In that case, the distribution of these computations is of course trivial.
 The :ref:`oneagent <implementation_reference_distributions_oneagent>`
-distribution replicates this traditional hypothesis in pyDCOP
+distribution replicates this traditional method in pyDCOP
 and might be enough if you do not care about distribution issues and
 simply want to develop or benchmark classical DCOP algorithms.
 
@@ -52,17 +53,17 @@ of this factor graph on 3 agents but is obvously not the only possible one.
   One possible distribution of the factor graph on agents
 
 
-And even with algorithms that only define computations for variables,
-the standard assumptions do not hold on many real world problems.
-Agents typically maps to physical computers or devices
+Even with algorithms that only define computations for variables,
+the standard assumptions do not hold in many real world problems.
+"Agents" typically maps to physical computers or devices
 and the number of these devices is not necessarily equal
 to the number of decision variables in the DCOP.
 Moreover, some variables have a physical link to devices
 (in the sense, for example, that they model an action or decision
-of this particular device)
+of this particular device),
 while some other variables might simply be used to model
 an abstract concept in the problem and have no real relationship
-with physical devices.
+with a physical device.
 
 Finally the placement of computations on the agents has an important impact on
 the performance characteristics of the global system:

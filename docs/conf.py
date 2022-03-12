@@ -174,4 +174,5 @@ texinfo_documents = [
 ]
 
 
-
+# -- BibTeX options -------
+bibtex_bibfiles = ['biblio.bib']

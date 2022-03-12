@@ -5,4 +5,5 @@ pydcop.algorithms.syncbb
 ========================
 
 .. automodule:: pydcop.algorithms.syncbb
+  :members:
 

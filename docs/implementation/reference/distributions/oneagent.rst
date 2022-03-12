@@ -5,3 +5,4 @@ pydcop.distribution.oneagent
 ================================
 
 .. automodule:: pydcop.distribution.oneagent
+    :members:

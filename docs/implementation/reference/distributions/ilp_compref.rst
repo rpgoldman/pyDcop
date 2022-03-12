@@ -5,3 +5,4 @@ pydcop.distribution.ilp_compref
 ================================
 
 .. automodule:: pydcop.distribution.ilp_compref
+    :members:

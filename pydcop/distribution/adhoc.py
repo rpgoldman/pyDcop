@@ -28,6 +28,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""
+**Ad-hoc distribution**
+
+This is a heuristic design for [some?] IJCAI 2016 paper.
+The distribution respects the agents' capacities, and thus requires an
+estimation function for the computation footprint, and honors so-called
+'hints'.
+
+"""
 
 import logging
 from random import choice, shuffle
@@ -42,17 +51,6 @@ from pydcop.distribution.objects import Distribution, DistributionHints, \
 
 logger = logging.getLogger('distribution.adhoc')
 
-
-"""
-Ad-hoc distribution
-This is an heuristic design for IJCAI 2016 paper.
-The distribution respects the agents capacity, and thus requires an 
-estimation function for the computation footprint, and honors so-called 
-'hints'. 
-
-"""
-
-
 def distribute(computation_graph: ComputationGraph,
                agentsdef: Iterable[AgentDef],
                hints: DistributionHints=None,
@@ -60,20 +58,20 @@ def distribute(computation_graph: ComputationGraph,
                communication_load=None,
                timeout=None):
     """
-    Generate a distribution for the dcop.
-    This method uses a simple heuristic for distribution, with no guaranty of
+    Generate a distribution for the DCOP.
+    This method uses a simple heuristic for distribution, with no guarantee of
     optimality.
 
-    Even if a feasible distribution exists, this method is not warranted to
+    Even if a feasible distribution exists, this method is not guaranteed to
     find it.
 
-    When using a dcop that represents an secp, given the correct 
+    When using a DCOP that represents an SECP, given the correct
     DistributionHint the same distribution should be generated that with the 
-    adhoc secp distribution method.
+    adhoc SECP distribution method.
 
     Notes
     -----
-    The timeout argument is supported to honor the protocol in ``pydcop distribute``
+    The timeout argument is accepted to honor the protocol in ``pydcop distribute``
     but ignored.
 
     """
@@ -98,9 +96,9 @@ def _distribute_try(computation_graph: ComputationGraph,
                     attempt=0):
 
     agents_capa = {a.name: a.capacity for a in agents}
-    # The distribution methods depends on the order used to process the node,
-    # we shuffle them to test a new configuration when retry a distribution
-    # after a failure
+    # The distribution method depends on the order used to process the node,
+    # we shuffle them to test a new configuration when we retry generating
+    # a distribution after a failure
     nodes = list(computation_graph.nodes)
     shuffle(nodes)
     mapping = defaultdict(set)

@@ -5,3 +5,4 @@ pydcop.algorithms.dsa
 =====================
 
 .. automodule:: pydcop.algorithms.dsa
+  :members:

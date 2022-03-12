@@ -5,3 +5,4 @@ pydcop.algorithms.gdba
 ======================
 
 .. automodule:: pydcop.algorithms.gdba
+  :members:

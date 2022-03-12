@@ -37,8 +37,8 @@ Algorithm Parameters
 ^^^^^^^^^^^^^^^^^^^^
 MGM supports two parameters:
 
-* break_mode
-* stop_cycle
+* break_mode: ``lexic`` or ``random``, defaulting to ``lexic``
+* stop_cycle: integer
 
 Example
 ^^^^^^^
@@ -73,7 +73,8 @@ BREAK_MODES = ["lexic", "random"]
 
 
 """
-MGM supports two paramaters: 
+MGM supports two parameters:
+
 * break_mode
 * stop_cycle
 """

@@ -5,3 +5,4 @@ pydcop.algorithms.maxsum
 ========================
 
 .. automodule:: pydcop.algorithms.maxsum
+  :members:

@@ -5,3 +5,4 @@ pydcop.algorithms.dpop
 ======================
 
 .. automodule:: pydcop.algorithms.dpop
+  :members:

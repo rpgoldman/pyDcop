@@ -28,10 +28,33 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""
+r"""
 GDBA Algorithm
 --------------
 
+See the following article for more details on adaptation mode:
+Distributed Breakout Algorithm: Beyond Satisfaction' (S. Okamoto,
+R. Zivan, A. Nahon, 2016)
+
+Algorithm Parameters
+^^^^^^^^^^^^^^^^^^^^
+
+
+* modifier: str, "A" or "M"
+
+  How to increase costs dynamically to focus search: "A" (Additive) or "M" (Multiplicative).
+  Default is "A"
+
+* violation: str, NZ", "NM" or "MX".
+
+  How to determine if a constraint is violated, Non-zero cost (NZ), Non-minimum (NM) or Maximum (MX).
+  Default is "NZ"
+
+* increase_mode: str. "E", "R", "C", or "T"
+
+  Determine which costs have to be increased.
+  Possible values: ‘E’ (single-entry) or ‘C’ (column) or ‘R’ (row) or ‘T’ ( Transversal).
+  default is "E".
 
 """
 

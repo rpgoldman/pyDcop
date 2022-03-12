@@ -5,3 +5,4 @@ pydcop.distribution.ilp_fgdp
 ================================
 
 .. automodule:: pydcop.distribution.ilp_fgdp
+    :members:

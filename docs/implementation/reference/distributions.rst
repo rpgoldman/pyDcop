@@ -21,11 +21,18 @@ pyDCOP currently provides the following distribution methods :
 .. toctree::
   :maxdepth: 1
 
-  distributions/oneagent
-  distributions/ilp_fgdp
-  distributions/ilp_compref
-  distributions/heur_comhost
-
+  distributions/oneagent.rst
+  distributions/adhoc.rst
+  distributions/gh_cgdp.rst
+  distributions/gh_secp_cgdp.rst
+  distributions/gh_secp_fgdp.rst
+  distributions/heur_comhost.rst
+  distributions/ilp_compref.rst
+  distributions/ilp_compref_fg.rst
+  distributions/ilp_fgdp.rst
+  distributions/oilp_cgdp.rst
+  distributions/oilp_secp_cgdp.rst
+  distributions/oilp_secp_fgdp.rst
 
 Implementing a distribution method
 ----------------------------------
@@ -52,4 +59,14 @@ Base classes
 
 .. autoclass:: pydcop.distribution.oneagent.Distribution
   :members:
+
+
+Additional utilities, etc.
+--------------------------
+
+.. toctree::
+  :maxdepth: 1
+
+  distributions/objects
+  distributions/yamlformat
 

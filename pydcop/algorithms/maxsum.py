@@ -36,27 +36,32 @@ Max-Sum :cite:`farinelli_decentralised_2008` is an incomplete inference-based DC
 algorithm.
 
 This is a **synchronous implementation** of Max-Sum, where messages are sent and received
-in cycles. For an asynchronous implementation,
-see. :ref:`A-Max-Sum<implementation_reference_algorithms_amaxsum>`
+in cycles. For an asynchronous version,
+see :ref:`AMaxSum<api_algorithms_amaxsum>`.
 
 
 Algorithm Parameters
 ^^^^^^^^^^^^^^^^^^^^
 
-**damping**
-  amount of dumping [0-1]
+* damping: float, default = 0.5
 
-**damping_nodes**
-  nodes that apply damping to messages: "vars", "factors", "both" or "none"
+  Amount of damping [0-1].
 
-**stability**
-  stability detection coefficient
+* damping_nodes: "vars", "factors", "both" or "none", default = "both"
 
-**noise**
-  noise level for variable
+  Nodes that apply damping to messages.
 
-**start_messages**
-  nodes that initiate messages : "leafs", "leafs_vars", "all"
+* stability: float, default = 0.1 (``STABILITY_COEFFICIENT``)
+
+  Stability detection coefficient
+
+* noise: float, default = 0.01
+
+  Noise level for variables
+
+* start_messages: "leafs", "leafs_vars", "all", default = "leafs"
+
+  Nodes that initiate messages.
 
 
 FIXME: add support for stop_cycle

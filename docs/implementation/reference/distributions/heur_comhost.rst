@@ -6,4 +6,5 @@ pydcop.distribution.heur_comhost
 ================================
 
 .. automodule:: pydcop.distribution.heur_comhost
+  :members:
 

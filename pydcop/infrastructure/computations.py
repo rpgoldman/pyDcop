@@ -521,7 +521,7 @@ class MessagePassingComputation(object, metaclass=ComputationMetaClass):
         Notes
         -----
         This method should always be used when sending a message. The
-        computation should never use the `_msg_sender` directly has this
+        computation should never use the `_msg_sender` directly as this
         would bypass the pause state.
 
         Parameters

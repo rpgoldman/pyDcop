@@ -32,7 +32,7 @@
 .. _pydcop_commands_generate_scenario:
 
 
-pydcop generate agents
+pydcop generate scenario
 ======================
 
 Generate a scenario.

@@ -54,7 +54,7 @@ Algorithm Parameters
 
 **stop_cycle**
   The number of cycle after which the algorithm stops, defaults to `0`
-  If not defined (of equals to `0`), the computation never stops.
+  If not defined (or equal to `0`), the computation never stops.
 
 Example
 ^^^^^^^

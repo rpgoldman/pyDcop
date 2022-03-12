@@ -51,7 +51,7 @@ Algorithm Parameters
   probability of changing a value. Defaults to 0.7.
 
 **period**
-  The period between variables activation, in second. Defaults to 0.5.
+  The period between variables' activations, in seconds. Defaults to 0.5.
 
 
 Example
@@ -72,7 +72,7 @@ See Also
 :ref:`DSA-tuto<implementation_reference_algorithms_dsatuto>`: for a very simple
 implementation of DSA, made for tutorials.
 
-:ref:`A-DSA<implementation_reference_algorithms_dsa>`: for an asynchronous
+:ref:`DSA<implementation_reference_algorithms_dsa>`: for a synchronous
 implementation of DSA.
 
 
