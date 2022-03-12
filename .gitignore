@@ -83,3 +83,5 @@ target/
 /docs/_figures_src/fg_distribution.png
 /tests/unit/progress
 /todo.txt
+
+pydcop/commands/generators/maap.py

@@ -96,6 +96,13 @@ from pydcop.commands.generators import graphcoloring, meetingscheduling, ising, 
 from pydcop.commands.generators.iot import generate_iot
 from pydcop.commands.generators.secp import generate_secp, parser_secp
 from pydcop.commands.generators.smallworld import generate_small_world
+try:
+    from pydcop.commands.generators import maap
+except ImportError:
+    logging.getLogger("pydcop.cli.generate").error("Unable to import MAAP problem generator.")
+    print("Unable to import MAAP problem generator.")
+    maap = None
+    pass
 from pydcop.dcop.objects import VariableDomain, Variable, AgentDef
 from pydcop.dcop.dcop import DCOP
 from pydcop.dcop.relations import relation_from_str
@@ -135,9 +142,14 @@ def set_parser(main_subparsers):
     graphcoloring.init_cli_parser(subparsers)
     meetingscheduling.init_cli_parser(subparsers)
     ising.init_cli_parser(subparsers)
-
     agents.init_cli_parser(subparsers)
     scenario.init_cli_parser(subparsers)
+    if maap is not None:
+        logger.info("Initializing the MAAP parser.")
+        maap.init_cli_parser(subparsers)
+    else:
+        logger.error("Unable to initialize the MAAP problem parser.")
+
     parser_mixed_problem(subparsers)
 
     parser_ising_soft(subparsers)
@@ -561,7 +573,7 @@ def generate_mixed_problem(args):
         edges_count = int(variable_count * (variable_count - 1) * density / 2)
         if constraint_count != edges_count:
             logger.warning(
-                "edges count is different of constraint count ({} "
+                "edges count is different from constraint count ({} "
                 "!= {}) but for arity 2, constraints are the deges"
                 "of the graph. We use the density ({}) to determine"
                 " the number of edges".format(edges_count, constraint_count, density)
