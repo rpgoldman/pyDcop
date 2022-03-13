@@ -30,7 +30,7 @@
 
 
 from collections.abc import Mapping as CollectionsMapping
-from typing import Dict, Iterable, List, Mapping, Set, Tuple, Union
+from typing import Any, Dict, Iterable, List, Mapping, Set, Tuple, Union
 
 from pydcop.dcop.objects import AgentDef, Domain, ExternalVariable, Variable
 from pydcop.dcop.relations import Constraint, RelationProtocol, constraint_from_str, filter_assignment_dict
@@ -312,6 +312,16 @@ class DCOP(object):
 
         return solution_cost(self.constraints.values(),
                              self.all_variables, full_assignment, infinity)
+
+    def dict_for_yaml(self) -> Dict[str, Any]:
+        r"""
+        Return a dictionary to be used to generate the header of a DCOP YAML
+        file. By default, includes only the name and the objective, but subclasses
+        of DCOP may add additional information by extending this method.
+
+        :return: Dict[str, Any]
+        """
+        return {"name": self.name, "objective": self.objective}
 
 
 def solution_cost(relations, variables, assignment, infinity):

@@ -106,7 +106,7 @@ def load_dcop(dcop_str: str, main_dir=None) -> DCOP:
 
 
 def dcop_yaml(dcop: DCOP) -> str:
-    dcop_dict = {"name": dcop.name, "objective": dcop.objective}
+    dcop_dict = dcop.dict_for_yaml()
     dcop_str = yaml.dump(dcop_dict, default_flow_style=False)
     dcop_str += "\n"
     dcop_str += _yaml_domains(dcop.domains.values())
