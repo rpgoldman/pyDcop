@@ -1,0 +1,543 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "inputs": {
+                "distribution": "path/to/distfile.yml",
+                "dcop": "path/to/dcop/file.yaml",
+                "graph": "constraints_hypergraph",
+                "algo": "dsa",
+                "k": 3,
+                "replication": "dist_ucs_hostingcosts"
+            },
+            "replica_dist": {
+                "v0": [
+                    "a12",
+                    "a5",
+                    "a1"
+                ],
+                "v1": [
+                    "a12",
+                    "a5",
+                    "a1"
+                ],
+                "v2": [
+                    "a12",
+                    "a5",
+                    "a1"
+                ],
+                "v3": [
+                    "a12",
+                    "a5",
+                    "a9"
+                ],
+                "v4": [
+                    "a1",
+                    "a5",
+                    "a9"
+                ],
+                "v5": [
+                    "a12",
+                    "a9",
+                    "a1"
+                ],
+                "v6": [
+                    "a12",
+                    "a9",
+                    "a1"
+                ],
+                "v7": [
+                    "a12",
+                    "a5",
+                    "a1"
+                ],
+                "v8": [
+                    "a12",
+                    "a5",
+                    "a9"
+                ],
+                "v9": [
+                    "a12",
+                    "a5",
+                    "a1"
+                ]
+            }
+        }
+    ],
+    "required": [
+        "inputs",
+        "replica_dist"
+    ],
+    "properties": {
+        "inputs": {
+            "$id": "#/properties/inputs",
+            "type": "object",
+            "title": "The inputs schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "distribution": "path/to/distfile.yml",
+                    "dcop": "path/to/dcop/file.yaml",
+                    "graph": "constraints_hypergraph",
+                    "algo": "dsa",
+                    "k": 3,
+                    "replication": "dist_ucs_hostingcosts"
+                }
+            ],
+            "required": [
+                "distribution",
+                "dcop",
+                "graph",
+                "algo",
+                "k",
+                "replication"
+            ],
+            "properties": {
+                "distribution": {
+                    "$id": "#/properties/inputs/properties/distribution",
+                    "type": "string",
+                    "title": "The distribution schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "path/to/distfile.yml"
+                    ]
+                },
+                "dcop": {
+                    "$id": "#/properties/inputs/properties/dcop",
+                    "type": "string",
+                    "title": "The dcop schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "path/to/dcop/file.yaml"
+                    ]
+                },
+                "graph": {
+                    "$id": "#/properties/inputs/properties/graph",
+                    "type": "string",
+                    "title": "The graph schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "constraints_hypergraph"
+                    ]
+                },
+                "algo": {
+                    "$id": "#/properties/inputs/properties/algo",
+                    "type": "string",
+                    "title": "The algo schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "dsa"
+                    ]
+                },
+                "k": {
+                    "$id": "#/properties/inputs/properties/k",
+                    "type": "integer",
+                    "title": "The k schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                        3
+                    ]
+                },
+                "replication": {
+                    "$id": "#/properties/inputs/properties/replication",
+                    "type": "string",
+                    "title": "The replication schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "dist_ucs_hostingcosts"
+                    ]
+                }
+            },
+            "additionalProperties": true
+        },
+        "replica_dist": {
+            "$id": "#/properties/replica_dist",
+            "type": "object",
+            "title": "The replica_dist schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "v0": [
+                        "a12",
+                        "a5",
+                        "a1"
+                    ],
+                    "v1": [
+                        "a12",
+                        "a5",
+                        "a1"
+                    ],
+                    "v2": [
+                        "a12",
+                        "a5",
+                        "a1"
+                    ],
+                    "v3": [
+                        "a12",
+                        "a5",
+                        "a9"
+                    ],
+                    "v4": [
+                        "a1",
+                        "a5",
+                        "a9"
+                    ],
+                    "v5": [
+                        "a12",
+                        "a9",
+                        "a1"
+                    ],
+                    "v6": [
+                        "a12",
+                        "a9",
+                        "a1"
+                    ],
+                    "v7": [
+                        "a12",
+                        "a5",
+                        "a1"
+                    ],
+                    "v8": [
+                        "a12",
+                        "a5",
+                        "a9"
+                    ],
+                    "v9": [
+                        "a12",
+                        "a5",
+                        "a1"
+                    ]
+                }
+            ],
+            "required": [
+                "v0",
+                "v1",
+                "v2",
+                "v3",
+                "v4",
+                "v5",
+                "v6",
+                "v7",
+                "v8",
+                "v9"
+            ],
+            "properties": {
+                "v0": {
+                    "$id": "#/properties/replica_dist/properties/v0",
+                    "type": "array",
+                    "title": "The v0 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v0/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v0/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v1": {
+                    "$id": "#/properties/replica_dist/properties/v1",
+                    "type": "array",
+                    "title": "The v1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v1/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v1/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v2": {
+                    "$id": "#/properties/replica_dist/properties/v2",
+                    "type": "array",
+                    "title": "The v2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v2/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v2/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v3": {
+                    "$id": "#/properties/replica_dist/properties/v3",
+                    "type": "array",
+                    "title": "The v3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v3/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v3/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v4": {
+                    "$id": "#/properties/replica_dist/properties/v4",
+                    "type": "array",
+                    "title": "The v4 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a1",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v4/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v4/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a1",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v5": {
+                    "$id": "#/properties/replica_dist/properties/v5",
+                    "type": "array",
+                    "title": "The v5 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a9"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v5/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v5/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a9"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v6": {
+                    "$id": "#/properties/replica_dist/properties/v6",
+                    "type": "array",
+                    "title": "The v6 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a9"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v6/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v6/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a9"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v7": {
+                    "$id": "#/properties/replica_dist/properties/v7",
+                    "type": "array",
+                    "title": "The v7 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v7/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v7/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v8": {
+                    "$id": "#/properties/replica_dist/properties/v8",
+                    "type": "array",
+                    "title": "The v8 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v8/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v8/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "v9": {
+                    "$id": "#/properties/replica_dist/properties/v9",
+                    "type": "array",
+                    "title": "The v9 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "a12",
+                            "a5"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/replica_dist/properties/v9/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/replica_dist/properties/v9/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "a12",
+                                    "a5"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "additionalProperties": true
+}

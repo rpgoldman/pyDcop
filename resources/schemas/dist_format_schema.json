@@ -1,0 +1,219 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "inputs": {
+                "dist_algo": "ilp_comcost",
+                "dcop": "path/to/dcop/file.yaml",
+                "graph": "constraints_hypergraph",
+                "algo": "dsa"
+            },
+            "distribution": {
+                "a0": [],
+                "a1": [
+                    "v1",
+                    "v2"
+                ],
+                "a2": [],
+                "a3": [
+                    "v2",
+                    "v3"
+                ]
+            }
+        }
+    ],
+    "required": [
+        "inputs",
+        "distribution"
+    ],
+    "properties": {
+        "inputs": {
+            "$id": "#/properties/inputs",
+            "type": "object",
+            "title": "The inputs schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "dist_algo": "ilp_comcost",
+                    "dcop": "path/to/dcop/file.yaml",
+                    "graph": "constraints_hypergraph",
+                    "algo": "dsa"
+                }
+            ],
+            "required": [
+                "dist_algo",
+                "dcop",
+                "graph",
+                "algo"
+            ],
+            "properties": {
+                "dist_algo": {
+                    "$id": "#/properties/inputs/properties/dist_algo",
+                    "type": "string",
+                    "title": "The dist_algo schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "ilp_comcost"
+                    ]
+                },
+                "dcop": {
+                    "$id": "#/properties/inputs/properties/dcop",
+                    "type": "string",
+                    "title": "The dcop schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "path/to/dcop/file.yaml"
+                    ]
+                },
+                "graph": {
+                    "$id": "#/properties/inputs/properties/graph",
+                    "type": "string",
+                    "title": "The graph schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "constraints_hypergraph"
+                    ]
+                },
+                "algo": {
+                    "$id": "#/properties/inputs/properties/algo",
+                    "type": "string",
+                    "title": "The algo schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "dsa"
+                    ]
+                }
+            },
+            "additionalProperties": true
+        },
+        "distribution": {
+            "$id": "#/properties/distribution",
+            "type": "object",
+            "title": "The distribution schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "a0": [],
+                    "a1": [
+                        "v1",
+                        "v2"
+                    ],
+                    "a2": [],
+                    "a3": [
+                        "v2",
+                        "v3"
+                    ]
+                }
+            ],
+            "required": [
+                "a0",
+                "a1",
+                "a2",
+                "a3"
+            ],
+            "properties": {
+                "a0": {
+                    "$id": "#/properties/distribution/properties/a0",
+                    "type": "array",
+                    "title": "The a0 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        []
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/distribution/properties/a0/items"
+                    }
+                },
+                "a1": {
+                    "$id": "#/properties/distribution/properties/a1",
+                    "type": "array",
+                    "title": "The a1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "v1",
+                            "v2"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/distribution/properties/a1/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/distribution/properties/a1/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "v1",
+                                    "v2"
+                                ]
+                            }
+                        ]
+                    }
+                },
+                "a2": {
+                    "$id": "#/properties/distribution/properties/a2",
+                    "type": "array",
+                    "title": "The a2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        []
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/distribution/properties/a2/items"
+                    }
+                },
+                "a3": {
+                    "$id": "#/properties/distribution/properties/a3",
+                    "type": "array",
+                    "title": "The a3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": [],
+                    "examples": [
+                        [
+                            "v2",
+                            "v3"
+                        ]
+                    ],
+                    "additionalItems": true,
+                    "items": {
+                        "$id": "#/properties/distribution/properties/a3/items",
+                        "anyOf": [
+                            {
+                                "$id": "#/properties/distribution/properties/a3/items/anyOf/0",
+                                "type": "string",
+                                "title": "The first anyOf schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "v2",
+                                    "v3"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "additionalProperties": true
+}

@@ -1,0 +1,1806 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "name": "dcop yaml sample format",
+            "description": "This serves as a informal specification\nof the yaml-based ddcop serialization format.\nNote: in the description field, use the \"|\" yaml syntax for long string (see this example).\n",
+            "objective": "min",
+            "domains": {
+                "d1": {
+                    "values": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4
+                    ],
+                    "type": "non_semantic"
+                },
+                "d2": {
+                    "values": [
+                        "A",
+                        "B",
+                        "C",
+                        "D",
+                        "E"
+                    ]
+                },
+                "d3": {
+                    "values": [
+                        "1 .. 10"
+                    ],
+                    "type": "non_semantic",
+                    "initial_value": 3
+                },
+                "dbool": {
+                    "values": [
+                        true,
+                        false
+                    ]
+                }
+            },
+            "variables": {
+                "var1": {
+                    "domain": "d1",
+                    "initial_value": 0,
+                    "yourkey": "yourvalue",
+                    "foo": "bar"
+                },
+                "var2": {
+                    "domain": "d2",
+                    "initial_value": 0
+                },
+                "var3": {
+                    "domain": "d1",
+                    "initial_value": 0,
+                    "cost_function": "var3 * 0.5"
+                },
+                "var4": {
+                    "domain": "d3",
+                    "initial_value": 0,
+                    "cost_function": "var4 * 0.6",
+                    "noise_level": 0.2
+                }
+            },
+            "external_variables": {
+                "ext_var1": {
+                    "domain": "dbool",
+                    "initial_value": false
+                }
+            },
+            "constraints": {
+                "c1": {
+                    "type": "intention",
+                    "function": "var3 - var1 + var2"
+                },
+                "c2": {
+                    "type": "intention",
+                    "function": "var1 if ext_var else var3"
+                },
+                "c3": {
+                    "type": "intention",
+                    "function": "1000 if var2 == var3 else 0"
+                },
+                "c4": {
+                    "type": "intention",
+                    "function": "if var1 == 2:\n    b= 4\nelse:\n    b = 2\nreturn var1 + 2\n"
+                },
+                "diff_2_3": {
+                    "type": "intention",
+                    "source": "./external_python_constraints.py",
+                    "function": "source.diff_vars(v2, v3)"
+                },
+                "cost_d1": {
+                    "type": "intention",
+                    "function": "var1 * 0.8"
+                },
+                "cost_d2": {
+                    "type": "intention",
+                    "function": "var2 * 0.4"
+                },
+                "constraint1": {
+                    "type": "intention",
+                    "function": "var2 * 0.4 + var3 + var1 *0.5",
+                    "partial": {
+                        "var2": 2,
+                        "var3": 1
+                    }
+                },
+                "c_ext": {
+                    "type": "extensional",
+                    "variables": [
+                        "var1",
+                        "var2",
+                        "var3"
+                    ],
+                    "default": 100,
+                    "values": {
+                        "2": "2 3 'too bad'",
+                        "10": "1 2 3 | 1 2 4"
+                    }
+                }
+            },
+            "agents": {
+                "a1": {
+                    "capacity": 100,
+                    "foo": "bar"
+                },
+                "a2": {
+                    "capacity": 100
+                },
+                "a3": {
+                    "capacity": 100
+                }
+            },
+            "routes": {
+                "default": 5,
+                "a1": {
+                    "a2": 10,
+                    "a3": 4
+                },
+                "a2": {
+                    "a3": 4
+                }
+            },
+            "hosting_costs": {
+                "default": 1000,
+                "a1": {
+                    "default": 5000,
+                    "computations": {
+                        "c1": 10,
+                        "c2": 30
+                    }
+                },
+                "a2": {
+                    "default": 0
+                },
+                "a3": {
+                    "default": 10
+                }
+            }
+        }
+    ],
+    "required": [
+        "name",
+        "description",
+        "objective",
+        "domains",
+        "variables",
+        "external_variables",
+        "constraints",
+        "agents",
+        "routes",
+        "hosting_costs"
+    ],
+    "properties": {
+        "name": {
+            "$id": "#/properties/name",
+            "type": "string",
+            "title": "The name schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "dcop yaml sample format"
+            ]
+        },
+        "description": {
+            "$id": "#/properties/description",
+            "type": "string",
+            "title": "The description schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "This serves as a informal specification\nof the yaml-based ddcop serialization format.\nNote: in the description field, use the \"|\" yaml syntax for long string (see this example).\n"
+            ]
+        },
+        "objective": {
+            "$id": "#/properties/objective",
+            "type": "string",
+            "title": "The objective schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "min"
+            ]
+        },
+        "domains": {
+            "$id": "#/properties/domains",
+            "type": "object",
+            "title": "The domains schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "d1": {
+                        "values": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4
+                        ],
+                        "type": "non_semantic"
+                    },
+                    "d2": {
+                        "values": [
+                            "A",
+                            "B",
+                            "C",
+                            "D",
+                            "E"
+                        ]
+                    },
+                    "d3": {
+                        "values": [
+                            "1 .. 10"
+                        ],
+                        "type": "non_semantic",
+                        "initial_value": 3
+                    },
+                    "dbool": {
+                        "values": [
+                            true,
+                            false
+                        ]
+                    }
+                }
+            ],
+            "required": [
+                "d1",
+                "d2",
+                "d3",
+                "dbool"
+            ],
+            "properties": {
+                "d1": {
+                    "$id": "#/properties/domains/properties/d1",
+                    "type": "object",
+                    "title": "The d1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "values": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4
+                            ],
+                            "type": "non_semantic"
+                        }
+                    ],
+                    "required": [
+                        "values",
+                        "type"
+                    ],
+                    "properties": {
+                        "values": {
+                            "$id": "#/properties/domains/properties/d1/properties/values",
+                            "type": "array",
+                            "title": "The values schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": [],
+                            "examples": [
+                                [
+                                    0,
+                                    1
+                                ]
+                            ],
+                            "additionalItems": true,
+                            "items": {
+                                "$id": "#/properties/domains/properties/d1/properties/values/items",
+                                "anyOf": [
+                                    {
+                                        "$id": "#/properties/domains/properties/d1/properties/values/items/anyOf/0",
+                                        "type": "integer",
+                                        "title": "The first anyOf schema",
+                                        "description": "An explanation about the purpose of this instance.",
+                                        "default": 0,
+                                        "examples": [
+                                            0,
+                                            1
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "type": {
+                            "$id": "#/properties/domains/properties/d1/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "non_semantic"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "d2": {
+                    "$id": "#/properties/domains/properties/d2",
+                    "type": "object",
+                    "title": "The d2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "values": [
+                                "A",
+                                "B",
+                                "C",
+                                "D",
+                                "E"
+                            ]
+                        }
+                    ],
+                    "required": [
+                        "values"
+                    ],
+                    "properties": {
+                        "values": {
+                            "$id": "#/properties/domains/properties/d2/properties/values",
+                            "type": "array",
+                            "title": "The values schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": [],
+                            "examples": [
+                                [
+                                    "A",
+                                    "B"
+                                ]
+                            ],
+                            "additionalItems": true,
+                            "items": {
+                                "$id": "#/properties/domains/properties/d2/properties/values/items",
+                                "anyOf": [
+                                    {
+                                        "$id": "#/properties/domains/properties/d2/properties/values/items/anyOf/0",
+                                        "type": "string",
+                                        "title": "The first anyOf schema",
+                                        "description": "An explanation about the purpose of this instance.",
+                                        "default": "",
+                                        "examples": [
+                                            "A",
+                                            "B"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "d3": {
+                    "$id": "#/properties/domains/properties/d3",
+                    "type": "object",
+                    "title": "The d3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "values": [
+                                "1 .. 10"
+                            ],
+                            "type": "non_semantic",
+                            "initial_value": 3
+                        }
+                    ],
+                    "required": [
+                        "values",
+                        "type",
+                        "initial_value"
+                    ],
+                    "properties": {
+                        "values": {
+                            "$id": "#/properties/domains/properties/d3/properties/values",
+                            "type": "array",
+                            "title": "The values schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": [],
+                            "examples": [
+                                [
+                                    "1 .. 10"
+                                ]
+                            ],
+                            "additionalItems": true,
+                            "items": {
+                                "$id": "#/properties/domains/properties/d3/properties/values/items",
+                                "anyOf": [
+                                    {
+                                        "$id": "#/properties/domains/properties/d3/properties/values/items/anyOf/0",
+                                        "type": "string",
+                                        "title": "The first anyOf schema",
+                                        "description": "An explanation about the purpose of this instance.",
+                                        "default": "",
+                                        "examples": [
+                                            "1 .. 10"
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "type": {
+                            "$id": "#/properties/domains/properties/d3/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "non_semantic"
+                            ]
+                        },
+                        "initial_value": {
+                            "$id": "#/properties/domains/properties/d3/properties/initial_value",
+                            "type": "integer",
+                            "title": "The initial_value schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                3
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "dbool": {
+                    "$id": "#/properties/domains/properties/dbool",
+                    "type": "object",
+                    "title": "The dbool schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "values": [
+                                true,
+                                false
+                            ]
+                        }
+                    ],
+                    "required": [
+                        "values"
+                    ],
+                    "properties": {
+                        "values": {
+                            "$id": "#/properties/domains/properties/dbool/properties/values",
+                            "type": "array",
+                            "title": "The values schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": [],
+                            "examples": [
+                                [
+                                    true,
+                                    false
+                                ]
+                            ],
+                            "additionalItems": true,
+                            "items": {
+                                "$id": "#/properties/domains/properties/dbool/properties/values/items",
+                                "anyOf": [
+                                    {
+                                        "$id": "#/properties/domains/properties/dbool/properties/values/items/anyOf/0",
+                                        "type": "boolean",
+                                        "title": "The first anyOf schema",
+                                        "description": "An explanation about the purpose of this instance.",
+                                        "default": false,
+                                        "examples": [
+                                            true,
+                                            false
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "variables": {
+            "$id": "#/properties/variables",
+            "type": "object",
+            "title": "The variables schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "var1": {
+                        "domain": "d1",
+                        "initial_value": 0,
+                        "yourkey": "yourvalue",
+                        "foo": "bar"
+                    },
+                    "var2": {
+                        "domain": "d2",
+                        "initial_value": 0
+                    },
+                    "var3": {
+                        "domain": "d1",
+                        "initial_value": 0,
+                        "cost_function": "var3 * 0.5"
+                    },
+                    "var4": {
+                        "domain": "d3",
+                        "initial_value": 0,
+                        "cost_function": "var4 * 0.6",
+                        "noise_level": 0.2
+                    }
+                }
+            ],
+            "required": [
+                "var1",
+                "var2",
+                "var3",
+                "var4"
+            ],
+            "properties": {
+                "var1": {
+                    "$id": "#/properties/variables/properties/var1",
+                    "type": "object",
+                    "title": "The var1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "domain": "d1",
+                            "initial_value": 0,
+                            "yourkey": "yourvalue",
+                            "foo": "bar"
+                        }
+                    ],
+                    "required": [
+                        "domain",
+                        "initial_value",
+                        "yourkey",
+                        "foo"
+                    ],
+                    "properties": {
+                        "domain": {
+                            "$id": "#/properties/variables/properties/var1/properties/domain",
+                            "type": "string",
+                            "title": "The domain schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "d1"
+                            ]
+                        },
+                        "initial_value": {
+                            "$id": "#/properties/variables/properties/var1/properties/initial_value",
+                            "type": "integer",
+                            "title": "The initial_value schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                0
+                            ]
+                        },
+                        "yourkey": {
+                            "$id": "#/properties/variables/properties/var1/properties/yourkey",
+                            "type": "string",
+                            "title": "The yourkey schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "yourvalue"
+                            ]
+                        },
+                        "foo": {
+                            "$id": "#/properties/variables/properties/var1/properties/foo",
+                            "type": "string",
+                            "title": "The foo schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "bar"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "var2": {
+                    "$id": "#/properties/variables/properties/var2",
+                    "type": "object",
+                    "title": "The var2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "domain": "d2",
+                            "initial_value": 0
+                        }
+                    ],
+                    "required": [
+                        "domain",
+                        "initial_value"
+                    ],
+                    "properties": {
+                        "domain": {
+                            "$id": "#/properties/variables/properties/var2/properties/domain",
+                            "type": "string",
+                            "title": "The domain schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "d2"
+                            ]
+                        },
+                        "initial_value": {
+                            "$id": "#/properties/variables/properties/var2/properties/initial_value",
+                            "type": "integer",
+                            "title": "The initial_value schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                0
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "var3": {
+                    "$id": "#/properties/variables/properties/var3",
+                    "type": "object",
+                    "title": "The var3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "domain": "d1",
+                            "initial_value": 0,
+                            "cost_function": "var3 * 0.5"
+                        }
+                    ],
+                    "required": [
+                        "domain",
+                        "initial_value",
+                        "cost_function"
+                    ],
+                    "properties": {
+                        "domain": {
+                            "$id": "#/properties/variables/properties/var3/properties/domain",
+                            "type": "string",
+                            "title": "The domain schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "d1"
+                            ]
+                        },
+                        "initial_value": {
+                            "$id": "#/properties/variables/properties/var3/properties/initial_value",
+                            "type": "integer",
+                            "title": "The initial_value schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                0
+                            ]
+                        },
+                        "cost_function": {
+                            "$id": "#/properties/variables/properties/var3/properties/cost_function",
+                            "type": "string",
+                            "title": "The cost_function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "var3 * 0.5"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "var4": {
+                    "$id": "#/properties/variables/properties/var4",
+                    "type": "object",
+                    "title": "The var4 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "domain": "d3",
+                            "initial_value": 0,
+                            "cost_function": "var4 * 0.6",
+                            "noise_level": 0.2
+                        }
+                    ],
+                    "required": [
+                        "domain",
+                        "initial_value",
+                        "cost_function",
+                        "noise_level"
+                    ],
+                    "properties": {
+                        "domain": {
+                            "$id": "#/properties/variables/properties/var4/properties/domain",
+                            "type": "string",
+                            "title": "The domain schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "d3"
+                            ]
+                        },
+                        "initial_value": {
+                            "$id": "#/properties/variables/properties/var4/properties/initial_value",
+                            "type": "integer",
+                            "title": "The initial_value schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                0
+                            ]
+                        },
+                        "cost_function": {
+                            "$id": "#/properties/variables/properties/var4/properties/cost_function",
+                            "type": "string",
+                            "title": "The cost_function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "var4 * 0.6"
+                            ]
+                        },
+                        "noise_level": {
+                            "$id": "#/properties/variables/properties/var4/properties/noise_level",
+                            "type": "number",
+                            "title": "The noise_level schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0.0,
+                            "examples": [
+                                0.2
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "external_variables": {
+            "$id": "#/properties/external_variables",
+            "type": "object",
+            "title": "The external_variables schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "ext_var1": {
+                        "domain": "dbool",
+                        "initial_value": false
+                    }
+                }
+            ],
+            "required": [
+                "ext_var1"
+            ],
+            "properties": {
+                "ext_var1": {
+                    "$id": "#/properties/external_variables/properties/ext_var1",
+                    "type": "object",
+                    "title": "The ext_var1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "domain": "dbool",
+                            "initial_value": false
+                        }
+                    ],
+                    "required": [
+                        "domain",
+                        "initial_value"
+                    ],
+                    "properties": {
+                        "domain": {
+                            "$id": "#/properties/external_variables/properties/ext_var1/properties/domain",
+                            "type": "string",
+                            "title": "The domain schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "dbool"
+                            ]
+                        },
+                        "initial_value": {
+                            "$id": "#/properties/external_variables/properties/ext_var1/properties/initial_value",
+                            "type": "boolean",
+                            "title": "The initial_value schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": false,
+                            "examples": [
+                                false
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "constraints": {
+            "$id": "#/properties/constraints",
+            "type": "object",
+            "title": "The constraints schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "c1": {
+                        "type": "intention",
+                        "function": "var3 - var1 + var2"
+                    },
+                    "c2": {
+                        "type": "intention",
+                        "function": "var1 if ext_var else var3"
+                    },
+                    "c3": {
+                        "type": "intention",
+                        "function": "1000 if var2 == var3 else 0"
+                    },
+                    "c4": {
+                        "type": "intention",
+                        "function": "if var1 == 2:\n    b= 4\nelse:\n    b = 2\nreturn var1 + 2\n"
+                    },
+                    "diff_2_3": {
+                        "type": "intention",
+                        "source": "./external_python_constraints.py",
+                        "function": "source.diff_vars(v2, v3)"
+                    },
+                    "cost_d1": {
+                        "type": "intention",
+                        "function": "var1 * 0.8"
+                    },
+                    "cost_d2": {
+                        "type": "intention",
+                        "function": "var2 * 0.4"
+                    },
+                    "constraint1": {
+                        "type": "intention",
+                        "function": "var2 * 0.4 + var3 + var1 *0.5",
+                        "partial": {
+                            "var2": 2,
+                            "var3": 1
+                        }
+                    },
+                    "c_ext": {
+                        "type": "extensional",
+                        "variables": [
+                            "var1",
+                            "var2",
+                            "var3"
+                        ],
+                        "default": 100,
+                        "values": {
+                            "2": "2 3 'too bad'",
+                            "10": "1 2 3 | 1 2 4"
+                        }
+                    }
+                }
+            ],
+            "required": [
+                "c1",
+                "c2",
+                "c3",
+                "c4",
+                "diff_2_3",
+                "cost_d1",
+                "cost_d2",
+                "constraint1",
+                "c_ext"
+            ],
+            "properties": {
+                "c1": {
+                    "$id": "#/properties/constraints/properties/c1",
+                    "type": "object",
+                    "title": "The c1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "function": "var3 - var1 + var2"
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "function"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/c1/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/c1/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "var3 - var1 + var2"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "c2": {
+                    "$id": "#/properties/constraints/properties/c2",
+                    "type": "object",
+                    "title": "The c2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "function": "var1 if ext_var else var3"
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "function"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/c2/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/c2/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "var1 if ext_var else var3"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "c3": {
+                    "$id": "#/properties/constraints/properties/c3",
+                    "type": "object",
+                    "title": "The c3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "function": "1000 if var2 == var3 else 0"
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "function"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/c3/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/c3/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "1000 if var2 == var3 else 0"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "c4": {
+                    "$id": "#/properties/constraints/properties/c4",
+                    "type": "object",
+                    "title": "The c4 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "function": "if var1 == 2:\n    b= 4\nelse:\n    b = 2\nreturn var1 + 2\n"
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "function"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/c4/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/c4/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "if var1 == 2:\n    b= 4\nelse:\n    b = 2\nreturn var1 + 2\n"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "diff_2_3": {
+                    "$id": "#/properties/constraints/properties/diff_2_3",
+                    "type": "object",
+                    "title": "The diff_2_3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "source": "./external_python_constraints.py",
+                            "function": "source.diff_vars(v2, v3)"
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "source",
+                        "function"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/diff_2_3/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "source": {
+                            "$id": "#/properties/constraints/properties/diff_2_3/properties/source",
+                            "type": "string",
+                            "title": "The source schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "./external_python_constraints.py"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/diff_2_3/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "source.diff_vars(v2, v3)"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "cost_d1": {
+                    "$id": "#/properties/constraints/properties/cost_d1",
+                    "type": "object",
+                    "title": "The cost_d1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "function": "var1 * 0.8"
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "function"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/cost_d1/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/cost_d1/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "var1 * 0.8"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "cost_d2": {
+                    "$id": "#/properties/constraints/properties/cost_d2",
+                    "type": "object",
+                    "title": "The cost_d2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "function": "var2 * 0.4"
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "function"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/cost_d2/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/cost_d2/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "var2 * 0.4"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "constraint1": {
+                    "$id": "#/properties/constraints/properties/constraint1",
+                    "type": "object",
+                    "title": "The constraint1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "intention",
+                            "function": "var2 * 0.4 + var3 + var1 *0.5",
+                            "partial": {
+                                "var2": 2,
+                                "var3": 1
+                            }
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "function",
+                        "partial"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/constraint1/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "intention"
+                            ]
+                        },
+                        "function": {
+                            "$id": "#/properties/constraints/properties/constraint1/properties/function",
+                            "type": "string",
+                            "title": "The function schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "var2 * 0.4 + var3 + var1 *0.5"
+                            ]
+                        },
+                        "partial": {
+                            "$id": "#/properties/constraints/properties/constraint1/properties/partial",
+                            "type": "object",
+                            "title": "The partial schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "var2": 2,
+                                    "var3": 1
+                                }
+                            ],
+                            "required": [
+                                "var2",
+                                "var3"
+                            ],
+                            "properties": {
+                                "var2": {
+                                    "$id": "#/properties/constraints/properties/constraint1/properties/partial/properties/var2",
+                                    "type": "integer",
+                                    "title": "The var2 schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": 0,
+                                    "examples": [
+                                        2
+                                    ]
+                                },
+                                "var3": {
+                                    "$id": "#/properties/constraints/properties/constraint1/properties/partial/properties/var3",
+                                    "type": "integer",
+                                    "title": "The var3 schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": 0,
+                                    "examples": [
+                                        1
+                                    ]
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "c_ext": {
+                    "$id": "#/properties/constraints/properties/c_ext",
+                    "type": "object",
+                    "title": "The c_ext schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "type": "extensional",
+                            "variables": [
+                                "var1",
+                                "var2",
+                                "var3"
+                            ],
+                            "default": 100,
+                            "values": {
+                                "2": "2 3 'too bad'",
+                                "10": "1 2 3 | 1 2 4"
+                            }
+                        }
+                    ],
+                    "required": [
+                        "type",
+                        "variables",
+                        "default",
+                        "values"
+                    ],
+                    "properties": {
+                        "type": {
+                            "$id": "#/properties/constraints/properties/c_ext/properties/type",
+                            "type": "string",
+                            "title": "The type schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "extensional"
+                            ]
+                        },
+                        "variables": {
+                            "$id": "#/properties/constraints/properties/c_ext/properties/variables",
+                            "type": "array",
+                            "title": "The variables schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": [],
+                            "examples": [
+                                [
+                                    "var1",
+                                    "var2"
+                                ]
+                            ],
+                            "additionalItems": true,
+                            "items": {
+                                "$id": "#/properties/constraints/properties/c_ext/properties/variables/items",
+                                "anyOf": [
+                                    {
+                                        "$id": "#/properties/constraints/properties/c_ext/properties/variables/items/anyOf/0",
+                                        "type": "string",
+                                        "title": "The first anyOf schema",
+                                        "description": "An explanation about the purpose of this instance.",
+                                        "default": "",
+                                        "examples": [
+                                            "var1",
+                                            "var2"
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "default": {
+                            "$id": "#/properties/constraints/properties/c_ext/properties/default",
+                            "type": "integer",
+                            "title": "The default schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                100
+                            ]
+                        },
+                        "values": {
+                            "$id": "#/properties/constraints/properties/c_ext/properties/values",
+                            "type": "object",
+                            "title": "The values schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "2": "2 3 'too bad'",
+                                    "10": "1 2 3 | 1 2 4"
+                                }
+                            ],
+                            "required": [
+                                "2",
+                                "10"
+                            ],
+                            "properties": {
+                                "2": {
+                                    "$id": "#/properties/constraints/properties/c_ext/properties/values/properties/2",
+                                    "type": "string",
+                                    "title": "The 2 schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": "",
+                                    "examples": [
+                                        "2 3 'too bad'"
+                                    ]
+                                },
+                                "10": {
+                                    "$id": "#/properties/constraints/properties/c_ext/properties/values/properties/10",
+                                    "type": "string",
+                                    "title": "The 10 schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": "",
+                                    "examples": [
+                                        "1 2 3 | 1 2 4"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "agents": {
+            "$id": "#/properties/agents",
+            "type": "object",
+            "title": "The agents schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "a1": {
+                        "capacity": 100,
+                        "foo": "bar"
+                    },
+                    "a2": {
+                        "capacity": 100
+                    },
+                    "a3": {
+                        "capacity": 100
+                    }
+                }
+            ],
+            "required": [
+                "a1",
+                "a2",
+                "a3"
+            ],
+            "properties": {
+                "a1": {
+                    "$id": "#/properties/agents/properties/a1",
+                    "type": "object",
+                    "title": "The a1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "capacity": 100,
+                            "foo": "bar"
+                        }
+                    ],
+                    "required": [
+                        "capacity",
+                        "foo"
+                    ],
+                    "properties": {
+                        "capacity": {
+                            "$id": "#/properties/agents/properties/a1/properties/capacity",
+                            "type": "integer",
+                            "title": "The capacity schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                100
+                            ]
+                        },
+                        "foo": {
+                            "$id": "#/properties/agents/properties/a1/properties/foo",
+                            "type": "string",
+                            "title": "The foo schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "bar"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "a2": {
+                    "$id": "#/properties/agents/properties/a2",
+                    "type": "object",
+                    "title": "The a2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "capacity": 100
+                        }
+                    ],
+                    "required": [
+                        "capacity"
+                    ],
+                    "properties": {
+                        "capacity": {
+                            "$id": "#/properties/agents/properties/a2/properties/capacity",
+                            "type": "integer",
+                            "title": "The capacity schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                100
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "a3": {
+                    "$id": "#/properties/agents/properties/a3",
+                    "type": "object",
+                    "title": "The a3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "capacity": 100
+                        }
+                    ],
+                    "required": [
+                        "capacity"
+                    ],
+                    "properties": {
+                        "capacity": {
+                            "$id": "#/properties/agents/properties/a3/properties/capacity",
+                            "type": "integer",
+                            "title": "The capacity schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                100
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "routes": {
+            "$id": "#/properties/routes",
+            "type": "object",
+            "title": "The routes schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "default": 5,
+                    "a1": {
+                        "a2": 10,
+                        "a3": 4
+                    },
+                    "a2": {
+                        "a3": 4
+                    }
+                }
+            ],
+            "required": [
+                "default",
+                "a1",
+                "a2"
+            ],
+            "properties": {
+                "default": {
+                    "$id": "#/properties/routes/properties/default",
+                    "type": "integer",
+                    "title": "The default schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                        5
+                    ]
+                },
+                "a1": {
+                    "$id": "#/properties/routes/properties/a1",
+                    "type": "object",
+                    "title": "The a1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "a2": 10,
+                            "a3": 4
+                        }
+                    ],
+                    "required": [
+                        "a2",
+                        "a3"
+                    ],
+                    "properties": {
+                        "a2": {
+                            "$id": "#/properties/routes/properties/a1/properties/a2",
+                            "type": "integer",
+                            "title": "The a2 schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                10
+                            ]
+                        },
+                        "a3": {
+                            "$id": "#/properties/routes/properties/a1/properties/a3",
+                            "type": "integer",
+                            "title": "The a3 schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                4
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "a2": {
+                    "$id": "#/properties/routes/properties/a2",
+                    "type": "object",
+                    "title": "The a2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "a3": 4
+                        }
+                    ],
+                    "required": [
+                        "a3"
+                    ],
+                    "properties": {
+                        "a3": {
+                            "$id": "#/properties/routes/properties/a2/properties/a3",
+                            "type": "integer",
+                            "title": "The a3 schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                4
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "hosting_costs": {
+            "$id": "#/properties/hosting_costs",
+            "type": "object",
+            "title": "The hosting_costs schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "default": 1000,
+                    "a1": {
+                        "default": 5000,
+                        "computations": {
+                            "c1": 10,
+                            "c2": 30
+                        }
+                    },
+                    "a2": {
+                        "default": 0
+                    },
+                    "a3": {
+                        "default": 10
+                    }
+                }
+            ],
+            "required": [
+                "default",
+                "a1",
+                "a2",
+                "a3"
+            ],
+            "properties": {
+                "default": {
+                    "$id": "#/properties/hosting_costs/properties/default",
+                    "type": "integer",
+                    "title": "The default schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                        1000
+                    ]
+                },
+                "a1": {
+                    "$id": "#/properties/hosting_costs/properties/a1",
+                    "type": "object",
+                    "title": "The a1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "default": 5000,
+                            "computations": {
+                                "c1": 10,
+                                "c2": 30
+                            }
+                        }
+                    ],
+                    "required": [
+                        "default",
+                        "computations"
+                    ],
+                    "properties": {
+                        "default": {
+                            "$id": "#/properties/hosting_costs/properties/a1/properties/default",
+                            "type": "integer",
+                            "title": "The default schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                5000
+                            ]
+                        },
+                        "computations": {
+                            "$id": "#/properties/hosting_costs/properties/a1/properties/computations",
+                            "type": "object",
+                            "title": "The computations schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "c1": 10,
+                                    "c2": 30
+                                }
+                            ],
+                            "required": [
+                                "c1",
+                                "c2"
+                            ],
+                            "properties": {
+                                "c1": {
+                                    "$id": "#/properties/hosting_costs/properties/a1/properties/computations/properties/c1",
+                                    "type": "integer",
+                                    "title": "The c1 schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": 0,
+                                    "examples": [
+                                        10
+                                    ]
+                                },
+                                "c2": {
+                                    "$id": "#/properties/hosting_costs/properties/a1/properties/computations/properties/c2",
+                                    "type": "integer",
+                                    "title": "The c2 schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": 0,
+                                    "examples": [
+                                        30
+                                    ]
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "a2": {
+                    "$id": "#/properties/hosting_costs/properties/a2",
+                    "type": "object",
+                    "title": "The a2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "default": 0
+                        }
+                    ],
+                    "required": [
+                        "default"
+                    ],
+                    "properties": {
+                        "default": {
+                            "$id": "#/properties/hosting_costs/properties/a2/properties/default",
+                            "type": "integer",
+                            "title": "The default schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                0
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "a3": {
+                    "$id": "#/properties/hosting_costs/properties/a3",
+                    "type": "object",
+                    "title": "The a3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "default": 10
+                        }
+                    ],
+                    "required": [
+                        "default"
+                    ],
+                    "properties": {
+                        "default": {
+                            "$id": "#/properties/hosting_costs/properties/a3/properties/default",
+                            "type": "integer",
+                            "title": "The default schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                10
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "additionalProperties": true
+}
