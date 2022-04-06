@@ -63,7 +63,7 @@ Options
 -------
 ``--mode <generation_mode>``
   Agents generation mode. When 'variables' is used, one agent is generated for each
-  variable in the problem and and the '--dcop_files' option is required.
+  variable in the problem and the '--dcop_files' option is required.
   When using 'count', the '--count' option is required.
 
 ``--capacity <capacity>``
@@ -134,8 +134,8 @@ def init_cli_parser(parent_parser):
         required=True,
         choices=["variables", "count"],
         help="Agents generation mode. When 'variables' is used, one agent "
-        "is generated for each agent and the '--dcop_files' option is required. "
-        "When using 'count', '--count' is required",
+             "is generated for each agent and the '--dcop_files' option is required. "
+             "When using 'count', '--count' is required",
     )
 
     parser.add_argument("--dcop_files", type=str, nargs="+", default=None, help="dcop file(s)")
@@ -179,9 +179,10 @@ def init_cli_parser(parent_parser):
     )
 
     parser.add_argument(
-        "dcop_files_end", type=str, nargs="*", metavar="FILE", 
+        "dcop_files_end", type=str, nargs="*", metavar="FILE",
         help="dcop file(s)", default=None,
     )
+
 
 def generate(args):
     if not args.dcop_files and args.dcop_files_end:
@@ -261,7 +262,7 @@ def check_args(args):
 
 
 def generate_agents_names(
-    mode: str, count=None, variables=None, agent_prefix="a"
+        mode: str, count=None, variables=None, agent_prefix="a"
 ) -> List[str]:
     if mode == "count":
         return generate_agents_from_count(count, agent_prefix=agent_prefix)
@@ -283,7 +284,7 @@ def generate_agents_from_variables(variables: List[str], agent_prefix="a") -> Li
 
 
 def agent_variables_mapping(
-    hosting_mode: str, agents: List[str], variables: List[str]
+        hosting_mode: str, agents: List[str], variables: List[str]
 ) -> Dict[str, List[str]]:
     if hosting_mode == "name_mapping":
         return find_corresponding_variables(agents, variables)
@@ -291,8 +292,7 @@ def agent_variables_mapping(
         return find_corresponding_variables_start_with(agents, variables)
 
 
-def generate_hosting_costs(mode: str,  mapping: Dict[str, List[str]]):
-
+def generate_hosting_costs(_mode: str, mapping: Dict[str, List[str]]):
     costs = {}
     for agt_name in mapping:
         agt_costs = {}
@@ -303,15 +303,15 @@ def generate_hosting_costs(mode: str,  mapping: Dict[str, List[str]]):
 
 
 def generate_routes_costs(
-    mode: str, mapping, dcop
+        mode: str, mapping, dcop
 ) -> Dict[str, Dict[str, float]]:
     routes = {}
     if mode == "graph":
-        variables = list(dcop.variables)
+        # variables = list(dcop.variables)
         graph = constraints_hypergraph.build_computation_graph(dcop)
 
         # route = (1 + abs(degree_n - degree_v)) / (degree_n + degree_v)
-        # logger.debug(f"agants {agents}")
+        # logger.debug(f"agents {agents}")
         # logger.debug(f"variables {variables}")
         # mappings = find_corresponding_variables(agents, variables)
         # logger.debug(mappings)
@@ -336,7 +336,7 @@ def generate_routes_costs(
                         neighbor_agent = inverse_mapping[neighbor]
                         degree_neighbor = len(list(graph.neighbors(neighbor)))
                         route = (0.2 + abs(degree - degree_neighbor)) / (
-                            degree + degree_neighbor
+                                degree + degree_neighbor
                         )
                         logger.debug(
                             f"Route {agt_name} - {neighbor_agent} : {route}"
@@ -347,12 +347,12 @@ def generate_routes_costs(
 
 
 def find_corresponding_variables(
-    agents: List[str], variables: List[str], agt_prefix=None, var_prefix=None
+        agents: List[str], variables: List[str], agt_prefix=None, var_prefix=None
 ) -> Dict[str, List[str]]:
     var_prefix = var_prefix if var_prefix else find_prefix(variables)
-    var_regexp = re.compile(f"{var_prefix}(?P<index_var>\w+)")
+    var_regexp = re.compile(rf"{var_prefix}(?P<index_var>\w+)")
     agt_prefix = agt_prefix if agt_prefix else find_prefix(agents)
-    agt_regexp = re.compile(f"{agt_prefix}(?P<index_agt>\w+)")
+    agt_regexp = re.compile(rf"{agt_prefix}(?P<index_agt>\w+)")
 
     mapping, indexed_vars = defaultdict(lambda: list()), {}
     for variable in variables:
@@ -388,13 +388,12 @@ def find_corresponding_variables(
 
 
 def find_corresponding_variables_start_with(
-    agents: List[str], variables: List[str], agt_prefix=None, var_prefix=None
+        agents: List[str], variables: List[str], agt_prefix=None, var_prefix=None
 ) -> Dict[str, List[str]]:
-
     var_prefix = var_prefix if var_prefix else find_prefix(variables)
-    var_regexp = re.compile(f"{var_prefix}(?P<index_var>\w+)")
+    var_regexp = re.compile(rf"{var_prefix}(?P<index_var>\w+)")
     agt_prefix = agt_prefix if agt_prefix else find_prefix(agents)
-    agt_regexp = re.compile(f"{agt_prefix}(?P<index_agt>\w+)")
+    agt_regexp = re.compile(rf"{agt_prefix}(?P<index_agt>\w+)")
 
     mapping, indexed_vars = defaultdict(lambda: list()), {}
     for variable in variables:
@@ -403,12 +402,12 @@ def find_corresponding_variables_start_with(
             index = m.group("index_var")
             indexed_vars[index] = variable
 
-    try:
-        int_indexed_vars = {
-            int(index_var): variable for index_var, variable in indexed_vars.items()
-        }
-    except ValueError:
-        int_indexed_vars = []
+    # try:
+    #     int_indexed_vars = {
+    #         int(index_var): variable for index_var, variable in indexed_vars.items()
+    #     }
+    # except ValueError:
+    #     int_indexed_vars = []
 
     for agent in agents:
         m = agt_regexp.match(agent)
