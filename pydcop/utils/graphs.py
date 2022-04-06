@@ -105,8 +105,7 @@ def calc_diameter(nodes):
     return distance
 
 
-def find_furthest_node(root_node, nodes):
-
+def find_furthest_node(root_node, _nodes):
     # BFS on the graph defined by nodes
     queue = [root_node]
     distances = {root_node.name: 0}
@@ -145,7 +144,7 @@ def as_networkx_graph(variables, relations):
     """
     graph = nx.Graph()
 
-    # One node for each variables
+    # One node for each variable
     graph.add_nodes_from([v.name for v in variables])
 
     for r in relations:
@@ -171,7 +170,7 @@ def as_networkx_bipartite_graph(variables, relations):
     """
     graph = nx.Graph()
 
-    # One node for each variables
+    # One node for each variable
     graph.add_nodes_from([v.name for v in variables], bipartite=0)
     graph.add_nodes_from([r.name for r in relations], bipartite=1)
 
@@ -198,7 +197,7 @@ def display_graph(variables, relations):
 
     # Do not crash if matplotlib is not installed
     try:
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # noqa
 
         nx.draw_networkx(graph, with_labels=True)
         # nx.draw_random(graph)
@@ -207,6 +206,8 @@ def display_graph(variables, relations):
         plt.show()
     except ImportError:
         print("ERROR: cannot display graph, matplotlib is not installed")
+
+    return graph
 
 
 def display_bipartite_graph(variables, relations):
@@ -225,7 +226,7 @@ def display_bipartite_graph(variables, relations):
 
     # Do not crash if matplotlib is not installed
     try:
-        import matplotlib.pyplot as plt
+        import matplotlib.pyplot as plt  # noqa
 
         pos = nx.drawing.spring_layout(graph)
         variables = set(n for n, d in graph.nodes(data=True) if d["bipartite"] == 0)
@@ -233,7 +234,6 @@ def display_bipartite_graph(variables, relations):
         nx.draw_networkx_nodes(
             graph,
             pos=pos,
-            with_labels=True,
             nodelist=variables,
             node_shape="o",
             node_color="b",
@@ -243,7 +243,6 @@ def display_bipartite_graph(variables, relations):
         nx.draw_networkx_nodes(
             graph,
             pos=pos,
-            with_labels=True,
             nodelist=factors,
             node_shape="s",
             node_color="r",
@@ -259,9 +258,10 @@ def display_bipartite_graph(variables, relations):
     except ImportError:
         print("ERROR: cannot display graph, matplotlib is not installed")
 
+    return graph
+
 
 def cycles_count(variables, relations):
-
     g = as_networkx_graph(variables, relations)
     cycles = nx.cycle_basis(g)
     return len(cycles)
@@ -279,7 +279,7 @@ def graph_diameter(variables, relations):
     """
     diams = []
     g = as_networkx_graph(variables, relations)
-    components  = (g.subgraph(c).copy() for c in nx.connected_components(g))
+    components = (g.subgraph(c).copy() for c in nx.connected_components(g))
     for c in components:
         diams.append(nx.diameter(c))
 
