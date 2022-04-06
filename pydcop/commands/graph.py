@@ -65,6 +65,9 @@ Options
   The set of computation to distribute depends on the graph model used to
   represent the DCOP.
 
+``--dot-file <filename>``
+  If supplied, write the networkx graph to ``filename`` as a dot file.
+
 ``--display``
   Display a graphical representation of the constraints graph using
   networkx and matplotlib.
@@ -98,6 +101,8 @@ Example output::
 import logging
 from importlib import import_module
 import sys
+
+import networkx.drawing.nx_pydot
 import yaml
 
 from pydcop.dcop.yamldcop import load_dcop_from_file
@@ -134,6 +139,12 @@ def set_parser(subparsers):
         help="Display the constraints graph using networkx and " "matplotlib",
     )
     parser.add_argument(
+        "--dot-file",
+        default=None,
+        action="store",
+        help="If supplied, the name of a dot file to which to save the graph.",
+    )
+    parser.add_argument(
         "-g",
         "--graph",
         choices=["factor_graph", "pseudotree", "constraints_hypergraph"],
@@ -150,9 +161,12 @@ def run_cmd(args):
 
     if args.display:
         if args.graph == "factor_graph":
-            display_bipartite_graph(dcop.variables.values(), dcop.constraints.values())
+            graph = display_bipartite_graph(dcop.variables.values(), dcop.constraints.values())
         else:
-            display_graph(dcop.variables.values(), dcop.constraints.values())
+            graph = display_graph(dcop.variables.values(), dcop.constraints.values())
+
+    if args.dot_file is not None:
+        networkx.drawing.nx_pydot.write_dot(graph, args.dot_file)
 
     try:
         graph_module = import_module("pydcop.computations_graph.{}".format(args.graph))
