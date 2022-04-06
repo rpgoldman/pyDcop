@@ -1,0 +1,690 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "DCOP problem",
+  "description": "This is the format for describing Distributed Constraint Optimization Problems for PyDCOP.",
+  "default": null,
+  "examples": [
+    {
+      "name": "dcop yaml sample format",
+      "description": "This serves as a informal specification\nof the yaml-based ddcop serialization format.\nNote: in the description field, use the \"|\" yaml syntax for long string (see this example).\n",
+      "objective": "min",
+      "domains": {
+        "d1": {
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "type": "non_semantic"
+        },
+        "d2": {
+          "values": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ]
+        },
+        "d3": {
+          "values": [
+            "1 .. 10"
+          ],
+          "type": "non_semantic",
+          "initial_value": 3
+        },
+        "dbool": {
+          "values": [
+            true,
+            false
+          ]
+        }
+      },
+      "variables": {
+        "var1": {
+          "domain": "d1",
+          "initial_value": 0,
+          "yourkey": "yourvalue",
+          "foo": "bar"
+        },
+        "var2": {
+          "domain": "d2",
+          "initial_value": 0
+        },
+        "var3": {
+          "domain": "d1",
+          "initial_value": 0,
+          "cost_function": "var3 * 0.5"
+        },
+        "var4": {
+          "domain": "d3",
+          "initial_value": 0,
+          "cost_function": "var4 * 0.6",
+          "noise_level": 0.2
+        }
+      },
+      "external_variables": {
+        "ext_var1": {
+          "domain": "dbool",
+          "initial_value": false
+        }
+      },
+      "constraints": {
+        "c1": {
+          "type": "intention",
+          "function": "var3 - var1 + var2"
+        },
+        "c2": {
+          "type": "intention",
+          "function": "var1 if ext_var else var3"
+        },
+        "c3": {
+          "type": "intention",
+          "function": "1000 if var2 == var3 else 0"
+        },
+        "c4": {
+          "type": "intention",
+          "function": "if var1 == 2:\n    b= 4\nelse:\n    b = 2\nreturn var1 + 2\n"
+        },
+        "diff_2_3": {
+          "type": "intention",
+          "source": "./external_python_constraints.py",
+          "function": "source.diff_vars(v2, v3)"
+        },
+        "cost_d1": {
+          "type": "intention",
+          "function": "var1 * 0.8"
+        },
+        "cost_d2": {
+          "type": "intention",
+          "function": "var2 * 0.4"
+        },
+        "constraint1": {
+          "type": "intention",
+          "function": "var2 * 0.4 + var3 + var1 *0.5",
+          "partial": {
+            "var2": 2,
+            "var3": 1
+          }
+        },
+        "c_ext": {
+          "type": "extensional",
+          "variables": [
+            "var1",
+            "var2",
+            "var3"
+          ],
+          "default": 100,
+          "values": {
+            "2": "2 3 'too bad'",
+            "10": "1 2 3 | 1 2 4"
+          }
+        }
+      },
+      "agents": {
+        "a1": {
+          "capacity": 100,
+          "foo": "bar"
+        },
+        "a2": {
+          "capacity": 100
+        },
+        "a3": {
+          "capacity": 100
+        }
+      },
+      "routes": {
+        "default": 5,
+        "a1": {
+          "a2": 10,
+          "a3": 4
+        },
+        "a2": {
+          "a3": 4
+        }
+      },
+      "hosting_costs": {
+        "default": 1000,
+        "a1": {
+          "default": 5000,
+          "computations": {
+            "c1": 10,
+            "c2": 30
+          }
+        },
+        "a2": {
+          "default": 0
+        },
+        "a3": {
+          "default": 10
+        }
+      }
+    }
+  ],
+  "required": [
+    "name",
+    "objective",
+    "domains",
+    "variables",
+    "constraints",
+    "agents"
+  ],
+  "properties": {
+    "name": {
+      "$id": "#/properties/name",
+      "type": "string",
+      "title": "The name of the DCOP problem",
+      "description": "An explanation about the purpose of this instance.",
+      "default": "dcop problem",
+      "examples": [
+        "dcop yaml sample format"
+      ]
+    },
+    "description": {
+      "$id": "#/properties/description",
+      "type": "string",
+      "title": "The description schema",
+      "description": "Descriptive text explaining the nature of the problem.",
+      "default": "",
+      "examples": [
+        "This serves as a informal specification\nof the yaml-based pydcop serialization format.\nNote: in the description field, use the \"|\" yaml syntax for long string (see this example).\n"
+      ]
+    },
+    "objective": {
+      "$id": "#/properties/objective",
+      "type": "string",
+      "enum": [
+        "min",
+        "max"
+      ],
+      "title": "The objective for the problem.",
+      "description": "Should we \"min\"-imize cost or \"max\"-imize reward?",
+      "default": "min",
+      "examples": [
+        "min"
+      ]
+    },
+    "domains": {
+      "$id": "#/properties/domains",
+      "type": "object",
+      "title": "Domain definitions.",
+      "description": "Define named domain types for later reference from variable definitions.",
+      "default": null,
+      "examples": [
+        {
+          "d1": {
+            "values": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "type": "non_semantic"
+          },
+          "d2": {
+            "values": [
+              "A",
+              "B",
+              "C",
+              "D",
+              "E"
+            ]
+          },
+          "d3": {
+            "values": [
+              "1 .. 10"
+            ],
+            "type": "non_semantic",
+            "initial_value": 3
+          },
+          "dbool": {
+            "values": [
+              true,
+              false
+            ]
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "values"
+        ],
+        "properties": {
+          "values": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "boolean"
+                }
+              }
+            ]
+          },
+          "type": {
+            "type": "string",
+            "title": "Value type",
+            "description": "Not used semantically, this is used to give a reader a sense of the meaning of these values."
+          },
+          "initial_value": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "boolean"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "variables": {
+      "$id": "#/properties/variables",
+      "type": "object",
+      "title": "The variables schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": null,
+      "examples": [
+        {
+          "var1": {
+            "domain": "d1",
+            "initial_value": 0,
+            "yourkey": "yourvalue",
+            "foo": "bar"
+          },
+          "var2": {
+            "domain": "d2",
+            "initial_value": 0
+          },
+          "var3": {
+            "domain": "d1",
+            "initial_value": 0,
+            "cost_function": "var3 * 0.5"
+          },
+          "var4": {
+            "domain": "d3",
+            "initial_value": 0,
+            "cost_function": "var4 * 0.6",
+            "noise_level": 0.2
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "domain"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "title": "Name of variable domain",
+            "description": "A name defined in the \"domains\" part of the problem."
+          },
+          "initial_value": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "cost_function": {
+            "type": "string",
+            "description": "The cost function represented either extensionally or as (restricted) python code."
+          }
+        }
+      }
+    },
+    "external_variables": {
+      "$id": "#/properties/external_variables",
+      "type": "object",
+      "title": "The external_variables schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": null,
+      "examples": [
+        {
+          "ext_var1": {
+            "domain": "dbool",
+            "initial_value": false
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "description": "External variables are not controlled nor modified during the optimization process. These variables can be used in constraints definition. In a dynamic DCOP they can be modified externally through events. Initial value is mandatory for external variables.",
+        "required": [
+          "domain",
+          "initial_value"
+        ],
+        "properties": {
+          "domain": {
+            "type": "string",
+            "title": "Name of variable domain",
+            "description": "A name defined in the \"domains\" part of the problem."
+          },
+          "initial_value": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "cost_function": {
+            "type": "string",
+            "description": "The cost function represented either extensionally or as (restricted) python code."
+          }
+        }
+      }
+    },
+    "constraints": {
+      "$id": "#/properties/constraints",
+      "type": "object",
+      "title": "The constraints schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": null,
+      "examples": [
+        {
+          "c1": {
+            "type": "intention",
+            "function": "var3 - var1 + var2"
+          },
+          "c2": {
+            "type": "intention",
+            "function": "var1 if ext_var else var3"
+          },
+          "c3": {
+            "type": "intention",
+            "function": "1000 if var2 == var3 else 0"
+          },
+          "c4": {
+            "type": "intention",
+            "function": "if var1 == 2:\n    b= 4\nelse:\n    b = 2\nreturn var1 + 2\n"
+          },
+          "diff_2_3": {
+            "type": "intention",
+            "source": "./external_python_constraints.py",
+            "function": "source.diff_vars(v2, v3)"
+          },
+          "cost_d1": {
+            "type": "intention",
+            "function": "var1 * 0.8"
+          },
+          "cost_d2": {
+            "type": "intention",
+            "function": "var2 * 0.4"
+          },
+          "constraint1": {
+            "type": "intention",
+            "function": "var2 * 0.4 + var3 + var1 *0.5",
+            "partial": {
+              "var2": 2,
+              "var3": 1
+            }
+          },
+          "c_ext": {
+            "type": "extensional",
+            "variables": [
+              "var1",
+              "var2",
+              "var3"
+            ],
+            "default": 100,
+            "values": {
+              "2": "2 3 'too bad'",
+              "10": "1 2 3 | 1 2 4"
+            }
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "title": "Constraint properties",
+        "description": "An explanation about the purpose of this instance.",
+        "default": null,
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "extensional",
+              "intention",
+              "intensional"
+            ],
+            "title": "Constraint encoding type",
+            "description": "The constraint encoding can be either intensional (backward-compatible synonym: intention), in which case it is described by code, or extensional, in which case it's given as a set of tuples and costs.",
+            "default": "",
+            "examples": [
+              "intention"
+            ]
+          },
+          "function": {
+            "type": "string",
+            "title": "Constraint cost function",
+            "description": "Function encoded as a string, either tuples of python code subset. Required unless this is an extensional constraint.",
+            "default": "",
+            "examples": [
+              "var3 - var1 + var2"
+            ]
+          },
+          "variables": {
+            "title": "Variables in the constraint.",
+            "description": "List of constrained variable names. Variable list is required when using extensional constraints.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "default": {
+            "type": "number"
+          },
+          "partial": {
+            "title": "Partial variable assignment.",
+            "description": "partial : a dictionary of variable name : value.  The variable must be in the scope of the constraint and value must be in the domain of the corresponding variable.  When using partial, the resulting constraint value will be based on the the partial application of the function with these variables 'frozen' with their given values. This is useful when serializing a dynamic DCOP.",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "values": {
+            "title": "Values for extensional constraint.",
+            "description": "String in the format \"cost : tuple [ | tuple ]*\".  Mandatory for extensional constraints. Should not be used with intensional constraints."
+          }
+        }
+      }
+    },
+    "agents": {
+      "$id": "#/properties/agents",
+      "title": "The agents schema",
+      "description": "An explanation about the purpose of this instance.",
+      "examples": [
+        {
+          "a1": {
+            "capacity": 100,
+            "foo": "bar"
+          },
+          "a2": {
+            "capacity": 100
+          },
+          "a3": {
+            "capacity": 100
+          }
+        },
+        [
+          "a1",
+          "a2",
+          "a3"
+        ]
+      ],
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "capacity": {
+                "type": "integer",
+                "title": "Capacity of the agent.",
+                "description": "Unitless number specifying the agent's capacity for use in allocating computations.",
+                "default": 0,
+                "examples": [
+                  100
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "routes": {
+      "$id": "#/properties/routes",
+      "type": "object",
+      "title": "The routes schema",
+      "description": "Specify costs for connecting one agent with another.  Routes model the cost of communication between any pair of two agents.  The route information can be used when distributing computations on agents, to optimize the distribution for reduced communication cost. Routes are assumed to be symmetric : the cost of the route (a1, a2) is the same as the cost of (a2, a1). If you specify the cost more than once an error will be raised when parsing the file. The default value for routes is 1, as they are used as a multiplication factor for the message sizes. When all routes are set to 1, only the communication load between computations is used. Setting a route to 0 means that it's completely free to use, no matter how much data you send on this route.",
+      "default": {
+        "type": "integer",
+        "default": 1
+      },
+      "examples": [
+        {
+          "default": 5,
+          "a1": {
+            "a2": 10,
+            "a3": 4
+          },
+          "a2": {
+            "a3": 4
+          }
+        }
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "default": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      },
+      "properties": {
+        "default": {
+          "$id": "#/properties/routes/properties/default",
+          "type": "integer",
+          "title": "The default communication cost.",
+          "default": 0,
+          "examples": [
+            5
+          ]
+        }
+      }
+    }
+  },
+  "hosting_costs": {
+    "$id": "#/properties/hosting_costs",
+    "type": "object",
+    "title": "Hosting costs",
+    "description": "The hosting cost is a measure of the costs for an agent to host a given computation. The default value is 0. To model the fact that an agent is generally less attractive for computations (independently of which computations), simply use the 'default' attribute (global or agent level). Hosting cost can be seen as a generalized, fine grained, version of the 'must_host'relation in distribution_hints. A distribution method will generally use hosting cost or distribution hints but not both. Beware that these costs are aggregated with the routes costs (which are multiplied by msg size, for each edge) and thus must high enough to have any influence !",
+    "default": null,
+    "examples": [
+      {
+        "default": 1000,
+        "a1": {
+          "default": 5000,
+          "computations": {
+            "c1": 10,
+            "c2": 30
+          }
+        },
+        "a2": {
+          "default": 0
+        },
+        "a3": {
+          "default": 10
+        }
+      }
+    ],
+    "additionalProperties": {
+      "type": "object",
+      "properties": {
+        "default": {
+          "type": "integer"
+        },
+        "computations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "distribution_hints": {
+    "type": "object",
+    "properties": {
+      "must_host": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+    "inputs": {
+        "bar": "foo"
+    },
+    "events": [
+        {
+            "id": "w",
+            "delay": 1
+        },
+        {
+            "id": "e1",
+            "actions": [
+                {
+                    "type": "remove_agent",
+                    "agent": "a2"
+                },
+                {
+                    "type": "remove_agent",
+                    "agent": "a3"
+                }
+            ]
+        },
+        {
+            "id": "w",
+            "delay": 1.5
+        },
+        {
+            "id": "e2",
+            "actions": [
+                {
+                    "type": "add_agent",
+                    "agent": "a12",
+                    "extra_params": "..."
+                }
+            ]
+        }
+    ]
+}

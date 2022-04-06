@@ -71,7 +71,7 @@ def create_agent_capacity_constraint(agt_name: str, remaining_capacity,
                                      footprint_func: Callable[[str], float],
                                      bin_vars: Dict[Tuple, BinaryVariable]) \
         -> Constraint:
-    """
+    r"""
     Create a constraints that ensure that an agent a_m does not exceeds its
     capacity when hosting some candidates computations x_i \in X_c.
 
@@ -118,7 +118,7 @@ def create_agent_hosting_constraint(agt_name: str,
                                     hosting_func: Callable[[str], float],
                                     bin_vars: Dict[Tuple, BinaryVariable]) \
         -> Constraint:
-    """
+    r"""
     Create a constraints that returns the hosting costs for agent a_m
     `agt_name` when hosting some candidates computations x_i \in X_c.
 
@@ -163,7 +163,7 @@ def create_agent_comp_comm_constraint(
         comm: Callable[[str, str, str], float],
         bin_vars: Dict[Tuple, BinaryVariable]) \
         -> Constraint:
-    """
+    r"""
     Create a constraints that returns the communication costs for agent a_m
     `agt_name` when hosting a candidate computations x_i \in X_c.
     The constraints is an soft constraint that should be minimized.

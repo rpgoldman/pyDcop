@@ -1,0 +1,938 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "sets": {
+                "description": "The element `sets` is simply a list of named 'set' element (i.e. a dictionary).\nEach element in set must have a unique name ('set1', 'set2' or anything else more meaningful)\nand is a dictionary that can contain the following keys:\n* iterations\n* path\n* file_re\n* extras_files\n",
+                "set1": {
+                    "path": "/path/set1/*.yaml",
+                    "iterations": 3,
+                    "env": {
+                        "key": "value"
+                    }
+                },
+                "set2": {
+                    "iterations": 5
+                },
+                "set3": {
+                    "path": "/path/set3/",
+                    "path_re": "/path/a_dir_(?P<dir_num>.+)/",
+                    "file_re": "coloring_random_(?P<num>.+)_dcop.yaml",
+                    "extras_files": [
+                        "coloring_random_{num}_dcop_agts.yaml"
+                    ]
+                }
+            },
+            "parallel": 2,
+            "global_options": {
+                "timeout": 10,
+                "log": "log.conf"
+            },
+            "batches": {
+                "conf1": {
+                    "command": "solve",
+                    "current_dir": "~/tmp/{algo}",
+                    "command_options": {
+                        "algo": "dsa",
+                        "algo_params": {
+                            "stop_cyle": 100,
+                            "variant": [
+                                "A",
+                                "B",
+                                "C"
+                            ],
+                            "probability": [
+                                0.1,
+                                0.2,
+                                0.3,
+                                0.4,
+                                0.5,
+                                0.6
+                            ]
+                        },
+                        "run_metrics": "set/problem/variant_algo_params[variant]/prob_algo_params[probability]/run.csv"
+                    },
+                    "global_options": {
+                        "timeout": 10,
+                        "log": "log.conf",
+                        "output": {
+                            "pb_file": null
+                        }
+                    },
+                    "out_path": "{problems_set}/{problem}/{algo}/variant_{variant}/prob_{probability}/"
+                },
+                "conf_generate": {
+                    "command": "generate ising",
+                    "current_dir": "~/tmp/ising/row{row_count}_col{col_count}/",
+                    "command_options": {
+                        "row_count": [
+                            3,
+                            4,
+                            5
+                        ],
+                        "col_count": [
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    "global_options": {
+                        "output": "/out/ising/ising_{row_count}_{col_count}.yaml"
+                    }
+                }
+            }
+        }
+    ],
+    "required": [
+        "sets",
+        "parallel",
+        "global_options",
+        "batches"
+    ],
+    "properties": {
+        "sets": {
+            "$id": "#/properties/sets",
+            "type": "object",
+            "title": "The sets schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "description": "The element `sets` is simply a list of named 'set' element (i.e. a dictionary).\nEach element in set must have a unique name ('set1', 'set2' or anything else more meaningful)\nand is a dictionary that can contain the following keys:\n* iterations\n* path\n* file_re\n* extras_files\n",
+                    "set1": {
+                        "path": "/path/set1/*.yaml",
+                        "iterations": 3,
+                        "env": {
+                            "key": "value"
+                        }
+                    },
+                    "set2": {
+                        "iterations": 5
+                    },
+                    "set3": {
+                        "path": "/path/set3/",
+                        "path_re": "/path/a_dir_(?P<dir_num>.+)/",
+                        "file_re": "coloring_random_(?P<num>.+)_dcop.yaml",
+                        "extras_files": [
+                            "coloring_random_{num}_dcop_agts.yaml"
+                        ]
+                    }
+                }
+            ],
+            "required": [
+                "description",
+                "set1",
+                "set2",
+                "set3"
+            ],
+            "properties": {
+                "description": {
+                    "$id": "#/properties/sets/properties/description",
+                    "type": "string",
+                    "title": "The description schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "The element `sets` is simply a list of named 'set' element (i.e. a dictionary).\nEach element in set must have a unique name ('set1', 'set2' or anything else more meaningful)\nand is a dictionary that can contain the following keys:\n* iterations\n* path\n* file_re\n* extras_files\n"
+                    ]
+                },
+                "set1": {
+                    "$id": "#/properties/sets/properties/set1",
+                    "type": "object",
+                    "title": "The set1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "path": "/path/set1/*.yaml",
+                            "iterations": 3,
+                            "env": {
+                                "key": "value"
+                            }
+                        }
+                    ],
+                    "required": [
+                        "path",
+                        "iterations",
+                        "env"
+                    ],
+                    "properties": {
+                        "path": {
+                            "$id": "#/properties/sets/properties/set1/properties/path",
+                            "type": "string",
+                            "title": "The path schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "/path/set1/*.yaml"
+                            ]
+                        },
+                        "iterations": {
+                            "$id": "#/properties/sets/properties/set1/properties/iterations",
+                            "type": "integer",
+                            "title": "The iterations schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                3
+                            ]
+                        },
+                        "env": {
+                            "$id": "#/properties/sets/properties/set1/properties/env",
+                            "type": "object",
+                            "title": "The env schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "key": "value"
+                                }
+                            ],
+                            "required": [
+                                "key"
+                            ],
+                            "properties": {
+                                "key": {
+                                    "$id": "#/properties/sets/properties/set1/properties/env/properties/key",
+                                    "type": "string",
+                                    "title": "The key schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": "",
+                                    "examples": [
+                                        "value"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "set2": {
+                    "$id": "#/properties/sets/properties/set2",
+                    "type": "object",
+                    "title": "The set2 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "iterations": 5
+                        }
+                    ],
+                    "required": [
+                        "iterations"
+                    ],
+                    "properties": {
+                        "iterations": {
+                            "$id": "#/properties/sets/properties/set2/properties/iterations",
+                            "type": "integer",
+                            "title": "The iterations schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": 0,
+                            "examples": [
+                                5
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "set3": {
+                    "$id": "#/properties/sets/properties/set3",
+                    "type": "object",
+                    "title": "The set3 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "path": "/path/set3/",
+                            "path_re": "/path/a_dir_(?P<dir_num>.+)/",
+                            "file_re": "coloring_random_(?P<num>.+)_dcop.yaml",
+                            "extras_files": [
+                                "coloring_random_{num}_dcop_agts.yaml"
+                            ]
+                        }
+                    ],
+                    "required": [
+                        "path",
+                        "path_re",
+                        "file_re",
+                        "extras_files"
+                    ],
+                    "properties": {
+                        "path": {
+                            "$id": "#/properties/sets/properties/set3/properties/path",
+                            "type": "string",
+                            "title": "The path schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "/path/set3/"
+                            ]
+                        },
+                        "path_re": {
+                            "$id": "#/properties/sets/properties/set3/properties/path_re",
+                            "type": "string",
+                            "title": "The path_re schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "/path/a_dir_(?P<dir_num>.+)/"
+                            ]
+                        },
+                        "file_re": {
+                            "$id": "#/properties/sets/properties/set3/properties/file_re",
+                            "type": "string",
+                            "title": "The file_re schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "coloring_random_(?P<num>.+)_dcop.yaml"
+                            ]
+                        },
+                        "extras_files": {
+                            "$id": "#/properties/sets/properties/set3/properties/extras_files",
+                            "type": "array",
+                            "title": "The extras_files schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": [],
+                            "examples": [
+                                [
+                                    "coloring_random_{num}_dcop_agts.yaml"
+                                ]
+                            ],
+                            "additionalItems": true,
+                            "items": {
+                                "$id": "#/properties/sets/properties/set3/properties/extras_files/items",
+                                "anyOf": [
+                                    {
+                                        "$id": "#/properties/sets/properties/set3/properties/extras_files/items/anyOf/0",
+                                        "type": "string",
+                                        "title": "The first anyOf schema",
+                                        "description": "An explanation about the purpose of this instance.",
+                                        "default": "",
+                                        "examples": [
+                                            "coloring_random_{num}_dcop_agts.yaml"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        },
+        "parallel": {
+            "$id": "#/properties/parallel",
+            "type": "integer",
+            "title": "The parallel schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": 0,
+            "examples": [
+                2
+            ]
+        },
+        "global_options": {
+            "$id": "#/properties/global_options",
+            "type": "object",
+            "title": "The global_options schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "timeout": 10,
+                    "log": "log.conf"
+                }
+            ],
+            "required": [
+                "timeout",
+                "log"
+            ],
+            "properties": {
+                "timeout": {
+                    "$id": "#/properties/global_options/properties/timeout",
+                    "type": "integer",
+                    "title": "The timeout schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                        10
+                    ]
+                },
+                "log": {
+                    "$id": "#/properties/global_options/properties/log",
+                    "type": "string",
+                    "title": "The log schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "log.conf"
+                    ]
+                }
+            },
+            "additionalProperties": true
+        },
+        "batches": {
+            "$id": "#/properties/batches",
+            "type": "object",
+            "title": "The batches schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "conf1": {
+                        "command": "solve",
+                        "current_dir": "~/tmp/{algo}",
+                        "command_options": {
+                            "algo": "dsa",
+                            "algo_params": {
+                                "stop_cyle": 100,
+                                "variant": [
+                                    "A",
+                                    "B",
+                                    "C"
+                                ],
+                                "probability": [
+                                    0.1,
+                                    0.2,
+                                    0.3,
+                                    0.4,
+                                    0.5,
+                                    0.6
+                                ]
+                            },
+                            "run_metrics": "set/problem/variant_algo_params[variant]/prob_algo_params[probability]/run.csv"
+                        },
+                        "global_options": {
+                            "timeout": 10,
+                            "log": "log.conf",
+                            "output": {
+                                "pb_file": null
+                            }
+                        },
+                        "out_path": "{problems_set}/{problem}/{algo}/variant_{variant}/prob_{probability}/"
+                    },
+                    "conf_generate": {
+                        "command": "generate ising",
+                        "current_dir": "~/tmp/ising/row{row_count}_col{col_count}/",
+                        "command_options": {
+                            "row_count": [
+                                3,
+                                4,
+                                5
+                            ],
+                            "col_count": [
+                                3,
+                                4,
+                                5
+                            ]
+                        },
+                        "global_options": {
+                            "output": "/out/ising/ising_{row_count}_{col_count}.yaml"
+                        }
+                    }
+                }
+            ],
+            "required": [
+                "conf1",
+                "conf_generate"
+            ],
+            "properties": {
+                "conf1": {
+                    "$id": "#/properties/batches/properties/conf1",
+                    "type": "object",
+                    "title": "The conf1 schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "command": "solve",
+                            "current_dir": "~/tmp/{algo}",
+                            "command_options": {
+                                "algo": "dsa",
+                                "algo_params": {
+                                    "stop_cyle": 100,
+                                    "variant": [
+                                        "A",
+                                        "B",
+                                        "C"
+                                    ],
+                                    "probability": [
+                                        0.1,
+                                        0.2,
+                                        0.3,
+                                        0.4,
+                                        0.5,
+                                        0.6
+                                    ]
+                                },
+                                "run_metrics": "set/problem/variant_algo_params[variant]/prob_algo_params[probability]/run.csv"
+                            },
+                            "global_options": {
+                                "timeout": 10,
+                                "log": "log.conf",
+                                "output": {
+                                    "pb_file": null
+                                }
+                            },
+                            "out_path": "{problems_set}/{problem}/{algo}/variant_{variant}/prob_{probability}/"
+                        }
+                    ],
+                    "required": [
+                        "command",
+                        "current_dir",
+                        "command_options",
+                        "global_options",
+                        "out_path"
+                    ],
+                    "properties": {
+                        "command": {
+                            "$id": "#/properties/batches/properties/conf1/properties/command",
+                            "type": "string",
+                            "title": "The command schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "solve"
+                            ]
+                        },
+                        "current_dir": {
+                            "$id": "#/properties/batches/properties/conf1/properties/current_dir",
+                            "type": "string",
+                            "title": "The current_dir schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "~/tmp/{algo}"
+                            ]
+                        },
+                        "command_options": {
+                            "$id": "#/properties/batches/properties/conf1/properties/command_options",
+                            "type": "object",
+                            "title": "The command_options schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "algo": "dsa",
+                                    "algo_params": {
+                                        "stop_cyle": 100,
+                                        "variant": [
+                                            "A",
+                                            "B",
+                                            "C"
+                                        ],
+                                        "probability": [
+                                            0.1,
+                                            0.2,
+                                            0.3,
+                                            0.4,
+                                            0.5,
+                                            0.6
+                                        ]
+                                    },
+                                    "run_metrics": "set/problem/variant_algo_params[variant]/prob_algo_params[probability]/run.csv"
+                                }
+                            ],
+                            "required": [
+                                "algo",
+                                "algo_params",
+                                "run_metrics"
+                            ],
+                            "properties": {
+                                "algo": {
+                                    "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo",
+                                    "type": "string",
+                                    "title": "The algo schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": "",
+                                    "examples": [
+                                        "dsa"
+                                    ]
+                                },
+                                "algo_params": {
+                                    "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params",
+                                    "type": "object",
+                                    "title": "The algo_params schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": {},
+                                    "examples": [
+                                        {
+                                            "stop_cyle": 100,
+                                            "variant": [
+                                                "A",
+                                                "B",
+                                                "C"
+                                            ],
+                                            "probability": [
+                                                0.1,
+                                                0.2,
+                                                0.3,
+                                                0.4,
+                                                0.5,
+                                                0.6
+                                            ]
+                                        }
+                                    ],
+                                    "required": [
+                                        "stop_cyle",
+                                        "variant",
+                                        "probability"
+                                    ],
+                                    "properties": {
+                                        "stop_cyle": {
+                                            "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params/properties/stop_cyle",
+                                            "type": "integer",
+                                            "title": "The stop_cyle schema",
+                                            "description": "An explanation about the purpose of this instance.",
+                                            "default": 0,
+                                            "examples": [
+                                                100
+                                            ]
+                                        },
+                                        "variant": {
+                                            "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params/properties/variant",
+                                            "type": "array",
+                                            "title": "The variant schema",
+                                            "description": "An explanation about the purpose of this instance.",
+                                            "default": [],
+                                            "examples": [
+                                                [
+                                                    "A",
+                                                    "B"
+                                                ]
+                                            ],
+                                            "additionalItems": true,
+                                            "items": {
+                                                "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params/properties/variant/items",
+                                                "anyOf": [
+                                                    {
+                                                        "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params/properties/variant/items/anyOf/0",
+                                                        "type": "string",
+                                                        "title": "The first anyOf schema",
+                                                        "description": "An explanation about the purpose of this instance.",
+                                                        "default": "",
+                                                        "examples": [
+                                                            "A",
+                                                            "B"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        "probability": {
+                                            "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params/properties/probability",
+                                            "type": "array",
+                                            "title": "The probability schema",
+                                            "description": "An explanation about the purpose of this instance.",
+                                            "default": [],
+                                            "examples": [
+                                                [
+                                                    0.1,
+                                                    0.2
+                                                ]
+                                            ],
+                                            "additionalItems": true,
+                                            "items": {
+                                                "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params/properties/probability/items",
+                                                "anyOf": [
+                                                    {
+                                                        "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/algo_params/properties/probability/items/anyOf/0",
+                                                        "type": "number",
+                                                        "title": "The first anyOf schema",
+                                                        "description": "An explanation about the purpose of this instance.",
+                                                        "default": 0.0,
+                                                        "examples": [
+                                                            0.1,
+                                                            0.2
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "additionalProperties": true
+                                },
+                                "run_metrics": {
+                                    "$id": "#/properties/batches/properties/conf1/properties/command_options/properties/run_metrics",
+                                    "type": "string",
+                                    "title": "The run_metrics schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": "",
+                                    "examples": [
+                                        "set/problem/variant_algo_params[variant]/prob_algo_params[probability]/run.csv"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": true
+                        },
+                        "global_options": {
+                            "$id": "#/properties/batches/properties/conf1/properties/global_options",
+                            "type": "object",
+                            "title": "The global_options schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "timeout": 10,
+                                    "log": "log.conf",
+                                    "output": {
+                                        "pb_file": null
+                                    }
+                                }
+                            ],
+                            "required": [
+                                "timeout",
+                                "log",
+                                "output"
+                            ],
+                            "properties": {
+                                "timeout": {
+                                    "$id": "#/properties/batches/properties/conf1/properties/global_options/properties/timeout",
+                                    "type": "integer",
+                                    "title": "The timeout schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": 0,
+                                    "examples": [
+                                        10
+                                    ]
+                                },
+                                "log": {
+                                    "$id": "#/properties/batches/properties/conf1/properties/global_options/properties/log",
+                                    "type": "string",
+                                    "title": "The log schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": "",
+                                    "examples": [
+                                        "log.conf"
+                                    ]
+                                },
+                                "output": {
+                                    "$id": "#/properties/batches/properties/conf1/properties/global_options/properties/output",
+                                    "type": "object",
+                                    "title": "The output schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": {},
+                                    "examples": [
+                                        {
+                                            "pb_file": null
+                                        }
+                                    ],
+                                    "required": [
+                                        "pb_file"
+                                    ],
+                                    "properties": {
+                                        "pb_file": {
+                                            "$id": "#/properties/batches/properties/conf1/properties/global_options/properties/output/properties/pb_file",
+                                            "type": "null",
+                                            "title": "The pb_file schema",
+                                            "description": "An explanation about the purpose of this instance.",
+                                            "default": null,
+                                            "examples": [
+                                                null
+                                            ]
+                                        }
+                                    },
+                                    "additionalProperties": true
+                                }
+                            },
+                            "additionalProperties": true
+                        },
+                        "out_path": {
+                            "$id": "#/properties/batches/properties/conf1/properties/out_path",
+                            "type": "string",
+                            "title": "The out_path schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "{problems_set}/{problem}/{algo}/variant_{variant}/prob_{probability}/"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                },
+                "conf_generate": {
+                    "$id": "#/properties/batches/properties/conf_generate",
+                    "type": "object",
+                    "title": "The conf_generate schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                        {
+                            "command": "generate ising",
+                            "current_dir": "~/tmp/ising/row{row_count}_col{col_count}/",
+                            "command_options": {
+                                "row_count": [
+                                    3,
+                                    4,
+                                    5
+                                ],
+                                "col_count": [
+                                    3,
+                                    4,
+                                    5
+                                ]
+                            },
+                            "global_options": {
+                                "output": "/out/ising/ising_{row_count}_{col_count}.yaml"
+                            }
+                        }
+                    ],
+                    "required": [
+                        "command",
+                        "current_dir",
+                        "command_options",
+                        "global_options"
+                    ],
+                    "properties": {
+                        "command": {
+                            "$id": "#/properties/batches/properties/conf_generate/properties/command",
+                            "type": "string",
+                            "title": "The command schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "generate ising"
+                            ]
+                        },
+                        "current_dir": {
+                            "$id": "#/properties/batches/properties/conf_generate/properties/current_dir",
+                            "type": "string",
+                            "title": "The current_dir schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": "",
+                            "examples": [
+                                "~/tmp/ising/row{row_count}_col{col_count}/"
+                            ]
+                        },
+                        "command_options": {
+                            "$id": "#/properties/batches/properties/conf_generate/properties/command_options",
+                            "type": "object",
+                            "title": "The command_options schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "row_count": [
+                                        3,
+                                        4,
+                                        5
+                                    ],
+                                    "col_count": [
+                                        3,
+                                        4,
+                                        5
+                                    ]
+                                }
+                            ],
+                            "required": [
+                                "row_count",
+                                "col_count"
+                            ],
+                            "properties": {
+                                "row_count": {
+                                    "$id": "#/properties/batches/properties/conf_generate/properties/command_options/properties/row_count",
+                                    "type": "array",
+                                    "title": "The row_count schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": [],
+                                    "examples": [
+                                        [
+                                            3,
+                                            4
+                                        ]
+                                    ],
+                                    "additionalItems": true,
+                                    "items": {
+                                        "$id": "#/properties/batches/properties/conf_generate/properties/command_options/properties/row_count/items",
+                                        "anyOf": [
+                                            {
+                                                "$id": "#/properties/batches/properties/conf_generate/properties/command_options/properties/row_count/items/anyOf/0",
+                                                "type": "integer",
+                                                "title": "The first anyOf schema",
+                                                "description": "An explanation about the purpose of this instance.",
+                                                "default": 0,
+                                                "examples": [
+                                                    3,
+                                                    4
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                },
+                                "col_count": {
+                                    "$id": "#/properties/batches/properties/conf_generate/properties/command_options/properties/col_count",
+                                    "type": "array",
+                                    "title": "The col_count schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": [],
+                                    "examples": [
+                                        [
+                                            3,
+                                            4
+                                        ]
+                                    ],
+                                    "additionalItems": true,
+                                    "items": {
+                                        "$id": "#/properties/batches/properties/conf_generate/properties/command_options/properties/col_count/items",
+                                        "anyOf": [
+                                            {
+                                                "$id": "#/properties/batches/properties/conf_generate/properties/command_options/properties/col_count/items/anyOf/0",
+                                                "type": "integer",
+                                                "title": "The first anyOf schema",
+                                                "description": "An explanation about the purpose of this instance.",
+                                                "default": 0,
+                                                "examples": [
+                                                    3,
+                                                    4
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            "additionalProperties": true
+                        },
+                        "global_options": {
+                            "$id": "#/properties/batches/properties/conf_generate/properties/global_options",
+                            "type": "object",
+                            "title": "The global_options schema",
+                            "description": "An explanation about the purpose of this instance.",
+                            "default": {},
+                            "examples": [
+                                {
+                                    "output": "/out/ising/ising_{row_count}_{col_count}.yaml"
+                                }
+                            ],
+                            "required": [
+                                "output"
+                            ],
+                            "properties": {
+                                "output": {
+                                    "$id": "#/properties/batches/properties/conf_generate/properties/global_options/properties/output",
+                                    "type": "string",
+                                    "title": "The output schema",
+                                    "description": "An explanation about the purpose of this instance.",
+                                    "default": "",
+                                    "examples": [
+                                        "/out/ising/ising_{row_count}_{col_count}.yaml"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "additionalProperties": true
+}

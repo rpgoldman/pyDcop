@@ -1,0 +1,20 @@
+{
+    "inputs": {
+        "dist_algo": "ilp_comcost",
+        "dcop": "path/to/dcop/file.yaml",
+        "graph": "constraints_hypergraph",
+        "algo": "dsa"
+    },
+    "distribution": {
+        "a0": [],
+        "a1": [
+            "v1",
+            "v2"
+        ],
+        "a2": [],
+        "a3": [
+            "v2",
+            "v3"
+        ]
+    }
+}

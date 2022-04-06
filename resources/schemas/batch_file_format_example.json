@@ -1,0 +1,81 @@
+{
+    "sets": {
+        "description": "The element `sets` is simply a list of named 'set' element (i.e. a dictionary).\nEach element in set must have a unique name ('set1', 'set2' or anything else more meaningful)\nand is a dictionary that can contain the following keys:\n* iterations\n* path\n* file_re\n* extras_files\n",
+        "set1": {
+            "path": "/path/set1/*.yaml",
+            "iterations": 3,
+            "env": {
+                "key": "value"
+            }
+        },
+        "set2": {
+            "iterations": 5
+        },
+        "set3": {
+            "path": "/path/set3/",
+            "path_re": "/path/a_dir_(?P<dir_num>.+)/",
+            "file_re": "coloring_random_(?P<num>.+)_dcop.yaml",
+            "extras_files": [
+                "coloring_random_{num}_dcop_agts.yaml"
+            ]
+        }
+    },
+    "parallel": 2,
+    "global_options": {
+        "timeout": 10,
+        "log": "log.conf"
+    },
+    "batches": {
+        "conf1": {
+            "command": "solve",
+            "current_dir": "~/tmp/{algo}",
+            "command_options": {
+                "algo": "dsa",
+                "algo_params": {
+                    "stop_cyle": 100,
+                    "variant": [
+                        "A",
+                        "B",
+                        "C"
+                    ],
+                    "probability": [
+                        0.1,
+                        0.2,
+                        0.3,
+                        0.4,
+                        0.5,
+                        0.6
+                    ]
+                },
+                "run_metrics": "set/problem/variant_algo_params[variant]/prob_algo_params[probability]/run.csv"
+            },
+            "global_options": {
+                "timeout": 10,
+                "log": "log.conf",
+                "output": {
+                    "pb_file": null
+                }
+            },
+            "out_path": "{problems_set}/{problem}/{algo}/variant_{variant}/prob_{probability}/"
+        },
+        "conf_generate": {
+            "command": "generate ising",
+            "current_dir": "~/tmp/ising/row{row_count}_col{col_count}/",
+            "command_options": {
+                "row_count": [
+                    3,
+                    4,
+                    5
+                ],
+                "col_count": [
+                    3,
+                    4,
+                    5
+                ]
+            },
+            "global_options": {
+                "output": "/out/ising/ising_{row_count}_{col_count}.yaml"
+            }
+        }
+    }
+}

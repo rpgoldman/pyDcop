@@ -1,0 +1,261 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "inputs": {
+                "bar": "foo"
+            },
+            "events": [
+                {
+                    "id": "w",
+                    "delay": 1
+                },
+                {
+                    "id": "e1",
+                    "actions": [
+                        {
+                            "type": "remove_agent",
+                            "agent": "a2"
+                        },
+                        {
+                            "type": "remove_agent",
+                            "agent": "a3"
+                        }
+                    ]
+                },
+                {
+                    "id": "w",
+                    "delay": 1.5
+                },
+                {
+                    "id": "e2",
+                    "actions": [
+                        {
+                            "type": "add_agent",
+                            "agent": "a12",
+                            "extra_params": "..."
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "required": [
+        "inputs",
+        "events"
+    ],
+    "properties": {
+        "inputs": {
+            "$id": "#/properties/inputs",
+            "type": "object",
+            "title": "The inputs schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+                {
+                    "bar": "foo"
+                }
+            ],
+            "required": [
+                "bar"
+            ],
+            "properties": {
+                "bar": {
+                    "$id": "#/properties/inputs/properties/bar",
+                    "type": "string",
+                    "title": "The bar schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "foo"
+                    ]
+                }
+            },
+            "additionalProperties": true
+        },
+        "events": {
+            "$id": "#/properties/events",
+            "type": "array",
+            "title": "The events schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": [],
+            "examples": [
+                [
+                    {
+                        "id": "w",
+                        "delay": 1
+                    },
+                    {
+                        "id": "e1",
+                        "actions": [
+                            {
+                                "type": "remove_agent",
+                                "agent": "a2"
+                            },
+                            {
+                                "type": "remove_agent",
+                                "agent": "a3"
+                            }
+                        ]
+                    }
+                ]
+            ],
+            "additionalItems": true,
+            "items": {
+                "$id": "#/properties/events/items",
+                "anyOf": [
+                    {
+                        "$id": "#/properties/events/items/anyOf/0",
+                        "type": "object",
+                        "title": "The first anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": {},
+                        "examples": [
+                            {
+                                "id": "w",
+                                "delay": 1
+                            }
+                        ],
+                        "required": [
+                            "id",
+                            "delay"
+                        ],
+                        "properties": {
+                            "id": {
+                                "$id": "#/properties/events/items/anyOf/0/properties/id",
+                                "type": "string",
+                                "title": "The id schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "w"
+                                ]
+                            },
+                            "delay": {
+                                "$id": "#/properties/events/items/anyOf/0/properties/delay",
+                                "type": "integer",
+                                "title": "The delay schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": 0,
+                                "examples": [
+                                    1
+                                ]
+                            }
+                        },
+                        "additionalProperties": true
+                    },
+                    {
+                        "$id": "#/properties/events/items/anyOf/1",
+                        "type": "object",
+                        "title": "The second anyOf schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": {},
+                        "examples": [
+                            {
+                                "id": "e1",
+                                "actions": [
+                                    {
+                                        "type": "remove_agent",
+                                        "agent": "a2"
+                                    },
+                                    {
+                                        "type": "remove_agent",
+                                        "agent": "a3"
+                                    }
+                                ]
+                            }
+                        ],
+                        "required": [
+                            "id",
+                            "actions"
+                        ],
+                        "properties": {
+                            "id": {
+                                "$id": "#/properties/events/items/anyOf/1/properties/id",
+                                "type": "string",
+                                "title": "The id schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": "",
+                                "examples": [
+                                    "e1"
+                                ]
+                            },
+                            "actions": {
+                                "$id": "#/properties/events/items/anyOf/1/properties/actions",
+                                "type": "array",
+                                "title": "The actions schema",
+                                "description": "An explanation about the purpose of this instance.",
+                                "default": [],
+                                "examples": [
+                                    [
+                                        {
+                                            "type": "remove_agent",
+                                            "agent": "a2"
+                                        },
+                                        {
+                                            "type": "remove_agent",
+                                            "agent": "a3"
+                                        }
+                                    ]
+                                ],
+                                "additionalItems": true,
+                                "items": {
+                                    "$id": "#/properties/events/items/anyOf/1/properties/actions/items",
+                                    "anyOf": [
+                                        {
+                                            "$id": "#/properties/events/items/anyOf/1/properties/actions/items/anyOf/0",
+                                            "type": "object",
+                                            "title": "The first anyOf schema",
+                                            "description": "An explanation about the purpose of this instance.",
+                                            "default": {},
+                                            "examples": [
+                                                {
+                                                    "type": "remove_agent",
+                                                    "agent": "a2"
+                                                }
+                                            ],
+                                            "required": [
+                                                "type",
+                                                "agent"
+                                            ],
+                                            "properties": {
+                                                "type": {
+                                                    "$id": "#/properties/events/items/anyOf/1/properties/actions/items/anyOf/0/properties/type",
+                                                    "type": "string",
+                                                    "title": "The type schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "default": "",
+                                                    "examples": [
+                                                        "remove_agent"
+                                                    ]
+                                                },
+                                                "agent": {
+                                                    "$id": "#/properties/events/items/anyOf/1/properties/actions/items/anyOf/0/properties/agent",
+                                                    "type": "string",
+                                                    "title": "The agent schema",
+                                                    "description": "An explanation about the purpose of this instance.",
+                                                    "default": "",
+                                                    "examples": [
+                                                        "a2"
+                                                    ]
+                                                }
+                                            },
+                                            "additionalProperties": true
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                ]
+            }
+        }
+    },
+    "additionalProperties": true
+}
