@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deploying on several machines &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Modeling problems as DCOPs" href="problem_modeling.html" />
+    <link rel="prev" title="Analysing results" href="analysing_results.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysing_results.html">Analysing results</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Deploying on several machines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-independent-agents">Running independent agents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#orchestrator">Orchestrator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#agents">Agents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#provisioning-pydcop">Provisioning pyDCOP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="problem_modeling.html">Modeling problems as DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_dcops.html">Dynamic DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agent_gui.html">Agent’s GUI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algo_implementation.html">Implementing a DCOP algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+      <li>Deploying on several machines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/deploying_on_machines.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="deploying-on-several-machines">
+<span id="tutorials-deploying-on-machines"></span><h1>Deploying on several machines<a class="headerlink" href="#deploying-on-several-machines" title="Permalink to this headline"></a></h1>
+<p>In the first tutorials, you have been using the
+<span class="xref std std-ref">solve command</span> to run your DCOPs.
+This command is very convenient as it handles a lot of
+<em>plumbing</em> details for you,
+but it only works if you want to run the whole system on a single machine.
+In this tutorial, you will learn how to really distribute your system,
+by running different agents on different machines.</p>
+<section id="running-independent-agents">
+<h2>Running independent agents<a class="headerlink" href="#running-independent-agents" title="Permalink to this headline"></a></h2>
+<p>If you want to use several machine to run your DCOP
+(remenber, the <strong>D</strong> stands for Distributed !) you need to use the
+<span class="xref std std-ref">agent</span>
+and <span class="xref std std-ref">orchestrator</span>
+commands.</p>
+<section id="orchestrator">
+<h3>Orchestrator<a class="headerlink" href="#orchestrator" title="Permalink to this headline"></a></h3>
+<p>The <strong>Orchestrator</strong> is a special agent that is not part of the DCOP:
+it’s role is to bootstrap the solving process
+by distributing the computations on the agents.
+It also collects metrics for benchmark purpose.
+Once the system is started (and if no metric is collected),
+the orchestrator could be removed.
+In any case, the orchestrator never participates in the coordination process,
+which stays fully decentralised.</p>
+<p>The <span class="xref std std-ref">orchestrator</span> command
+looks very much like the <span class="xref std std-ref">solve command</span> ;
+it takes a DCOP yaml file as input and
+supports the same <code class="docutils literal notranslate"><span class="pre">--algo</span></code>, <code class="docutils literal notranslate"><span class="pre">--ditribution</span></code>
+options.
+The main difference is that the orchestrator command only launches an orchestrator,
+which then waits for agents to enter the system.
+The DCOP algorithm will only be started
+once all required agents have been started.</p>
+<p>For example, using <a class="reference download internal" download="" href="../_downloads/0aa5261933ad8c975753b04342401949/graph_coloring_3agts.yaml"><code class="xref download docutils literal notranslate"><span class="pre">this</span> <span class="pre">graph</span> <span class="pre">coloring</span> <span class="pre">problem</span> <span class="pre">definition</span> <span class="pre">file</span></code></a>, you can start an orchestrator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">-</span><span class="n">v</span> <span class="mi">3</span> <span class="n">orchestrator</span> <span class="o">--</span><span class="n">algo</span> <span class="n">mgm</span> <span class="o">--</span><span class="n">algo_param</span> <span class="n">stop_cycle</span><span class="p">:</span><span class="mi">20</span> \
+                         <span class="n">graph_coloring_3agts</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>Once the DCOP algorithm finishes, or when reaching the timeout, the
+command outputs the end-results.
+The content and format is the same than what is described in
+<a class="reference internal" href="analysing_results.html#tutorials-analysing-results"><span class="std std-ref">Analysing results</span></a>.</p>
+<p>All metrics-collection options can also be used with  the
+<span class="xref std std-ref">orchestrator</span> and works the same way
+than with the <span class="xref std std-ref">solve command</span> command.</p>
+</section>
+<section id="agents">
+<h3>Agents<a class="headerlink" href="#agents" title="Permalink to this headline"></a></h3>
+<p>The <span class="xref std std-ref">agent</span> command launches an agent on the local
+machine
+(actually it can also launch several agents,
+see the <span class="xref std std-ref">detailed command documentation</span>).
+Initially, this agent does not know anything about the DCOP (variables,
+constraints, etc. ).
+It only knows the address of an <strong>orchestrator</strong>,
+which is responsible for sending DCOP information
+to all agents in the system:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">-</span><span class="n">v</span> <span class="mi">3</span> <span class="n">agent</span> <span class="o">-</span><span class="n">n</span> <span class="n">a1</span> <span class="o">-</span><span class="n">p</span> <span class="mi">9001</span> <span class="o">--</span><span class="n">orchestrator</span> <span class="mf">192.168.1.10</span><span class="p">:</span><span class="mi">9000</span>
+</pre></div>
+</div>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline"></a></h3>
+<p>Instead of using solve, you can run the very simple DCOP used in
+<a class="reference internal" href="getting_started.html#tutorials-getting-started"><span class="std std-ref">the first tutorial</span></a> on different machines.
+For easier setup, we reduces the agents number to 3 in this file :
+<a class="reference download internal" download="" href="../_downloads/0aa5261933ad8c975753b04342401949/graph_coloring_3agts.yaml"><code class="xref download docutils literal notranslate"><span class="pre">graph_coloring_3agts.yaml</span></code></a>.</p>
+<p>First launch the orchestrator on a machine:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">-</span><span class="n">v</span> <span class="mi">3</span> <span class="n">orchestrator</span> <span class="o">--</span><span class="n">algo</span> <span class="n">mgm</span> <span class="o">--</span><span class="n">algo_param</span> <span class="n">stop_cycle</span><span class="p">:</span><span class="mi">20</span> \
+                         <span class="n">graph_coloring_3agts</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>You must check in the logs the ip address and port the orchestrator is
+listening on, or you can set it using <code class="docutils literal notranslate"><span class="pre">--address</span></code> and <code class="docutils literal notranslate"><span class="pre">--port</span></code></p>
+<p>Now launch on 3 different machines (or virtual machines) the following
+commands to run 3 agents that all use the orchestrator started before
+(make sure you give them the right IP address and port!):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Machine 1 runs agent a1</span>
+<span class="n">pydcop</span> <span class="o">-</span><span class="n">v</span> <span class="mi">3</span> <span class="n">agent</span> <span class="o">-</span><span class="n">n</span> <span class="n">a1</span> <span class="o">-</span><span class="n">p</span> <span class="mi">9001</span> <span class="o">--</span><span class="n">orchestrator</span> <span class="mf">192.168.1.10</span><span class="p">:</span><span class="mi">9000</span>
+<span class="c1"># Machine 2 runs agent a2</span>
+<span class="n">pydcop</span> <span class="o">-</span><span class="n">v</span> <span class="mi">3</span> <span class="n">agent</span> <span class="o">-</span><span class="n">n</span> <span class="n">a2</span> <span class="o">-</span><span class="n">p</span> <span class="mi">9001</span> <span class="o">--</span><span class="n">orchestrator</span> <span class="mf">192.168.1.10</span><span class="p">:</span><span class="mi">9000</span>
+<span class="c1"># Machine 3 runs agent a3</span>
+<span class="n">pydcop</span> <span class="o">-</span><span class="n">v</span> <span class="mi">3</span> <span class="n">agent</span> <span class="o">-</span><span class="n">n</span> <span class="n">a3</span> <span class="o">-</span><span class="n">p</span> <span class="mi">9001</span> <span class="o">--</span><span class="n">orchestrator</span> <span class="mf">192.168.1.10</span><span class="p">:</span><span class="mi">9000</span>
+</pre></div>
+</div>
+<p>Each agent receives the responsibility for one of the variables from the DCOP
+and runs MGM for 20 cycles.
+Once each agent has performed 20 cycles, the agents and the orchestrator
+commands return.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you know in advance the IP address and port the orchestrator
+will use, you can launch the agents before the orchestrator.
+In that case, agents will periodically attempt to connect to the
+orchestrator, until they can reach it.</p>
+</div>
+</section>
+</section>
+<section id="provisioning-pydcop">
+<h2>Provisioning pyDCOP<a class="headerlink" href="#provisioning-pydcop" title="Permalink to this headline"></a></h2>
+<p>You may have noticed that the previous section silently assumed that pyDCOP
+was installed on every machine you want to use in your system.
+Indeed, we use the <code class="docutils literal notranslate"><span class="pre">pydcop</span></code> command line application, which is only available
+if you have installed pyDCOP!</p>
+<p>Of course, you can simply follow the
+<a class="reference internal" href="../installation.html#installation"><span class="std std-ref">installation instructions</span></a> to install manually pyDCOP on
+all your machines, but the process is rather tedious and error prone.
+Moreover, if you are working on DCOP algorithms,
+you will probably make changes in
+pyDCOP implementation (at least in the implementation of your algorithm),
+which requires updating it on all your machine, copying the new development
+version on all machines, reinstalling it, etc.</p>
+<p>When running a large system, one needs to automate this kind of tasks.
+To help you with this, we provide as set of ansible playbooks that automates
+the installation process. See the <a class="reference internal" href="../usage/provisioning.html#usage-provisioning"><span class="std std-ref">Provisioning</span></a>
+guide for full details.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="analysing_results.html" class="btn btn-neutral float-left" title="Analysing results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="problem_modeling.html" class="btn btn-neutral float-right" title="Modeling problems as DCOPs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Provisioning pyDCOP on many machines &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Concepts &amp; Implementation" href="../implementation.html" />
+    <link rel="prev" title="Utilities" href="api/utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../usage.html">Usage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli_ref.html">pyDCOP command line reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fileformat_ref.html">pyDCOP file formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_ref.html">pyDCOP API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_ref.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Provisioning pyDCOP on many machines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#general-principle">General principle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-without-internet-connection">Installing without internet connection</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#local-cache-for-apt">Local cache for apt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#local-cache-for-pip">Local cache for pip</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#agent-machines">Agent-machines</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#virtual-machines">Virtual Machines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#raspberry-pis">Raspberry Pis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploying-with-ansible">Deploying with ansible</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../usage.html">Usage</a> &raquo;</li>
+      <li>Provisioning pyDCOP on many machines</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/usage/provisioning.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="provisioning-pydcop-on-many-machines">
+<span id="usage-provisioning"></span><h1>Provisioning pyDCOP on many machines<a class="headerlink" href="#provisioning-pydcop-on-many-machines" title="Permalink to this headline"></a></h1>
+<p>When developing on pyDCOP, if you want to host your agent on several different
+machines, you generally need to deploy your changes often in order to test them.
+This can be a pain if you do it manually (copying pyDCOP’s new development
+version on all machines, installing it, etc. ) and is error prone.
+For this reasons it is advised to automate this deployment. We provide an
+ansible playbook for this, along with some advices.</p>
+<section id="general-principle">
+<h2>General principle<a class="headerlink" href="#general-principle" title="Permalink to this headline"></a></h2>
+<p>In the following sections, we use the term <strong>controller</strong> to name the
+computer that is used to initiate and drive the installation of pyDCOP on
+other machines, which are called <strong>agent-machine</strong> (as they will be used to run
+pyDCOP agents).</p>
+<p>When provisioning a set of machines, the <strong>controller</strong> will
+contacts each <strong>agent-machines</strong> (using ssh) and make sure pyDCOP and all its
+dependencies are installed on it.</p>
+<p>This guide uses <a class="reference external" href="https://www.ansible.com/">ansible</a>
+(tested with version 2.5.3) , thus you must install
+ansible on the controller, which requires python. If python is already
+installed on your controller machine you can simply use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">ansible</span>
+</pre></div>
+</div>
+<p>See <a class="reference external" href="https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html">The official installation guide for more details</a></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Using windows for the Ansible controller is not officially
+supported. However you can <a class="reference external" href="http://docs.ansible.com/ansible/latest/user_guide/windows_faq.html#can-ansible-run-on-windows">run it under the Windows Subsystem for Linux (WSL)</a>
+or <a class="reference external" href="http://www.oznetnerd.com/installing-ansible-windows/">with Cygwin</a>.
+Another option is to use a linux virtual machine as a controller.</p>
+</div>
+</section>
+<section id="installing-without-internet-connection">
+<h2>Installing without internet connection<a class="headerlink" href="#installing-without-internet-connection" title="Permalink to this headline"></a></h2>
+<p>In many cases (tutorials, lectures, demos) it is necessary to install pyDCOP
+(including its dependencies ) on machines that may not have internet access.
+For this purpose, we recommend using <em>cache services</em> on the controller, that
+will provide the necessary packages to agent-machines even though the internet
+repositories cannot be reached.</p>
+<p>To be sure to have all required packages cached on the controller machine,
+you must install at least one agent machine while the controller has internet
+access.
+The controller will then cache locally all packages used during the
+installation and
+you will later be able to deploy new agent-machines with no internet access,
+even on the controller.</p>
+<section id="local-cache-for-apt">
+<h3>Local cache for apt<a class="headerlink" href="#local-cache-for-apt" title="Permalink to this headline"></a></h3>
+<p>Some system packages (e.g. <code class="docutils literal notranslate"><span class="pre">glpk</span></code> ) need to be installed with apt-get,
+we use the local cache apt repository
+<a class="reference external" href="https://www.unix-ag.uni-kl.de/~bloch/acng/">ACNG</a>,
+hosted on the controller computer.</p>
+<p>Install on controller:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">apt</span><span class="o">-</span><span class="n">cacher</span><span class="o">-</span><span class="n">ng</span>
+</pre></div>
+</div>
+<p>Check that ACNG is online:  <a class="reference external" href="http://localhost:3142/acng-report.html">http://localhost:3142/acng-report.html</a></p>
+<p>See <a class="reference external" href="http://xmodulo.com/apt-caching-server-ubuntu-debian.html">the official documentation</a> for more details.</p>
+</section>
+<section id="local-cache-for-pip">
+<h3>Local cache for pip<a class="headerlink" href="#local-cache-for-pip" title="Permalink to this headline"></a></h3>
+<p>We run <a class="reference external" href="https://www.devpi.net/">devpi</a>, which acts as a proxy-cache, on the
+controller:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">U</span> <span class="n">devpi</span><span class="o">-</span><span class="n">server</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="o">-</span><span class="n">U</span> <span class="n">devpi</span><span class="o">-</span><span class="n">web</span>
+<span class="n">devpi</span><span class="o">-</span><span class="n">server</span> <span class="o">--</span><span class="n">start</span> <span class="o">--</span><span class="n">init</span>
+<span class="n">devpi</span><span class="o">-</span><span class="n">server</span> <span class="o">--</span><span class="n">stop</span>
+</pre></div>
+</div>
+<p>Note: the <cite>devpi</cite> server must be started every time we need to need to perform
+a deployment. Once finished you may stop it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">devpi</span><span class="o">-</span><span class="n">server</span> <span class="o">--</span><span class="n">start</span> <span class="o">--</span><span class="n">host</span><span class="o">=</span><span class="mf">0.0.0.0</span>
+<span class="o">...</span>
+<span class="n">devpi</span><span class="o">-</span><span class="n">server</span> <span class="o">--</span><span class="n">stop</span>
+</pre></div>
+</div>
+<p>You can check that devpi is online : <a class="reference external" href="http://127.0.0.1:3141/">http://127.0.0.1:3141/</a></p>
+</section>
+</section>
+<section id="agent-machines">
+<h2>Agent-machines<a class="headerlink" href="#agent-machines" title="Permalink to this headline"></a></h2>
+<p>You can use any computer as an agent-machine, however we recommend using
+linux-based machines (Macs should work and windows can work too, but this
+guide might require some tweaking).
+The main requirement for ansible is that your agent-machine must have an ssh
+server.
+The command <code class="docutils literal notranslate"><span class="pre">sudo</span></code> must be available and your user must be able to use
+(i.e. be in the sudoer list,
+simply adding it to the sudo group usually does the trick
+<code class="docutils literal notranslate"><span class="pre">adduser</span> <span class="pre">dcop</span> <span class="pre">sudo</span></code>)</p>
+<p>As we generally do not have lots of machines available, agents-machines
+are generally implemented using Virtual Machines (VM) or cheap single-board
+computers like the Raspberry Pi.</p>
+<section id="virtual-machines">
+<h3>Virtual Machines<a class="headerlink" href="#virtual-machines" title="Permalink to this headline"></a></h3>
+<p>Using Virtual Machines (VM) allows you to run several agent-machines
+on a single server.
+We use VirtualBox to run our VM, but you can use any hypervisor.</p>
+<p>Create a base linux (debian or ubuntu is recommended, as the playbook assumes
+packages can be installed with <code class="docutils literal notranslate"><span class="pre">apt</span></code>) and duplicate it to create as many VM
+as required. Do not forget to enable the ssh server on your VM !</p>
+<p>Make sure you configure the network mode on the hypervisor in a way that
+allows connecting to servers running on the VMs.
+The details depends on your hypervisor, with VirtualBox you generally want
+to use the “bridged adaptater” mode (and not NAT, which the default).</p>
+</section>
+<section id="raspberry-pis">
+<h3>Raspberry Pis<a class="headerlink" href="#raspberry-pis" title="Permalink to this headline"></a></h3>
+<p>Single board computers like the Raspberry Pi are very good candidates for
+agent-machines : they are cheap, run linux and are powerfull enough for
+pyDCOP.</p>
+<p>You should use the <a class="reference external" href="https://www.raspberrypi.org/downloads/">standard raspbian distribution</a>.
+The only modification is to make sure that the ssh
+server is enabled your Raspberry Pi. This can be done using the ``
+raspi-config`` utility or by creating a file named <code class="docutils literal notranslate"><span class="pre">ssh</span></code> in the boot
+partition of the SD card, which can be done easily after preparing the SD
+card on another computer and is the best option if you run your Pis without
+keyboards.
+See the official <a class="reference external" href="https://www.raspberrypi.org/documentation/remote-access/ssh/">documentation</a>
+for more details</p>
+</section>
+</section>
+<section id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
+<p>Once you have your agent-machine (and you have noted their IP address), you
+must edit the ansible host configuration file. An example is provided in
+pyDCOP’s git repository (in <code class="docutils literal notranslate"><span class="pre">pyDcop/provisioning/ansible/hosts-conf.yaml</span></code>)</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful, agent names given in the host configuration file
+<strong>must match</strong> the names given in the dcop yaml definition, and their IP
+address must be set to the IP address assigned to the corresponding VMs or
+physical machine.</p>
+</div>
+<p>TODO: explain how to use avahi to make your agent-machine automatically
+discoverable.</p>
+</section>
+<section id="deploying-with-ansible">
+<h2>Deploying with ansible<a class="headerlink" href="#deploying-with-ansible" title="Permalink to this headline"></a></h2>
+<p>Once you have properly configured your host file, you can simply run
+ansible-playbook to apply the operations on all your agent-machines.
+The playbook is in <code class="docutils literal notranslate"><span class="pre">pyDcop/provisioning/ansible/</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ansible</span><span class="o">-</span><span class="n">playbook</span> <span class="o">--</span><span class="n">inventory</span> <span class="n">hosts</span><span class="o">-</span><span class="n">conf</span><span class="o">.</span><span class="n">yaml</span> <span class="n">pydcop</span><span class="o">-</span><span class="n">playbook</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>If the process fails on some machines, you can safely restart it as ansible
+keeps track of the progress.</p>
+<p>You can also run the playbook on a subset of the hosts defined in your
+configuration file, by using the <code class="docutils literal notranslate"><span class="pre">--limit</span></code> option:</p>
+<blockquote>
+<div><p>ansible-playbook –inventory hosts-conf.yaml –limit a2 pydcop-playbook.yml</p>
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api/utils.html" class="btn btn-neutral float-left" title="Utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../implementation.html" class="btn btn-neutral float-right" title="Concepts &amp; Implementation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

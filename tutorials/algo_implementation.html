@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Implementing a DCOP algorithm &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Usage" href="../usage.html" />
+    <link rel="prev" title="Agent’s GUI" href="agent_gui.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysing_results.html">Analysing results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploying_on_machines.html">Deploying on several machines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_modeling.html">Modeling problems as DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_dcops.html">Dynamic DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agent_gui.html">Agent’s GUI</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Implementing a DCOP algorithm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#distributed-stochastic-algorithm">Distributed Stochastic Algorithm</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#note">Note</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#implementation-with-pydcop">Implementation with pyDCOP</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-setup">Basic setup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#algorithm-implementation-class">Algorithm implementation class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#startup">Startup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#message-handling">Message handling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-algorithm">Running the algorithm</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+      <li>Implementing a DCOP algorithm</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/algo_implementation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="implementing-a-dcop-algorithm">
+<span id="tutorials-algorithm-implementation"></span><h1>Implementing a DCOP algorithm<a class="headerlink" href="#implementing-a-dcop-algorithm" title="Permalink to this headline"></a></h1>
+<p>One of pyDCOP goals is to help the study and development of DCOP algorithms.
+For this purpose, pyDCOp allows you to implement easily your own algorithms
+and provide all the required infrastructure so that you can concentrate
+on your algorithm logic.</p>
+<p>To demonstrate this we will implement a very simple DCOP algorithm in this
+tutorial, the Distributed Stochastic Algorithm (DSA).</p>
+<section id="distributed-stochastic-algorithm">
+<h2>Distributed Stochastic Algorithm<a class="headerlink" href="#distributed-stochastic-algorithm" title="Permalink to this headline"></a></h2>
+<p>DSA is a synchronous stochastic local search algorithm that works on a
+constraints graph.
+At startup, each variable takes a random value from it’s domain
+and then run the same procedure in repeated steps.</p>
+<p>At each step, each variable send its value to its neighbors.
+Once a variable has received the value from all it’s neighbors,
+it evaluates the gain it could obtain by picking another value.
+If this gain is positive, it decides to change it’s value
+or to keep the current one.
+This decision is made stochastically: a variable change its value with
+probability <strong>p</strong> (if doing so can improve the state quality).</p>
+<p>The algorithm stops after a predefined number of steps.</p>
+<section id="note">
+<h3>Note<a class="headerlink" href="#note" title="Permalink to this headline"></a></h3>
+<p>For example purpose, we only consider here a a very simple version of DSA,
+which implements DSA-A as described in <span id="id1">[<a class="reference internal" href="../zbibliography.html#id5" title="Weixiong Zhang, Guandong Wang, Zhao Xing, and Lars Wittenburg. Distributed stochastic search and distributed breakout: properties, comparison and applications to constraint optimization problems in sensor networks. Artificial Intelligence, 161(1-2):55–87, January 2005. URL: http://linkinghub.elsevier.com/retrieve/pii/S0004370204001481 (visited on 2018-06-07), doi:10.1016/j.artint.2004.10.004.">ZWXW05</a>]</span>.
+pyDCOP also has a full implementation of DSA, with several variants,
+both synchronous and asynchronous, which can be used as <code class="docutils literal notranslate"><span class="pre">dsa</span></code> and <code class="docutils literal notranslate"><span class="pre">adsa</span></code>
+in the <span class="xref std std-ref">solve</span>, <span class="xref std std-ref">run</span> and
+<span class="xref std std-ref">orchestrator</span> commands.</p>
+</section>
+</section>
+<section id="implementation-with-pydcop">
+<h2>Implementation with pyDCOP<a class="headerlink" href="#implementation-with-pydcop" title="Permalink to this headline"></a></h2>
+<section id="basic-setup">
+<h3>Basic setup<a class="headerlink" href="#basic-setup" title="Permalink to this headline"></a></h3>
+<p>In pyDCOP, each algorithm is implemented as a module
+in the <code class="docutils literal notranslate"><span class="pre">pydcop.algorithms</span></code> package.
+Thus for our DSA implementation, we simply create a <code class="docutils literal notranslate"><span class="pre">dsa_tuto.py</span></code> file
+in the directory <code class="docutils literal notranslate"><span class="pre">pydcop/algorithms</span></code>.</p>
+<p>We must then declare wich <a class="reference internal" href="../implementation/computation_graphs.html#concepts-graph"><span class="std std-ref">graph model</span></a>
+our algorithm works on. This is done by declaring a <code class="docutils literal notranslate"><span class="pre">GRAPH_TYPE</span></code> variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Type of computations graph that must be used with dsa-tuto</span>
+<span class="n">GRAPH_TYPE</span> <span class="o">=</span> <span class="s1">&#39;constraints_hypergraph&#39;</span>
+</pre></div>
+</div>
+<p>Then we need to define the message(s) for this algorithm.
+A message is defined by a class that inherits
+<code class="xref py py-class docutils literal notranslate"><span class="pre">pydcop.infrastructure.computations.Message</span></code>
+but you can use the <code class="xref py py-func docutils literal notranslate"><span class="pre">message_type()</span></code> function,
+which creates the subclass automatically for you.
+DSA uses one single type of message, which contains the value of the variable
+sending the message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DsaMessage</span> <span class="o">=</span> <span class="n">message_type</span><span class="p">(</span><span class="s2">&quot;dsa_value&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="algorithm-implementation-class">
+<h3>Algorithm implementation class<a class="headerlink" href="#algorithm-implementation-class" title="Permalink to this headline"></a></h3>
+<p>Generally speaking, an algorithm is implemented as a subclass of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">DcopComputation</span></code>.
+For algorithms that define computations for variables
+(i.e. most classic algorithms),
+you must subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">VariableComputation</span></code>, which defines
+several utility methods for handling variables:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DsaTutoComputation</span><span class="p">(</span><span class="n">VariableComputation</span><span class="p">):</span>
+</pre></div>
+</div>
+<p>One instance of <code class="docutils literal notranslate"><span class="pre">DsaTutoComputation</span></code> will be created by pyDCOP
+for each variable in our DCOP.</p>
+<p>The constructor of our class must accept
+a <code class="xref py py-class docutils literal notranslate"><span class="pre">ComputationDef</span></code> instance as argument.
+As its name implies, a <code class="xref py py-class docutils literal notranslate"><span class="pre">ComputationDef</span></code> instance is an object
+that fully describes a computation an can be used to instanciate one.
+It is made of a <code class="xref py py-class docutils literal notranslate"><span class="pre">ComputationNode</span></code> and a <code class="xref py py-class docutils literal notranslate"><span class="pre">AlgorithmDef</span></code>.
+You don’t need to bother with this for now, these instances will
+be automatically be created by pyDCOP and passed to your constructor.
+With this, we can now write our computation’s constructor:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DsaTutoComputation</span><span class="p">(</span><span class="n">VariableComputation</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computation_definition</span><span class="p">:</span> <span class="n">ComputationDef</span><span class="p">):</span>
+        <span class="c1"># Always call the super class constructor !</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">computation_definition</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">variable</span><span class="p">,</span>
+                         <span class="n">computation_definition</span><span class="p">)</span>
+
+        <span class="c1"># Constraints involving this variable are available on the</span>
+        <span class="c1"># ComputationNode:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="n">computation_definition</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">constraints</span>
+
+        <span class="c1"># The assignment of our neighbors for the current and next cycle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_cycle</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+</div>
+</section>
+<section id="startup">
+<h3>Startup<a class="headerlink" href="#startup" title="Permalink to this headline"></a></h3>
+<p>When pyDCOP starts a computation its <code class="docutils literal notranslate"><span class="pre">on_start</span></code> method is automatically called.
+You can use it for any startup logic.
+In the case of DSA, the computation must pick a value for the variable
+it represents:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">on_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># This picks a random value form the domain of the variable</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">random_value_selection</span><span class="p">()</span>
+
+    <span class="c1"># The currently selected value is available through self.current_value.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">post_to_all_neighbors</span><span class="p">(</span><span class="n">DsaMessage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_value</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_cycle</span><span class="p">()</span>  <span class="c1"># Defined later</span>
+</pre></div>
+</div>
+</section>
+<section id="message-handling">
+<h3>Message handling<a class="headerlink" href="#message-handling" title="Permalink to this headline"></a></h3>
+<p>Once started, computations communicate one with another by sending messages.
+In order to handle the messages sent to by the computation, you must
+register a message handler using the <code class="xref py py-func docutils literal notranslate"><span class="pre">register()</span></code> decorator :
+<code class="docutils literal notranslate"><span class="pre">&#64;register(&quot;dsa_value&quot;)</span></code>.</p>
+<p>For DSA, when receiving a message, we store the value and check
+if we received a value from all our neighbors,
+in which case we can evaluate
+whether we should pick a new value for our variable.
+Note that there might be an offset of one cycle with our neighbor.</p>
+<p>Here is the corresponding message handler:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@register</span><span class="p">(</span><span class="s2">&quot;dsa_value&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">on_value_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable_name</span><span class="p">,</span> <span class="n">recv_msg</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">variable_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">[</span><span class="n">variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">recv_msg</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cycle_complete</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_cycle</span><span class="p">()</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># The message for the next cycle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_cycle</span><span class="p">[</span><span class="n">variable_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">recv_msg</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+</div>
+<p>Finally, we can decide if we should select another value
+by computing the potential gain and drawing a random number:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">evaluate_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_value</span>
+    <span class="n">current_cost</span> <span class="o">=</span> <span class="n">assignment_cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
+    <span class="n">arg_min</span><span class="p">,</span> <span class="n">min_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_best_value</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">current_cost</span> <span class="o">-</span> <span class="n">min_cost</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="mf">0.5</span> <span class="o">&gt;</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">():</span>
+        <span class="c1"># Select a new value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_selection</span><span class="p">(</span><span class="n">arg_min</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_cycle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_cycle</span><span class="p">,</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">post_to_all_neighbors</span><span class="p">(</span><span class="n">DsaMessage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_value</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">is_cycle_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># The cycle is complete if we received a value from all the neighbors:</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">neighbors</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">compute_best_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="c1"># compute the best possible value and associated cost</span>
+    <span class="n">arg_min</span><span class="p">,</span> <span class="n">min_cost</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">domain</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">cost</span> <span class="o">=</span> <span class="n">assignment_cost</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_cycle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cost</span> <span class="o">&lt;</span> <span class="n">min_cost</span><span class="p">:</span>
+            <span class="n">min_cost</span><span class="p">,</span> <span class="n">arg_min</span> <span class="o">=</span> <span class="n">cost</span><span class="p">,</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">arg_min</span><span class="p">,</span> <span class="n">min_cost</span>
+</pre></div>
+</div>
+</section>
+<section id="running-the-algorithm">
+<h3>Running the algorithm<a class="headerlink" href="#running-the-algorithm" title="Permalink to this headline"></a></h3>
+<p>You now have a full working implementation of DSA.
+For reference, this implementation is also available in this file :
+<a class="reference download internal" download="" href="../_downloads/3d0eb58192faee88975e7485e9776786/dsa-tuto.py"><code class="xref download docutils literal notranslate"><span class="pre">dsa-tuto.py</span></code></a>.</p>
+<p>If you did not follow the tutorial, you can simply copy this file in
+<code class="docutils literal notranslate"><span class="pre">pydcop/algorithms</span></code>.</p>
+<p>This implementation can be used with any pydcop command,
+for example for solving a graph coloring DCOP for 50 variables
+(<a class="reference download internal" download="" href="../_downloads/6e79fce90d02ab7c4c7e4d9ad9241352/graph_coloring_50.yaml"><code class="xref download docutils literal notranslate"><span class="pre">graph_coloring_50.yaml</span></code></a>)
+you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">--</span><span class="n">timeout</span> <span class="mi">10</span> <span class="o">-</span><span class="n">v</span> <span class="mi">3</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">dsa</span><span class="o">-</span><span class="n">tuto</span> <span class="n">graph_coloring_50</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>Note that this tutorial only covers
+the basics of DCOP algorithms implementation,
+for more details, look at <a class="reference internal" href="../implementation/algorithms.html#implementation-algorithms"><span class="std std-ref">DCOP algorithm Implementation</span></a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="agent_gui.html" class="btn btn-neutral float-left" title="Agent’s GUI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analysing results &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Deploying on several machines" href="deploying_on_machines.html" />
+    <link rel="prev" title="Getting started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Analysing results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#end-results">End results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-time-metrics">Run-time metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-the-results">Plotting the results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logs">Logs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="deploying_on_machines.html">Deploying on several machines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_modeling.html">Modeling problems as DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_dcops.html">Dynamic DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agent_gui.html">Agent’s GUI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algo_implementation.html">Implementing a DCOP algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+      <li>Analysing results</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/analysing_results.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="analysing-results">
+<span id="tutorials-analysing-results"></span><h1>Analysing results<a class="headerlink" href="#analysing-results" title="Permalink to this headline"></a></h1>
+<section id="end-results">
+<h2>End results<a class="headerlink" href="#end-results" title="Permalink to this headline"></a></h2>
+<p>In the <a class="reference internal" href="getting_started.html#tutorials-getting-started"><span class="std std-ref">first tutorial</span></a> you solved a very
+simple DCOP using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">dpop</span> <span class="n">graph_coloring</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>This command outputs many results, given in json so that you can parse then
+easily, for example when writing more complex scripts for
+experimentation.
+You can also get these results directly in a file using the <code class="docutils literal notranslate"><span class="pre">--output</span></code> global
+option (see. <a class="reference internal" href="../usage/cli_ref.html#usage-cli-ref-options"><span class="std std-ref">pyDcop cli dcoumentation</span></a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">--</span><span class="n">output</span> <span class="n">results</span><span class="o">.</span><span class="n">json</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">dpop</span> <span class="n">graph_coloring</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>You may have noticed that, even though the DCOP has only 3 variables and a
+handful of constraints, the results file is quite long and contains a lot of
+information.</p>
+<p>At the top level you can find global results, which apply to the DCOP as a
+whole:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;agt_metrics&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="o">//</span> <span class="n">metrics</span> <span class="k">for</span> <span class="n">each</span> <span class="n">agent</span><span class="p">,</span> <span class="n">see</span> <span class="n">below</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;assignment&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;v1&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;v2&quot;</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;v3&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span>
+  <span class="s2">&quot;cycle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;msg_count&quot;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span>
+  <span class="s2">&quot;msg_size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;FINISHED&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mf">0.006329163996269926</span><span class="p">,</span>
+  <span class="s2">&quot;violation&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span></code>: indicates how the command was stopped, can be one of</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">FINISHED</span></code>, when all computation finished,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code>, when the command was interrupted because it reached timeout
+set with the <code class="docutils literal notranslate"><span class="pre">--timeout</span></code> option,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">STOPPED</span></code>, when the command was interrupted with <code class="docutils literal notranslate"><span class="pre">CTRL+C</span></code>.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assignment</span></code>: contains the assignment that was found by the DCOP
+algorithm.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cost</span></code>: the cost for this assignment (i.e. the sum of the cost of all
+constraints in the DCOP).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">violation</span></code>: the number of violated hard constraints, when using DCOP with a
+mix of soft and hard constraints (hard constraint support is still
+experimental and not documented).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">msg_size</span></code>: the total size of messages exchanged between agents.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">msg_count</span></code>: the number of messages exchanged between agents.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span></code>: the elapsed time, in second.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cycles</span></code>, the number of cycles for  DCOP computations.
+In this example it is always 0 has DPOP has no notion of cycle.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">agt_metrics</span></code> section contains one entry for each of the agents in the
+DCOP. Each of these entries contains several items:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;a1&quot;</span><span class="p">:</span> <span class="p">{</span>
+  <span class="s2">&quot;activity_ratio&quot;</span><span class="p">:</span> <span class="mf">0.24987247830102727</span><span class="p">,</span>
+  <span class="s2">&quot;count_ext_msg&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;v2&quot;</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;cycles&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;v2&quot;</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;size_ext_msg&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;v2&quot;</span><span class="p">:</span> <span class="mi">4</span>
+  <span class="p">}</span>
+<span class="p">},</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">count_ext_msg</span></code> and <code class="docutils literal notranslate"><span class="pre">size_ext_msg</span></code>, which contain the count and size of
+messages sent and received by each DCOP computation hosted on this agent</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cycles</span></code>, the number of cycles for each DCOP computation hosted on this
+agent.
+In this example it is always 0 because DPOP has no notion of cycle.</p></li>
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">activity_ratio</span></code>, the ratio of <em>active time</em> to total elapsed time,</dt><dd><p>where active time is defined as the time the agent spent handling a
+message as opposed to waiting for messages.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+<section id="run-time-metrics">
+<h2>Run-time metrics<a class="headerlink" href="#run-time-metrics" title="Permalink to this headline"></a></h2>
+<p>The output of the <span class="xref std std-ref">solve</span> command only gives you
+the end results of the command, but sometimes you need to know what happens
+<em>during</em> the execution of the DCOP algorithm.
+pyDCOP is able to collect metrics at different events during the DCOP execution.
+You must use the <code class="docutils literal notranslate"><span class="pre">--collect_on</span></code> option to select
+when you want metrics to be captured:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cycle_change</span></code>: metrics are collected every time the algorithm switch
+from one cycle (aka iteration) to the next one.
+This mode only makes sense with algorithms which have a notion of cycle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">period</span></code>: metrics are collected periodically , for each agent (meaning
+your will have line of metric for each agent and for each period).
+When using this mode, you <strong>must</strong> also set <code class="docutils literal notranslate"><span class="pre">--period</span></code> to set the
+metrics collection period (in second).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">value_change</span></code>: metrics are collected every time a new value is selected
+for a variable.</p></li>
+</ul>
+<p>When collecting run-time metrics, you also need to use the
+<code class="docutils literal notranslate"><span class="pre">--run_metrics</span> <span class="pre">&lt;file&gt;</span></code> option
+to specify the to which the metrics will be written.
+One csv line is written in this file for each metric collection.
+These lines contains the following columns:
+<code class="docutils literal notranslate"><span class="pre">time,</span> <span class="pre">cycle,</span> <span class="pre">cost,</span> <span class="pre">violation,</span> <span class="pre">msg_count,</span> <span class="pre">msg_size,</span> <span class="pre">status</span></code>
+, where the definition of these metrics are the same as for end-results.</p>
+<p>For example, this line contains metrics from cycle 14 and the solution at
+this point has a cost of 0.1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">time</span><span class="p">,</span> <span class="n">cycle</span><span class="p">,</span> <span class="n">cost</span><span class="p">,</span> <span class="n">violation</span><span class="p">,</span> <span class="n">msg_count</span><span class="p">,</span> <span class="n">msg_size</span><span class="p">,</span> <span class="n">status</span>
+<span class="mf">0.10148727701744065</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="n">RUNNING</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Be careful when collecting metrics for a large number of agents.
+For example, A <code class="docutils literal notranslate"><span class="pre">--period</span></code> of 0.1 means
+each agent will send its metrics 10 times per second.
+If you have 100 agents, collecting 1000 metrics per second will slow you
+down quite a bit and could even give invalid results if all these metrics
+could not be handled and written before the end of the timeout.</p>
+<p>If you want to assess the overall time needed to solve a problem,
+it is better not to collect run time metrics at the same time.
+In that case, you should only rely on the end-metrics,
+which does not influence the execution of the algorithm.</p>
+</div>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline"></a></h3>
+<p>For more interesting results, we use a bigger DCOP in these samples:
+<a class="reference download internal" download="" href="../_downloads/6e79fce90d02ab7c4c7e4d9ad9241352/graph_coloring_50.yaml"><code class="xref download docutils literal notranslate"><span class="pre">graph_coloring_50.yaml</span></code></a>
+It’s a graph coloring problem with 50 variables, generated with the
+<span class="xref std std-ref">generate command</span> :</p>
+<p>Solving with MGM (stopping after 20 cycles), collecting metrics on every cycle
+change:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">mgm</span> <span class="o">--</span><span class="n">algo_params</span> <span class="n">stop_cycle</span><span class="p">:</span><span class="mi">20</span> \
+             <span class="o">--</span><span class="n">collect_on</span> <span class="n">cycle_change</span> <span class="o">--</span><span class="n">run_metric</span> <span class="o">./</span><span class="n">metrics</span><span class="o">.</span><span class="n">csv</span> \
+             <span class="n">graph_coloring_50</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>Solving with MGM for 5 seconds, collecting metrics every 0.2 second:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span>  <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">mgm</span> <span class="o">--</span><span class="n">collect_on</span> <span class="n">period</span> <span class="o">--</span><span class="n">period</span> <span class="mf">0.2</span> \
+                   <span class="o">--</span><span class="n">run_metric</span> <span class="o">./</span><span class="n">metrics_on_period</span><span class="o">.</span><span class="n">csv</span> \
+                   <span class="n">graph_coloring_50</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>Solving with MGM for 5 seconds, collecting metrics every time a new value
+is selected:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">-</span><span class="n">t</span> <span class="mi">5</span>  <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">mgm</span>  <span class="o">--</span><span class="n">collect_on</span> <span class="n">value_change</span> \
+                   <span class="o">--</span><span class="n">run_metric</span> <span class="o">./</span><span class="n">metrics_on_value</span><span class="o">.</span><span class="n">csv</span> \
+                   <span class="n">graph_coloring_50</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="plotting-the-results">
+<h2>Plotting the results<a class="headerlink" href="#plotting-the-results" title="Permalink to this headline"></a></h2>
+<p>pyDCOP has no builtin utility to plot the metrics generated by the
+<span class="xref std std-ref">solve</span> command. However, using the generated
+CSV files, it’s very easy to generate graphs for these metrics using
+any of the commonly used plot utility like <a class="reference external" href="http://gnuplot.info/">gnuplot</a>,
+<a class="reference external" href="https://www.r-project.org/">R</a>, <a class="reference external" href="https://matplotlib.org/">matplotlib</a>, etc.</p>
+<p>For example, if you generate cycle metrics when solving the graph coloring
+dcop with MGM:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">mgm</span> <span class="o">--</span><span class="n">algo_params</span> <span class="n">stop_cycle</span><span class="p">:</span><span class="mi">20</span> \
+             <span class="o">--</span><span class="n">collect_on</span> <span class="n">cycle_change</span> \
+             <span class="o">--</span><span class="n">run_metric</span> <span class="o">./</span><span class="n">metrics_cycle</span><span class="o">.</span><span class="n">csv</span> \
+             <span class="n">graph_coloring_50</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>This should give you a metric file similar to
+<a class="reference download internal" download="" href="../_downloads/047fb760eb8a61899530ee9f9400ac72/metrics_cycle.csv"><code class="xref download docutils literal notranslate"><span class="pre">this</span> <span class="pre">one</span></code></a>.
+You can now plot the cost of the solution over cycles.
+Notice that the cost is always decreasing, as MGM is monotonic:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="s1">&#39;metrics_cycle.csv&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                     <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;cycle&#39;</span><span class="p">,</span> <span class="s1">&#39;cost&#39;</span><span class="p">,</span> <span class="s1">&#39;violation&#39;</span> <span class="p">,</span>
+                            <span class="s1">&#39;msg_count&#39;</span><span class="p">,</span> <span class="s1">&#39;msg_size&#39;</span><span class="p">,</span> <span class="s1">&#39;status&#39;</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;cost MGM&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;cycle&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;cost&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;MGM cost&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;mgm_cost.png&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-center" id="id1">
+<img alt="mgm solution cost" src="../_images/mgm_cost.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">MGM solution cost over 20 cycles.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Of course, before running this example, you need to install matplotlib:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">matplotlib</span>
+</pre></div>
+</div>
+</section>
+<section id="logs">
+<h2>Logs<a class="headerlink" href="#logs" title="Permalink to this headline"></a></h2>
+<p>By default, the <span class="xref std std-ref">solve</span> command (like all other
+pyDCOP commands) only outputs the results (here, the end metrics) and does
+not output any log, except if there are errors.
+You can enable  logs by adding the <code class="docutils literal notranslate"><span class="pre">-v</span></code>
+<a class="reference internal" href="../usage/cli_ref.html#usage-cli-ref-options"><span class="std std-ref">global option</span></a> with the requested level:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">-</span><span class="n">v</span> <span class="mi">2</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">dpop</span> <span class="n">graph_coloring</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>Level 1 displays only warnings messages, level 2 displays warnings and info
+messages and level 3 all messages (and can be quite verbose! )</p>
+<p>For more control over logs, you can use the <code class="docutils literal notranslate"><span class="pre">--log</span> <span class="pre">&lt;conf_file&gt;</span></code>
+<a class="reference internal" href="../usage/cli_ref.html#usage-cli-ref-options"><span class="std std-ref">option</span></a>, where <code class="docutils literal notranslate"><span class="pre">conf_file</span></code> is a
+<a class="reference external" href="https://docs.python.org/3/library/logging.config.html#configuration-file-format">standard python log configuration file</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">--</span><span class="n">log</span> <span class="n">algo_logs</span><span class="o">.</span><span class="n">conf</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">dpop</span> <span class="n">graph_coloring</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>For example, using <a class="reference download internal" download="" href="../_downloads/237765182df02b2a78a14412938a352d/algo_logs.conf"><code class="xref download docutils literal notranslate"><span class="pre">this</span> <span class="pre">long</span> <span class="pre">configuration</span> <span class="pre">file</span></code></a>,
+all log messages from DPOP computations will be output to an <code class="docutils literal notranslate"><span class="pre">agents.log</span></code> file,
+without any log from the pyDCOP infrastructure
+(discovery, messaging, etc.).
+This can be very useful to analyse an algorithm’s behavior.
+When solving our graph coloring problem with DPOP, you should get a log file
+containing something similar to this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v3</span> <span class="o">-</span>  <span class="n">Leaf</span> <span class="n">v3</span> <span class="n">prepares</span> <span class="n">init</span> <span class="n">message</span> <span class="n">v3</span> <span class="o">-&gt;</span> <span class="n">v2</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v2</span> <span class="o">-</span>  <span class="n">Util</span> <span class="n">message</span> <span class="kn">from</span> <span class="nn">v3</span> <span class="p">:</span> <span class="n">NAryMatrixRelation</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;v2&#39;</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span>  <span class="mf">0.1</span><span class="p">])</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v2</span> <span class="o">-</span>  <span class="n">On</span> <span class="n">UTIL</span> <span class="n">message</span> <span class="kn">from</span> <span class="nn">v3</span><span class="p">,</span> <span class="n">send</span> <span class="n">UTILS</span> <span class="n">msg</span> <span class="n">to</span> <span class="n">parent</span> <span class="p">[</span><span class="s1">&#39;v3&#39;</span><span class="p">]</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v1</span> <span class="o">-</span>  <span class="n">Util</span> <span class="n">message</span> <span class="kn">from</span> <span class="nn">v2</span> <span class="p">:</span> <span class="n">NAryMatrixRelation</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;v1&#39;</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span> <span class="mf">0.</span><span class="p">])</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v1</span> <span class="o">-</span>  <span class="n">ROOT</span><span class="p">:</span> <span class="n">On</span> <span class="n">UNTIL</span> <span class="n">message</span> <span class="kn">from</span> <span class="nn">v2</span><span class="p">,</span> <span class="n">send</span> <span class="n">value</span> <span class="n">msg</span> <span class="n">to</span> <span class="n">childrens</span> <span class="p">[</span><span class="s1">&#39;v2&#39;</span><span class="p">]</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v1</span> <span class="o">-</span>  <span class="n">Selecting</span> <span class="n">new</span> <span class="n">value</span><span class="p">:</span> <span class="n">R</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span> <span class="p">(</span><span class="n">previous</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v1</span> <span class="o">-</span>  <span class="n">Value</span> <span class="n">selected</span> <span class="n">at</span> <span class="n">v1</span> <span class="p">:</span> <span class="n">R</span> <span class="o">-</span> <span class="o">-</span><span class="mf">0.1</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v2</span> <span class="o">-</span>  <span class="n">v2</span><span class="p">:</span> <span class="n">on</span> <span class="n">value</span> <span class="n">message</span> <span class="kn">from</span> <span class="nn">v1</span> <span class="p">:</span> <span class="s2">&quot;DpopMessage(VALUE, ([Variable(v1, None, VariableDomain(colors))], [&#39;R&#39;]))&quot;</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v2</span> <span class="o">-</span>  <span class="n">Slicing</span> <span class="n">relation</span> <span class="n">on</span> <span class="p">{</span><span class="s1">&#39;v1&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">}</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v2</span> <span class="o">-</span>  <span class="n">Relation</span> <span class="n">after</span> <span class="n">slicing</span> <span class="n">NAryMatrixRelation</span> <span class="p">(</span><span class="n">joined_utils</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;v2&#39;</span><span class="p">])</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v2</span> <span class="o">-</span>  <span class="n">Selecting</span> <span class="n">new</span> <span class="n">value</span><span class="p">:</span> <span class="n">G</span><span class="p">,</span> <span class="mf">0.0</span> <span class="p">(</span><span class="n">previous</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v2</span> <span class="o">-</span>  <span class="n">Value</span> <span class="n">selected</span> <span class="n">at</span> <span class="n">v2</span> <span class="p">:</span> <span class="n">G</span> <span class="o">-</span> <span class="mf">0.0</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v3</span> <span class="o">-</span>  <span class="n">v3</span><span class="p">:</span> <span class="n">on</span> <span class="n">value</span> <span class="n">message</span> <span class="kn">from</span> <span class="nn">v2</span> <span class="p">:</span> <span class="s2">&quot;DpopMessage(VALUE, ([Variable(v2, None, VariableDomain(colors))], [&#39;G&#39;]))&quot;</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v3</span> <span class="o">-</span>  <span class="n">Slicing</span> <span class="n">relation</span> <span class="n">on</span> <span class="p">{</span><span class="s1">&#39;v2&#39;</span><span class="p">:</span> <span class="s1">&#39;G&#39;</span><span class="p">}</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v3</span> <span class="o">-</span>  <span class="n">Relation</span> <span class="n">after</span> <span class="n">slicing</span> <span class="n">NAryMatrixRelation</span><span class="p">(</span><span class="n">joined_utils</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;v3&#39;</span><span class="p">])</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v3</span> <span class="o">-</span>  <span class="n">Selecting</span> <span class="n">new</span> <span class="n">value</span><span class="p">:</span> <span class="n">R</span><span class="p">,</span> <span class="mf">0.1</span> <span class="p">(</span><span class="n">previous</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">pydcop</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">dpop</span><span class="o">.</span><span class="n">v3</span> <span class="o">-</span>  <span class="n">Value</span> <span class="n">selected</span> <span class="n">at</span> <span class="n">v3</span> <span class="p">:</span> <span class="n">R</span> <span class="o">-</span> <span class="mf">0.1</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-left" title="Getting started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="deploying_on_machines.html" class="btn btn-neutral float-right" title="Deploying on several machines" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

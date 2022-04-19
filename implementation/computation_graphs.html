@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DCOP graph models &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DCOP computation distribution" href="distribution.html" />
+    <link rel="prev" title="Concepts &amp; Implementation" href="../implementation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DCOP graph models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constraints-hyper-graph">Constraints hyper-graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#factor-graph">Factor graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dfs-tree">DFS tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementing-a-new-graph-model">Implementing a new graph model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="distribution.html">DCOP computation distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resilient_dcop.html">Resilient DCOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html">DCOP algorithm Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../implementation.html">Concepts &amp; Implementation</a> &raquo;</li>
+      <li>DCOP graph models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/implementation/computation_graphs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dcop-graph-models">
+<span id="concepts-graph"></span><h1>DCOP graph models<a class="headerlink" href="#dcop-graph-models" title="Permalink to this headline"></a></h1>
+<p>When solving a DCOP, The first step performed by pyDCOP is to build a graph
+of computations.
+This <strong>computation graph</strong>  must not be confused with the constraints graph ;
+while they may sometime be similar.
+The constraints graph is strictly a graph representation of the
+Constraints Optimization Problem (COP) while the <strong>computation graph</strong>
+depends on the method (aka algorithm) used to solve this problem.</p>
+<p>A computation graph is a graph
+where vertices represent <strong>computations</strong>
+and edges represent <strong>communication</strong> between these computations.
+Computation send and receive messages one with another,
+along the edges of the graph.
+Computations are defined as the basic unit of work needed when solving a DCOP,
+their exact definition depends on the algorithm used.
+Most algorithms define computations for the decision variables of the DCOP,
+but some algorithm can define computations for constraints as well,
+or even groups of variables.</p>
+<p>Pydcop defines at the moment 3 kinds of computation graphs:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Constraints hyper-graph</p></li>
+<li><p>Pseudo-tree (aka DFS Tree)</p></li>
+<li><p>Factor graph</p></li>
+</ul>
+</div></blockquote>
+<p>When solving a DCOP, as each algorithm require a specific type of graph,
+pydcop can automatically infer the computation graph model from the algorithm
+you’re using.</p>
+<section id="constraints-hyper-graph">
+<h2>Constraints hyper-graph<a class="headerlink" href="#constraints-hyper-graph" title="Permalink to this headline"></a></h2>
+<p>This is the most straightforward computation graph and is used with
+algorithms that define one computation for each variable.
+In a constraints graph  vertices (i.e. computations) directly maps to the
+variables of the DCOP and edges maps to constraints.
+As a classical constraint graph can only represents binary constraints,
+pyDCOP uses an hyper-graph, where hyper-edges can represent n-ary constraints.</p>
+<p>The kind of graph is used by algorithms like
+<a class="reference internal" href="reference/algorithms/mgm.html#implementation-reference-algorithms-mgm"><span class="std std-ref">MGM</span></a>,
+<a class="reference internal" href="reference/algorithms/dsa.html#implementation-reference-algorithms-dsa"><span class="std std-ref">DSA</span></a>, etc.</p>
+</section>
+<section id="factor-graph">
+<span id="concept-factor-graph"></span><h2>Factor graph<a class="headerlink" href="#factor-graph" title="Permalink to this headline"></a></h2>
+<p>A factor graph is an  undirected bipartite graph in which vertices represent
+variables and constraints (called factors),
+and an edge exists between a variable and a constraint
+if the variable is in the scope of the constraint.</p>
+<p>Factors graph are used for algorithms that define computations for variables
+and for constraints. This is typically the caase of
+<a class="reference internal" href="reference/algorithms/maxsum.html#implementation-reference-algorithms-maxsum"><span class="std std-ref">MaxSum</span></a> and
+most GDL-based algorithms.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/factor_graph.png"><img alt="factor graph" src="../_images/factor_graph.png" style="width: 60%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">An example of a Factor graph
+(from <span id="id1">[<a class="reference internal" href="../zbibliography.html#id7" title="Pierre Rust, Gauthier Picard, and Fano Ramparany. Using Message-passing DCOP Algorithms to Solve Energy-efficient Smart Environment Configuration Problems. In Proceedings of the Twenty-Fifth International Joint Conference on Artificial Intelligence, IJCAI'16, 468–474. New York, New York, USA, 2016. AAAI Press. URL: http://dl.acm.org/citation.cfm?id=3060621.3060687.">RPR16</a>]</span>)</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="dfs-tree">
+<h2>DFS tree<a class="headerlink" href="#dfs-tree" title="Permalink to this headline"></a></h2>
+<p>DFS trees are a subclass of pseudotrees, built a depth-first
+traversal of the constraint graph (where vertices represent variables and
+edges represent constraints).
+In addition to the parent/children edges of the tree,
+they contains pseudo-parent/ pseudo-children edges, which correspond to the
+edges (aka constraints) of the orginal graph that would othrwise not be
+represented in a simple tree.</p>
+<p>The only algorithm currently implemented in pyDCOP that uses a DFS tree
+computation graph is
+<a class="reference internal" href="reference/algorithms/dpop.html#implementation-reference-algorithms-dpop"><span class="std std-ref">DPOP</span></a></p>
+<figure class="align-center" id="id4">
+<a class="reference internal image-reference" href="../_images/dfs_tree.png"><img alt="factor graph" src="../_images/dfs_tree.png" style="width: 90%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">An example of a DFS tree representing a constraint graph
+(from <span id="id2">[<a class="reference internal" href="../zbibliography.html#id10" title="Adrian Petcu. A Class of Algorithms for Distributed Constraint Optimization. PhD thesis, École Polytechnique Fédérale de Lausanne, 2007.">Pet07</a>]</span>)</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="implementing-a-new-graph-model">
+<h2>Implementing a new graph model<a class="headerlink" href="#implementing-a-new-graph-model" title="Permalink to this headline"></a></h2>
+<p>A module for a computation graph type typically contains</p>
+<ul>
+<li><p>class(es) representing the nodes of the graph (i.e. the computation),
+extending ComputationNode</p></li>
+<li><p>class representing the edges (extending Link)</p></li>
+<li><p>a class representing the graph</p></li>
+<li><p>a (mandatory) method  to build a computation graph from a Dcop object :</p>
+<blockquote>
+<div><p>def build_computation_graph(dcop: DCOP)-&gt; ComputationPseudoTree:</p>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../implementation.html" class="btn btn-neutral float-left" title="Concepts &amp; Implementation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="distribution.html" class="btn btn-neutral float-right" title="DCOP computation distribution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

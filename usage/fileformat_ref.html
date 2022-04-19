@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyDCOP file formats &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyDCOP API" href="api_ref.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="cli/distribute.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../usage.html">Usage</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="cli_ref.html">pyDCOP command line reference</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pyDCOP file formats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dcop-file-format">DCOP file format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#distribution-file-format">Distribution file format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#replication-file-format">Replication file format</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scenario-file-format">Scenario file format</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_ref.html">pyDCOP API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_ref.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="provisioning.html">Provisioning pyDCOP on many machines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../usage.html">Usage</a> &raquo;</li>
+      <li>pyDCOP file formats</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/usage/fileformat_ref.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pydcop-file-formats">
+<span id="usage-file-formats"></span><h1>pyDCOP file formats<a class="headerlink" href="#pydcop-file-formats" title="Permalink to this headline"></a></h1>
+<section id="dcop-file-format">
+<span id="usage-file-formats-dcop"></span><h2>DCOP file format<a class="headerlink" href="#dcop-file-format" title="Permalink to this headline"></a></h2>
+<p>A DCOP definition is written in yaml-formatted files and must contains
+definitions for:</p>
+<ul class="simple">
+<li><p>the objective (min or max)</p></li>
+<li><p>variables , and their domains</p></li>
+<li><p>constraints, which can be given as intentional or extensional constraints</p></li>
+<li><p>agents</p></li>
+</ul>
+<p>It can also contains the following optional elements:</p>
+<ul class="simple">
+<li><p>agents capacity, which is used by some
+<a class="reference internal" href="../implementation/distribution.html#concepts-distribution"><span class="std std-ref">computations distribution</span></a>, mechanisms.</p></li>
+<li><p>route and hosting costs, also used for
+<a class="reference internal" href="../implementation/distribution.html#concepts-distribution"><span class="std std-ref">computations distribution</span></a>.</p></li>
+</ul>
+<p>See this sample annotated file for
+a quick description of the format:
+<a class="reference download internal" download="" href="../_downloads/b2d67c562454bcc7ba72ee800cf9c12e/dcop_format.yml"><code class="xref download docutils literal notranslate"><span class="pre">dcop_format.yml</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>pyDCOP command line interface accepts DCOP given
+in several files, which will be concatenated before parsing the yaml (see cli
+the command options, for example <span class="xref std std-ref">solve</span>).</p>
+<p>This can be useful, for example when when you want to run the same of
+variables and constraints with different sets of agents ; you can simply
+write a single file for the variables and constraints and one file for each
+set of agents.</p>
+</div>
+</section>
+<section id="distribution-file-format">
+<span id="usage-file-formats-distribution"></span><h2>Distribution file format<a class="headerlink" href="#distribution-file-format" title="Permalink to this headline"></a></h2>
+<p>In order to run a DCOP, one must also specify which agent is responsible for
+which variable (or, more generally, which agent will host which computation,
+see. <a class="reference internal" href="../implementation/distribution.html#concepts-distribution"><span class="std std-ref">computations distribution</span></a>). In pyDCOP, we
+call this mapping a <strong>distribution</strong> and it can be described with a yaml file.</p>
+<p>Yaml distribution files simply contains a map, where each key is an agent
+name and the corresponding value a list of computations hosted on this agent:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">distribution</span><span class="p">:</span>
+  <span class="n">a0</span><span class="p">:</span> <span class="p">[]</span>
+  <span class="n">a1</span><span class="p">:</span> <span class="p">[</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">]</span>
+  <span class="n">a2</span><span class="p">:</span> <span class="p">[]</span>
+  <span class="n">a3</span><span class="p">:</span> <span class="p">[</span><span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>See this file for an sample distribution file :
+<a class="reference download internal" download="" href="../_downloads/5a79f2cca1d22dbf679a99ec0d07d8ba/dist_format.yml"><code class="xref download docutils literal notranslate"><span class="pre">dist_format.yml</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>pyDCOP command line interface accepts either a yaml distribution
+file or the name of a distribution algorithm.
+In the latter case, the distribution will be
+automatically generated for the DCOP using the requested method.</p>
+</div>
+</section>
+<section id="replication-file-format">
+<span id="usage-file-formats-replication"></span><h2>Replication file format<a class="headerlink" href="#replication-file-format" title="Permalink to this headline"></a></h2>
+<p>When using a resilient DCOP, computations are replicated on several agents.
+This replica distribution is generated using the
+<span class="xref std std-ref">replica_dist</span> command and can also be
+given as a yaml file.</p>
+<p>See this file for an replica distribution file :
+<a class="reference download internal" download="" href="../_downloads/feb58a84b2e39489a06f36266138ccee/replica_dist_format.yml"><code class="xref download docutils literal notranslate"><span class="pre">replica_dist_format.yml</span></code></a>.</p>
+</section>
+<section id="scenario-file-format">
+<span id="usage-file-formats-scenario"></span><h2>Scenario file format<a class="headerlink" href="#scenario-file-format" title="Permalink to this headline"></a></h2>
+<p>To run a dynamic DCOP, you must also describe the events happening to the
+DCOP (agents leaving or entering the system, change of value for an
+non-decision variable, etc.). This is done is a scenario file, in yaml.</p>
+<p>See this file for an sample scenario file :
+<a class="reference download internal" download="" href="../_downloads/26a56db517a33b70d36ab7984dc04525/scenario_format.yml"><code class="xref download docutils literal notranslate"><span class="pre">scenario_format.yml</span></code></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli/distribute.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="api_ref.html" class="btn btn-neutral float-right" title="pyDCOP API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyDCOP: DCOP solver in python &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>pyDCOP: DCOP solver in python</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pydcop-dcop-solver-in-python">
+<h1>pyDCOP: DCOP solver in python<a class="headerlink" href="#pydcop-dcop-solver-in-python" title="Permalink to this headline"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<p>pyDCOP is a library and command line application for <strong>Distributed Constraint
+Optimization Problems</strong> (DCOP).</p>
+<p>A Distributed Constraint Optimization Problem is traditionally represented as
+a tuple
+<span class="math notranslate nohighlight">\(\langle \mathcal{A}, \mathcal{X}, \mathcal{D}, \mathcal{C}, \mu \rangle\)</span>
+, where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{A} = \{a_1,\ldots,a_{|A|}\}\)</span> is a set of agents;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{X} = \{x_1,\ldots, x_n\}\)</span> are variables owned by the agents;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{D} = \{\mathcal{D}_{x_1},\ldots,\mathcal{D}_{x_n}\}\)</span> is a set of finite
+domains, such that variable <span class="math notranslate nohighlight">\(x_i\)</span> takes values in <span class="math notranslate nohighlight">\(\mathcal{D}_{x_i} = \{v_1,\ldots, v_k\}\)</span>;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{C} = \{c_1,\ldots,c_m\}\)</span> is a set of soft constraints, where each <span class="math notranslate nohighlight">\(c_i\)</span>
+defines a cost <span class="math notranslate nohighlight">\(\in \mathbb{R} \cup \{\infty\}\)</span> for each combination of assignments to a
+subset of variables (a constraint is initially known only to the agents involved);</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu: \mathcal{X} \rightarrow \mathcal{A}\)</span> is a function mapping variables to their associated agent.</p></li>
+</ul>
+<p>A <em>solution</em> to the DCOP is an assignment to all variables that minimizes
+the overall sum of costs.</p>
+<p>pyDCOP has already been used for several scientific papers.</p>
+</section>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>pyDCOP provides implementations of many classic DCOP algorithms
+(DSA, MGM, MaxSum, DPOP, etc.).</p></li>
+<li><p>pyDCOP allows you to implement our own DCOP algorithm easily, by providing
+all the required infrastructure: agents, messaging system,
+metrics collection, etc.</p></li>
+<li><p>Agents can run on the same computer or on different machines, making real
+distributed experiments easy.</p></li>
+<li><p>Multi-platform : pyDCOP can run on windows, Mac and Linux.</p></li>
+<li><p>pyDCOP is especially suited for the IoT use-case and can run
+agents on single-board computers like the Raspberry Pi.</p></li>
+<li><p>In addition to classical DCOP algorithms, pyDCOP also provides novel approaches
+for using DCOP in IoT systems: several strategies are available to distribute
+DCOP computations on agents and achieve resilience.</p></li>
+</ul>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="zbibliography.html">Bibliography</a></li>
+</ul>
+</div>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline"></a></h2>
+<p>We welcome contributions, especially the implementation of DCOP algorithms
+(novel or well-known). Join us on
+<a class="reference external" href="https://github.com/rpgoldman/pyDcop">GitHub</a>.</p>
+</section>
+<section id="licence">
+<h2>Licence<a class="headerlink" href="#licence" title="Permalink to this headline"></a></h2>
+<p>pyDCOP is licensed under the BSD-3-clause license.</p>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

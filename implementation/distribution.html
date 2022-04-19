@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DCOP computation distribution &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Resilient DCOP" href="resilient_dcop.html" />
+    <link rel="prev" title="DCOP graph models" href="computation_graphs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="computation_graphs.html">DCOP graph models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DCOP computation distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resilient_dcop.html">Resilient DCOP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algorithms.html">DCOP algorithm Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../implementation.html">Concepts &amp; Implementation</a> &raquo;</li>
+      <li>DCOP computation distribution</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/implementation/distribution.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dcop-computation-distribution">
+<span id="concepts-distribution"></span><h1>DCOP computation distribution<a class="headerlink" href="#dcop-computation-distribution" title="Permalink to this headline"></a></h1>
+<p>Before running the DCOP, the computation must be deployed on agents.
+We call the task of assigning each computation to one agent, <strong>distribution</strong>.
+The agent that a distribution assigns to a computation will be responsible for
+hosting and running the computation</p>
+<p>When you look at the standard DCOP definition,
+<span class="math notranslate nohighlight">\(\langle \mathcal{A}, \mathcal{X}, \mathcal{D}, \mathcal{C}, \mu \rangle\)</span>,
+pyDCOP’s <strong>distribution</strong> can be seen as a generalization of the
+mapping function <span class="math notranslate nohighlight">\(\mu: \mathcal{X} \rightarrow \mathcal{A}\)</span>
+used to assign variables to agents.</p>
+<p>In classical DCOP approaches, there is exactly one agent for each variable
+and most DCOP algorithms define one computation for each variable.
+In that case, the distribution of these computations is of course trivial.
+The <a class="reference internal" href="reference/distributions/oneagent.html#implementation-reference-distributions-oneagent"><span class="std std-ref">oneagent</span></a>
+distribution replicates this traditional method in pyDCOP
+and might be enough if you do not care about distribution issues and
+simply want to develop or benchmark classical DCOP algorithms.</p>
+<p>However, some DCOP algorithms (for example MaxSum) not only define computations
+for variable, but also for constraints.
+These computations then form a
+<a class="reference internal" href="computation_graphs.html#concept-factor-graph"><span class="std std-ref">factor graph</span></a>
+like the one on <a class="reference internal" href="#factor-graph"><span class="std std-numref">Fig. 5</span></a>:</p>
+<figure class="align-center" id="id4">
+<span id="factor-graph"></span><a class="reference internal image-reference" href="../_images/factor_graph.png"><img alt="factor graph" src="../_images/factor_graph.png" style="width: 50%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Sample factor graph with 4 variables and 5 constraints</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In this situation, one must also assign factor-computation to agent, and
+there is no obvious mapping. <a class="reference internal" href="#fg-dist"><span class="std std-numref">Fig. 6</span></a>: is a possible distribution
+of this factor graph on 3 agents but is obvously not the only possible one.</p>
+<figure class="align-center" id="id5">
+<span id="fg-dist"></span><a class="reference internal image-reference" href="../_images/fg_distribution.png"><img alt="factor graph" src="../_images/fg_distribution.png" style="width: 60%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 6 </span><span class="caption-text">One possible distribution of the factor graph on agents</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Even with algorithms that only define computations for variables,
+the standard assumptions do not hold in many real world problems.
+“Agents” typically maps to physical computers or devices
+and the number of these devices is not necessarily equal
+to the number of decision variables in the DCOP.
+Moreover, some variables have a physical link to devices
+(in the sense, for example, that they model an action or decision
+of this particular device),
+while some other variables might simply be used to model
+an abstract concept in the problem and have no real relationship
+with a physical device.</p>
+<p>Finally the placement of computations on the agents has an important impact on
+the performance characteristics of the global system:
+some distributions may improve response time,
+some other may favor communication load between nodes
+and some other may be better for other criteria like QoS or running cost.</p>
+<p>Formally, once the definition of optimality has been defined for a specific
+problem,
+finding an optimal mapping is an optimization problem by itself,
+which can be mapped to graph partitioning and
+this typically falls under the category of NP-hard problems.</p>
+<p>For all these reasons, the distribution of computations on agents is
+an interesting topic, which is implemented in pyDCOP through distribution
+methods.
+See <span id="id1">[<a class="reference internal" href="../zbibliography.html#id7" title="Pierre Rust, Gauthier Picard, and Fano Ramparany. Using Message-passing DCOP Algorithms to Solve Energy-efficient Smart Environment Configuration Problems. In Proceedings of the Twenty-Fifth International Joint Conference on Artificial Intelligence, IJCAI'16, 468–474. New York, New York, USA, 2016. AAAI Press. URL: http://dl.acm.org/citation.cfm?id=3060621.3060687.">RPR16</a>]</span> <span id="id2">[<a class="reference internal" href="../zbibliography.html#id6" title="Pierre Rust, Gauthier Picard, and Fano Ramparany. On the Deployment of Factor Graph Elements to Operate Max-Sum in Dynamic Ambient Environments. In Autonomous Agents and Multiagent Systems, volume 10642, 116–137. Cham, 2017. Springer International Publishing. URL: http://link.springer.com/10.1007/978-3-319-71682-4_8 (visited on 2018-06-07), doi:10.1007/978-3-319-71682-4_8.">RPR17</a>]</span> and
+<span id="id3">[<a class="reference internal" href="../zbibliography.html#id9" title="Pierre Rust, Gauthier Picard, and Fano Ramparany. Self-Organized and Resilient Distribution of Decisions over Dynamic Multi-Agent Systems. In OPTMAS 2018. 2018.">RPR18</a>]</span> for background and
+details on the deployment and distribution of computations in a DCOP.</p>
+<p>pyDCOP currently implements several distribution methods, you can find the
+full list in the
+<a class="reference internal" href="reference/distributions.html#implementation-reference-distributions"><span class="std std-ref">reference documentation</span></a>.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="computation_graphs.html" class="btn btn-neutral float-left" title="DCOP graph models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="resilient_dcop.html" class="btn btn-neutral float-right" title="Resilient DCOP" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

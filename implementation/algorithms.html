@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DCOP algorithm Implementation &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Reference" href="reference.html" />
+    <link rel="prev" title="Resilient DCOP" href="resilient_dcop.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="computation_graphs.html">DCOP graph models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distribution.html">DCOP computation distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resilient_dcop.html">Resilient DCOP</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">DCOP algorithm Implementation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module">Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#messages">Messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#computation">Computation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#receiving-messages">Receiving messages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sending-messages">Sending messages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#selecting-a-value">Selecting a value</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cycles">Cycles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#terminating-the-algorithm">Terminating the algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#argument-parameters">Argument Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#builder-method">Builder method</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#distribution-and-deployment">Distribution and deployment</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#computations-s-footprint">Computations’s footprint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#communication-load">Communication load</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../implementation.html">Concepts &amp; Implementation</a> &raquo;</li>
+      <li>DCOP algorithm Implementation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/implementation/algorithms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dcop-algorithm-implementation">
+<span id="implementation-algorithms"></span><h1>DCOP algorithm Implementation<a class="headerlink" href="#dcop-algorithm-implementation" title="Permalink to this headline"></a></h1>
+<p><strong>Note:</strong> This document build upon the tutorial
+<a class="reference internal" href="../tutorials/algo_implementation.html#tutorials-algorithm-implementation"><span class="std std-ref">Implementing a DCOP algorithm</span></a>,
+you should follow it before reading this.</p>
+<p>By providing all the infrastructure, pyDCOP makes it easier to implement a
+new DCOP algorithm ; you only have one python module to implement,
+with only one mandatory class.</p>
+<p>To implement an algorithm you must:</p>
+<ul class="simple">
+<li><p>create a python module</p></li>
+<li><p>define one or several <code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code></p></li>
+<li><p>implement your logic in one or several
+<code class="xref py py-class docutils literal notranslate"><span class="pre">DcopComputation</span></code> class</p></li>
+</ul>
+<p>Optionally, you may also</p>
+<ul class="simple">
+<li><p>declare the algorithm’s parameters</p></li>
+<li><p>implement some other methods used for some
+distribution methods</p></li>
+</ul>
+<section id="module">
+<h2>Module<a class="headerlink" href="#module" title="Permalink to this headline"></a></h2>
+<p>An algorithm must be defined in it’s own module in <code class="xref py py-mod docutils literal notranslate"><span class="pre">pydcop.algorithms</span></code>.
+For example, <code class="docutils literal notranslate"><span class="pre">dsa</span></code> is implemented in the module <code class="xref py py-mod docutils literal notranslate"><span class="pre">pydcop.algorithms.dsa</span></code>.
+The name of the module is the name you will use
+when running your algorithm with the <code class="docutils literal notranslate"><span class="pre">pydcop</span></code>
+command line interface (<code class="docutils literal notranslate"><span class="pre">-a</span></code> or <code class="docutils literal notranslate"><span class="pre">--algo</span></code> parameter).
+For example, for a new algorithm named <code class="docutils literal notranslate"><span class="pre">my_algorithm</span></code>,
+you simply create a file <code class="docutils literal notranslate"><span class="pre">my_algorithm.py</span></code> in <code class="docutils literal notranslate"><span class="pre">pydcop/algorithms</span></code>.
+You will then be able to use this algorithm
+to <span class="xref std std-ref">solve</span> a DCOP with the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">my_algorithm</span> <span class="p">[</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The module of your algorithm <strong>must</strong> also have an attribute
+named <code class="docutils literal notranslate"><span class="pre">GRAPH_TYPE</span></code> which contains the name of the computation graph type used.
+Available computation graph types are <code class="docutils literal notranslate"><span class="pre">'factor_graph'</span></code>, <code class="docutils literal notranslate"><span class="pre">'pseudo_tree'</span></code> and
+<code class="docutils literal notranslate"><span class="pre">'constraints_hypergraph'</span></code>, other could be defined in the future.</p>
+<p>For example, in <code class="docutils literal notranslate"><span class="pre">dsa.py</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">GRAPH_TYPE</span> <span class="o">=</span> <span class="s1">&#39;constraints_hypergraph&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this headline"></a></h2>
+<p>DCOP algorithms are <em>message passing</em> algorithms: they work by sending
+messages to each other. You must define the message(s) used by your algorithm.
+The easiest approach is to use the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">message_type()</span></code>
+class factory method to define your message(s).</p>
+<p>For example, the following will define a message type <code class="docutils literal notranslate"><span class="pre">MyMessage</span></code>, with two
+fields <code class="docutils literal notranslate"><span class="pre">foo</span></code> and <code class="docutils literal notranslate"><span class="pre">bar</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyMessage</span> <span class="o">=</span> <span class="n">message_type</span><span class="p">(</span><span class="s1">&#39;MyMessage&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>You can then use <code class="docutils literal notranslate"><span class="pre">MyMessage</span></code> like any class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">MyMessage</span><span class="p">(</span><span class="n">foo</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">bar</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">foo</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">type</span>
+<span class="go">&#39;MyMessage&#39;</span>
+</pre></div>
+</div>
+<p>You can also subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">pydcop.infrastructure.computations.Message</span></code>,
+which is more verbose but can be convenient if you want to use python’s type
+annotations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyMessage</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">foot</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bar</span><span class="p">;</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s1">&#39;my_message&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_foo</span> <span class="o">=</span> <span class="n">foo</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bar</span> <span class="o">=</span> <span class="n">bar</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_foo</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bar</span>
+</pre></div>
+</div>
+<p>In any case, your messages <strong>must</strong> use the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">pydcop.utils.simple_repr.SimpleRepr</span></code> mixin
+(<code class="xref py py-mod docutils literal notranslate"><span class="pre">Message</span></code> already extends it)
+for your message to be serializable.
+When subclassing <code class="xref py py-class docutils literal notranslate"><span class="pre">Message</span></code> or
+using <code class="xref py py-func docutils literal notranslate"><span class="pre">message_type()</span></code> this is done automatically.
+This is necessary when running the agents in
+different processes, as messages will be sent over the network.</p>
+</section>
+<section id="computation">
+<h2>Computation<a class="headerlink" href="#computation" title="Permalink to this headline"></a></h2>
+<p>An algorithms consists in one or several <code class="xref py py-class docutils literal notranslate"><span class="pre">DcopComputation</span></code> class.
+Most algorithms have one single type of computation, which is
+responsible for selecting the value for a single variable.
+In this case you must subclass <code class="xref py py-class docutils literal notranslate"><span class="pre">VariableComputation</span></code>,
+which provides some convenient methods for value selection.</p>
+<p>For more complex algorithm, you can define several computations
+(with pyDCOP, your algorithm can have as many kind of computation as you want),
+look at MaxSum’s implementation for an example
+(<cite>MaxSum</cite> has two kind of computations, for <cite>Factor</cite> and <cite>Variable</cite>).</p>
+<section id="receiving-messages">
+<h3>Receiving messages<a class="headerlink" href="#receiving-messages" title="Permalink to this headline"></a></h3>
+<p>At runtime, an instance of a computation is deployed on an agent,
+which notifies it when receiving a message.
+The computation then processes the message and,
+if necessary, emits new messages for other computations.</p>
+<p>For each message type, you must declare a handler method using the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">register()</span></code> decorator:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@register</span><span class="p">(</span><span class="s2">&quot;my_message_type&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_on_my_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender_name</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="c1"># handle message of type &#39;my_message&#39;</span>
+    <span class="c1"># sender_name is the name of the computation that sent the message</span>
+    <span class="c1"># t is the time the message was received by the agent.</span>
+</pre></div>
+</div>
+</section>
+<section id="sending-messages">
+<h3>Sending messages<a class="headerlink" href="#sending-messages" title="Permalink to this headline"></a></h3>
+<p>When sending messages, a computation never needs
+to care about the agent hosting the target computations :
+all message routing and delivery is taken care of by
+the agent and communication infrastructure.
+Messages are sent by calling <code class="docutils literal notranslate"><span class="pre">self.post_msg</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">post_msg</span><span class="p">(</span><span class="n">target_computation_name</span><span class="p">,</span> <span class="n">message_object</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also send a message to all neighbors by using
+<code class="docutils literal notranslate"><span class="pre">self.post_to_all_neighbors</span></code>.</p>
+</section>
+<section id="selecting-a-value">
+<h3>Selecting a value<a class="headerlink" href="#selecting-a-value" title="Permalink to this headline"></a></h3>
+<p>In your computation, when selecting a value for a variable, you <strong>must</strong>
+call <code class="docutils literal notranslate"><span class="pre">self.value_selection</span></code> with the value and the associated local cost.
+This is allows pyDcop to monitor value selection on each agent and
+extract the final assignment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">value_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_v</span><span class="o">.</span><span class="n">initial_value</span><span class="p">,</span> <span class="n">local_cost</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">local_cost</span></code> is the cost as seen from this variable.</p>
+</section>
+<section id="cycles">
+<h3>Cycles<a class="headerlink" href="#cycles" title="Permalink to this headline"></a></h3>
+<p>Each your algorithm has a concept of cycle
+(i.e. it works in sycnhronized steps), you should call
+<code class="docutils literal notranslate"><span class="pre">self.new_cycle()</span></code> when you start a new cycle.</p>
+</section>
+<section id="terminating-the-algorithm">
+<h3>Terminating the algorithm<a class="headerlink" href="#terminating-the-algorithm" title="Permalink to this headline"></a></h3>
+<p>TODO</p>
+</section>
+<section id="argument-parameters">
+<h3>Argument Parameters<a class="headerlink" href="#argument-parameters" title="Permalink to this headline"></a></h3>
+<p>If the algorithm supports parameters, you must give a definition of these
+parameters in your module, by defining a variable named <code class="docutils literal notranslate"><span class="pre">algo_params</span></code>
+that contains a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">AlgoParameterDef</span></code>.</p>
+<p>See for example in mgm implementation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">algo_params</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">AlgoParameterDef</span><span class="p">(</span><span class="s1">&#39;break_mode&#39;</span><span class="p">,</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;lexic&#39;</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">],</span> <span class="s1">&#39;lexic&#39;</span><span class="p">),</span>
+    <span class="n">AlgoParameterDef</span><span class="p">(</span><span class="s1">&#39;stop_cycle&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>These definitions will be automatically used
+(with <code class="xref py py-func docutils literal notranslate"><span class="pre">pydcop.algorithms.prepare_algo_params()</span></code>) to check parameters
+for validity and add default values.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">AlgoritmDef</span></code> instance populated with the parsed parameters will be passed to
+your <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method, you can then use it to pass these parameters
+to the computation instance.</p>
+</section>
+<section id="builder-method">
+<h3>Builder method<a class="headerlink" href="#builder-method" title="Permalink to this headline"></a></h3>
+<p>TODO</p>
+</section>
+</section>
+<section id="distribution-and-deployment">
+<h2>Distribution and deployment<a class="headerlink" href="#distribution-and-deployment" title="Permalink to this headline"></a></h2>
+<p>Your module must also provide a a few predefined utility methods, used to
+build and deploy your algorithm, and may define some optional methods, used for
+deployment and distribution.</p>
+<p>Most distribution methods require the following two methods. These methods
+are generally required for a correct distribution of the computations on
+agents, but if you only want to use <cite>oneagent</cite> distribution (or simply
+during development) you can simply return 0:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">computation_memory</span><span class="p">(</span><span class="n">computation</span><span class="p">:</span> <span class="n">ComputationNode</span><span class="p">,</span> <span class="n">links</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  This method must return the memory footprint for the given computation</span>
+<span class="sd">  from the graph.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">communication_load</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="n">Link</span><span class="p">):</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This method must return the communication load for this link in the</span>
+<span class="sd">computation graph.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>When deploying  the computation, concrete <code class="docutils literal notranslate"><span class="pre">MessagePassingComputation</span></code> objects
+must be instantiated on their assigned agent. For this, an algorithm
+module <strong>must</strong> also provide a factory method to build computation object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">build_computation</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">ComputationNode</span><span class="p">,</span> <span class="n">links</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Link</span><span class="p">],</span> <span class="n">algo</span><span class="p">:</span> <span class="n">AlgorithmDef</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">MessagePassingComputation</span><span class="p">:</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Build a computation instance for a given algorithm (and parameters)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<section id="computations-s-footprint">
+<h3>Computations’s footprint<a class="headerlink" href="#computations-s-footprint" title="Permalink to this headline"></a></h3>
+<p>TODO</p>
+</section>
+<section id="communication-load">
+<h3>Communication load<a class="headerlink" href="#communication-load" title="Permalink to this headline"></a></h3>
+<p>TODO</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="resilient_dcop.html" class="btn btn-neutral float-left" title="Resilient DCOP" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reference.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

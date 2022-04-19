@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting started &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Analysing results" href="analysing_results.html" />
+    <link rel="prev" title="Tutorials" href="../tutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#solving-your-first-dcop">Solving your first DCOP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="analysing_results.html">Analysing results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploying_on_machines.html">Deploying on several machines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_modeling.html">Modeling problems as DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_dcops.html">Dynamic DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="agent_gui.html">Agent’s GUI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algo_implementation.html">Implementing a DCOP algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+      <li>Getting started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<span id="tutorials-getting-started"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline"></a></h1>
+<p>This small tutorial will guide you to solve your first DCOP using pyDCOP.</p>
+<section id="solving-your-first-dcop">
+<h2>Solving your first DCOP<a class="headerlink" href="#solving-your-first-dcop" title="Permalink to this headline"></a></h2>
+<p>Once you have
+<a class="reference internal" href="../installation.html#installation"><span class="std std-ref">installed pyDCOP</span></a>
+(and activated the python venv you have installed it in),
+create a text file <code class="docutils literal notranslate"><span class="pre">graph_coloring.yaml</span></code> with following content:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">name</span><span class="p">:</span> <span class="n">graph</span> <span class="n">coloring</span>
+<span class="n">objective</span><span class="p">:</span> <span class="nb">min</span>
+
+<span class="n">domains</span><span class="p">:</span>
+  <span class="n">colors</span><span class="p">:</span>
+    <span class="n">values</span><span class="p">:</span> <span class="p">[</span><span class="n">R</span><span class="p">,</span> <span class="n">G</span><span class="p">]</span>
+
+<span class="n">variables</span><span class="p">:</span>
+  <span class="n">v1</span><span class="p">:</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="n">colors</span>
+  <span class="n">v2</span><span class="p">:</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="n">colors</span>
+  <span class="n">v3</span><span class="p">:</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="n">colors</span>
+
+<span class="n">constraints</span><span class="p">:</span>
+    <span class="n">pref_1</span><span class="p">:</span>
+      <span class="nb">type</span><span class="p">:</span> <span class="n">extensional</span>
+      <span class="n">variables</span><span class="p">:</span> <span class="n">v1</span>
+      <span class="n">values</span><span class="p">:</span>
+        <span class="o">-</span><span class="mf">0.1</span><span class="p">:</span> <span class="n">R</span>
+        <span class="mf">0.1</span><span class="p">:</span> <span class="n">G</span>
+
+    <span class="n">pref_2</span><span class="p">:</span>
+      <span class="nb">type</span><span class="p">:</span> <span class="n">extensional</span>
+      <span class="n">variables</span><span class="p">:</span> <span class="n">v2</span>
+      <span class="n">values</span><span class="p">:</span>
+        <span class="o">-</span><span class="mf">0.1</span><span class="p">:</span> <span class="n">G</span>
+        <span class="mf">0.1</span><span class="p">:</span> <span class="n">R</span>
+
+    <span class="n">pref_3</span><span class="p">:</span>
+      <span class="nb">type</span><span class="p">:</span> <span class="n">extensional</span>
+      <span class="n">variables</span><span class="p">:</span> <span class="n">v3</span>
+      <span class="n">values</span><span class="p">:</span>
+        <span class="o">-</span><span class="mf">0.1</span><span class="p">:</span> <span class="n">G</span>
+        <span class="mf">0.1</span><span class="p">:</span> <span class="n">R</span>
+
+    <span class="n">diff_1_2</span><span class="p">:</span>
+      <span class="nb">type</span><span class="p">:</span> <span class="n">intention</span>
+      <span class="n">function</span><span class="p">:</span> <span class="mi">10</span> <span class="k">if</span> <span class="n">v1</span> <span class="o">==</span> <span class="n">v2</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="n">diff_2_3</span><span class="p">:</span>
+      <span class="nb">type</span><span class="p">:</span> <span class="n">intention</span>
+      <span class="n">function</span><span class="p">:</span> <span class="mi">10</span> <span class="k">if</span> <span class="n">v3</span> <span class="o">==</span> <span class="n">v2</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="n">agents</span><span class="p">:</span> <span class="p">[</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span><span class="p">,</span> <span class="n">a5</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>You don’t need for the moment to understand everything in this file, it’s
+enough to know that it represents a <a class="reference external" href="https://en.wikipedia.org/wiki/Graph_coloring">graph coloring problem</a>, modeled as a
+DCOP with 3 variables
+(this example is taken from
+<span id="id1">[<a class="reference internal" href="../zbibliography.html#id4" title="Farinelli, Rogers, Petcu, and Jennings. Decentralised Coordination of Low-power Embedded Devices Using the Max-sum Algorithm. In Proceedings of the 7th international joint conference on Autonomous agents and multiagent systems - Volume 2, volume 2. Richland, SC, 2008. International Foundation for Autonomous Agents and Multiagent Systems. OCLC: 881353656. URL: http://dl.acm.org/citation.cfm?id=1402298.1402313.">FRPJ08</a>]</span> ).</p>
+<p>Now you can simply run the following command to
+<span class="xref std std-ref">solve</span>
+this DCOP with the
+<a class="reference internal" href="../implementation/reference/algorithms/dpop.html#implementation-reference-algorithms-dpop"><span class="std std-ref">DPOP algorithm</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">dpop</span> <span class="n">graph_coloring</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>This should output a result simular to this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="o">//</span> <span class="n">Rather</span> <span class="n">long</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">information</span><span class="p">,</span> <span class="ow">not</span> <span class="n">included</span> <span class="n">here</span> <span class="o">....</span>
+  <span class="s2">&quot;assignment&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;v1&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;v2&quot;</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;v3&quot;</span><span class="p">:</span> <span class="s2">&quot;R&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span>
+  <span class="s2">&quot;cycle&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;msg_count&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="s2">&quot;msg_size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;FINISHED&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mf">0.008432154994807206</span><span class="p">,</span>
+  <span class="s2">&quot;violation&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Congratulations, you have solved your first DCOP using pyDCOP !!</p>
+<p>Of course, you can solve it with any other DCOP algorithm implemented by
+pyDCOP. Some algorithms have no default termination condition, in this case
+you can stop the execution with <code class="docutils literal notranslate"><span class="pre">CTRL+C</span></code> or use the <code class="docutils literal notranslate"><span class="pre">--timeout</span></code> option:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">--</span><span class="n">timeout</span> <span class="mi">3</span> <span class="n">solve</span> <span class="o">--</span><span class="n">algo</span> <span class="n">mgm</span> <span class="n">graph_coloring</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>You may notice that with this command the assignment in the result is not
+always the same and not always the result we found using DPOP.
+This is because <a class="reference internal" href="../implementation/reference/algorithms/mgm.html#implementation-reference-algorithms-mgm"><span class="std std-ref">MGM</span></a> is
+a <em>local search</em> algorithm, which can be trapped in a
+local minimum.
+On the other hand DPOP is a <em>complete algorithm</em> and will always return the
+optimal assignment (if your problem is small enough to use DPOP on it !).</p>
+<p>Now that you have run your first DCOP, you can head to the next tutorial to
+learn how to <a class="reference internal" href="analysing_results.html#tutorials-analysing-results"><span class="std std-ref">analyse the results</span></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="analysing_results.html" class="btn btn-neutral float-right" title="Analysing results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+language: python
+python:
+  - "3.6"
+  - "3.7"
+  - "3.8"
+  - "3.9"
+
+
+# Glpk solver must be installed through apt, as it is not a python package
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y glpk-utils
+
+# Install python dependencies
+install:
+  - pip install -r requirements.txt
+
+# Run tests
+script:
+  - pytest ./tests/api
+  - pytest --ignore='./tests/dcop_cli/test_distribute.py' --ignore='./tests/dcop_cli/test_solve.py' ./tests/dcop_cli
+  - pytest ./tests/instances
+  - pytest ./tests/integration
+  - pytest ./tests/unit
+  - pytest ./tests/utils
+  # fail:
+  allow_failures:
+    - pytest './tests/dcop_cli/test_distribute.py'
+    - pytest './tests/dcop_cli/test_solve.py'
+

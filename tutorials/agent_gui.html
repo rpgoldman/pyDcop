@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent’s GUI &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Implementing a DCOP algorithm" href="algo_implementation.html" />
+    <link rel="prev" title="Dynamic DCOPs" href="dynamic_dcops.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysing_results.html">Analysing results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploying_on_machines.html">Deploying on several machines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_modeling.html">Modeling problems as DCOPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_dcops.html">Dynamic DCOPs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Agent’s GUI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algo_implementation.html">Implementing a DCOP algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+      <li>Agent’s GUI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/agent_gui.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="agent-s-gui">
+<span id="tutorials-agent-gui"></span><h1>Agent’s GUI<a class="headerlink" href="#agent-s-gui" title="Permalink to this headline"></a></h1>
+<p>Start the Web UI for agent.</p>
+<blockquote>
+<div><p>cd ~/pyDcop-ui/dist
+python3 -m http.server 4001</p>
+</div></blockquote>
+<p>Run a dynamic DCOP, using the extra using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">--</span><span class="n">log</span> <span class="n">log</span><span class="o">.</span><span class="n">conf</span> <span class="n">orchestrator</span> \
+       <span class="o">--</span><span class="n">algo</span> <span class="n">maxsum</span> <span class="o">--</span><span class="n">algo_params</span> <span class="n">damping</span><span class="p">:</span><span class="mf">0.9</span> \
+       <span class="o">--</span><span class="n">distribution</span> <span class="n">heur_comhost</span> \
+       <span class="o">--</span><span class="n">scenario</span> <span class="n">scenario_2</span><span class="o">.</span><span class="n">yaml</span> \
+       <span class="n">graph_coloring_20</span><span class="o">.</span><span class="n">yaml</span>
+
+<span class="n">pydcop</span> <span class="n">agent</span> <span class="o">--</span><span class="n">names</span> <span class="n">a000</span> <span class="n">a001</span> <span class="n">a002</span> <span class="n">a003</span> <span class="n">a004</span> <span class="n">a005</span> <span class="n">a006</span> <span class="n">a007</span> <span class="n">a008</span> <span class="n">a009</span> <span class="n">a010</span> \
+  <span class="n">a011</span> <span class="n">a012</span> <span class="n">a013</span> <span class="n">a014</span> <span class="n">a015</span> <span class="n">a016</span> <span class="n">a017</span> <span class="n">a018</span> <span class="n">a019</span> <span class="n">a020</span> \
+   <span class="o">-</span><span class="n">p</span> <span class="mi">9001</span> <span class="o">--</span><span class="n">orchestrator</span> <span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">9000</span> <span class="o">--</span><span class="n">uiport</span> <span class="mi">10001</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dynamic_dcops.html" class="btn btn-neutral float-left" title="Dynamic DCOPs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="algo_implementation.html" class="btn btn-neutral float-right" title="Implementing a DCOP algorithm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

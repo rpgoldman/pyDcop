@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic DCOPs &mdash; pydcop 0.2.0a1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Agent’s GUI" href="agent_gui.html" />
+    <link rel="prev" title="Modeling problems as DCOPs" href="problem_modeling.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> pydcop
+          </a>
+              <div class="version">
+                0.2
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html">Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysing_results.html">Analysing results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploying_on_machines.html">Deploying on several machines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="problem_modeling.html">Modeling problems as DCOPs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dynamic DCOPs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dcop-and-scenario">DCOP and scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resiliency-and-replication">Resiliency and replication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-dynamic-dcop">Running the dynamic DCOP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="agent_gui.html">Agent’s GUI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="algo_implementation.html">Implementing a DCOP algorithm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation.html">Concepts &amp; Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../zbibliography.html">Bibliography</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pydcop</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+      <li>Dynamic DCOPs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/dynamic_dcops.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dynamic-dcops">
+<span id="tutorials-dynamic-dcops"></span><h1>Dynamic DCOPs<a class="headerlink" href="#dynamic-dcops" title="Permalink to this headline"></a></h1>
+<p>All the DCOPs we have seen in previous tutorial are <em>static DCOPs</em> :
+the problem definition (variables and constraints)
+and the set of agents are supposed to be stable during the solving process.</p>
+<p>However, as for most distributed systems,
+DCOPs are often used on problems where the environment is dynamic in nature.
+Agents may enter or leave the system at any time,
+the problem itself may evolve <em>while</em> it is been worked on,
+and the system needs to adapt to these changes.
+We call such problems <strong>dynamic DCOP</strong>
+(see. <a class="reference internal" href="../implementation/resilient_dcop.html#concepts-resilient-dcop"><span class="std std-ref">Resilient DCOP</span></a>).</p>
+<p>The <span class="xref std std-ref">solve</span> command deals with static DCOP,
+the <span class="xref std std-ref">run</span> command supports running <strong>dynamic DCOP</strong>.</p>
+<section id="dcop-and-scenario">
+<h2>DCOP and scenario<a class="headerlink" href="#dcop-and-scenario" title="Permalink to this headline"></a></h2>
+<p>Running a dynamic DCOP requires injecting events in the system,
+otherwise it would be the exact same thing as running a static DCOP
+using the <span class="xref std std-ref">solve</span> command.</p>
+<p>In order to run and evaluate DCOP solution methods in dynamic environments,
+pyDCOP defines the notion of <strong>scenario</strong>, which is an ordered collection of
+events that are injected in the system while it is running.
+Scenario can be <a class="reference internal" href="../usage/fileformat_ref.html#usage-file-formats-scenario"><span class="std std-ref">written in yaml</span></a>.
+Each event in the scenario is either a <strong>delay</strong>,
+during which the system runs without any perturbation,
+of a collection of <strong>actions</strong>.
+For example, in the following scenario,
+the agent a008 is removed after a 30 seconds delay:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">events</span><span class="p">:</span>
+  <span class="o">-</span> <span class="nb">id</span><span class="p">:</span> <span class="n">w1</span>
+    <span class="n">delay</span><span class="p">:</span> <span class="mi">30</span>
+
+  <span class="o">-</span> <span class="nb">id</span><span class="p">:</span> <span class="n">e1</span>
+    <span class="n">actions</span><span class="p">:</span>
+      <span class="o">-</span> <span class="nb">type</span><span class="p">:</span> <span class="n">remove_agent</span>
+        <span class="n">agent</span><span class="p">:</span> <span class="n">a008</span>
+</pre></div>
+</div>
+<p>Removing an agent is the only action supported at the moment
+(but that should change soon!) .
+Other actions could be:</p>
+<ul class="simple">
+<li><p>changing a constraint value table (the cost of the constraint for a given
+assignment)</p></li>
+<li><p>modifying the scope and arity of a constraint</p></li>
+<li><p>changing the value of a <em>read-only</em> variable</p></li>
+</ul>
+<p>Currently pyDCOP has a partial implementation for these kinds of events,
+which are not yet available through the command line interface.</p>
+<p>Also, pyDCOP implementation <em>simulates</em> dynamic DCOPs,
+which allows evaluating algorithms (for resilient DCOP for example) but does
+entirely support a real dynamic behavior
+where events happen in the environment
+and are <em>sensed</em> at agent level.</p>
+<p>The consequence it that removing an agent can only be done through a scenario:
+if you manually remove an agent from the system
+(by stopping it’s <code class="docutils literal notranslate"><span class="pre">pydcop</span> <span class="pre">agent</span></code> command)
+the computations will not be migrated and the system will malfunction.
+Supporting removal like this would require a distributed <em>discovery mechanism</em>,
+with <em>keep alive</em> messages, in order to be able to detect when an agent
+is not available.
+This mechanism is not (yet) implemented in pyDCOP and all events are injected
+through the orchestrator.</p>
+</section>
+<section id="resiliency-and-replication">
+<h2>Resiliency and replication<a class="headerlink" href="#resiliency-and-replication" title="Permalink to this headline"></a></h2>
+<p>As pyDCOP implementation is currently focused on resilience,
+the run command automatically deploy and run a resilient DCOP.</p>
+<p>This means that all the computations for the DCOP are automatically
+replicated on several agents. Without this step, we would loose computation
+when injecting <code class="docutils literal notranslate"><span class="pre">remove_agent</span></code> events, and the system would stop working
+properly.
+The resiliency level and replication method can be selected
+when using the <span class="xref std std-ref">run</span>  command,
+but for now, you don’t need to bother with these as safe default values are
+provided.</p>
+<p>For more information on resiliency, replication and reparation, see
+<a class="reference internal" href="../implementation/resilient_dcop.html#concepts-resilient-dcop"><span class="std std-ref">Resilient DCOP</span></a></p>
+</section>
+<section id="running-the-dynamic-dcop">
+<h2>Running the dynamic DCOP<a class="headerlink" href="#running-the-dynamic-dcop" title="Permalink to this headline"></a></h2>
+<p>We can now run our dynamic DCOP using the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pydcop</span> <span class="o">-</span><span class="n">t</span> <span class="mi">120</span> <span class="o">--</span><span class="n">log</span> <span class="n">log</span><span class="o">.</span><span class="n">conf</span> <span class="n">run</span> \
+       <span class="o">--</span><span class="n">algo</span> <span class="n">maxsum</span> <span class="o">--</span><span class="n">algo_params</span> <span class="n">damping</span><span class="p">:</span><span class="mf">0.9</span> \
+       <span class="o">--</span><span class="n">collect_on</span> <span class="n">value_change</span> <span class="o">--</span><span class="n">run_metric</span> <span class="n">metrics_value_maxsum</span><span class="o">.</span><span class="n">csv</span> \
+       <span class="o">--</span><span class="n">distribution</span> <span class="n">heur_comhost</span> \
+       <span class="o">--</span><span class="n">scenario</span> <span class="n">scenario_2</span><span class="o">.</span><span class="n">yaml</span> \
+       <span class="n">graph_coloring_20</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>When running this command, the following steps are performed :</p>
+<ul class="simple">
+<li><p>Building the computation graph required for the DCOP algorithm. Here
+it is a factor graph with one computation for each variable and factor (aka
+constraint) in the DCOP</p></li>
+<li><p>Computing an initial distribution of these computations on the the agents,
+using the heuristic <code class="docutils literal notranslate"><span class="pre">heur_comhost</span></code> based on communication and hosting costs</p></li>
+<li><p>replicating all computations on other agents, using the DRPM replication
+method (from <span id="id1">[<a class="reference internal" href="../zbibliography.html#id9" title="Pierre Rust, Gauthier Picard, and Fano Ramparany. Self-Organized and Resilient Distribution of Decisions over Dynamic Multi-Agent Systems. In OPTMAS 2018. 2018.">RPR18</a>]</span>)</p></li>
+<li><p>injecting delays and events from the scenario.
+After each event the system is repaired, which includes:</p>
+<ul>
+<li><p>For each of the computations that were hosted on a departed agent,
+activating one of its replicas</p></li>
+<li><p>Repairing the replication by creating new replicas for all computations that
+were replicated on a departed agent</p></li>
+</ul>
+</li>
+</ul>
+<p>You can try it on your computer using the following files:</p>
+<ul class="simple">
+<li><p>dcop:
+<a class="reference download internal" download="" href="../_downloads/9785d56969a78035988e5ec47ed220ff/graph_coloring_20.yaml"><code class="xref download docutils literal notranslate"><span class="pre">graph_coloring_20.yaml</span></code></a>
+We use here a weighted graph coloring problem. Agents defined in this
+DCOP have a <em>capacity</em>, <em>hosting costs</em> and <em>communication costs</em>, which are
+used when computing the distribution</p></li>
+<li><p>scenario: <a class="reference download internal" download="" href="../_downloads/63b603b9f9b764e4e27348b0337231a1/scenario_2.yaml"><code class="xref download docutils literal notranslate"><span class="pre">scenario_2.yaml</span></code></a>
+this scenario contains 3 events, where</p></li>
+<li><p>log configuration file: <a class="reference download internal" download="" href="../_downloads/1a39ab97aec9245ade524d7725227e2d/log.conf"><code class="xref download docutils literal notranslate"><span class="pre">log.conf</span></code></a></p></li>
+</ul>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Permalink to this headline"></a></h2>
+<p>We can plot the results as we did in
+<a class="reference internal" href="analysing_results.html#tutorials-analysing-results"><span class="std std-ref">a previous tutorial</span></a>.
+Use <a class="reference download internal" download="" href="../_downloads/3eabff6784bbe7bc624d011ee430b739/dyndcop_graph_maxsum.py"><code class="xref download docutils literal notranslate"><span class="pre">this</span> <span class="pre">script</span></code></a>
+if you’re not confortable with matplotlib.
+As we can see, the system keeps running, and the solution improves,
+even though we removed agents:</p>
+<figure class="align-center" id="id3">
+<img alt="maxsum solution cost" src="../_images/maxsum_cost.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Solution cost when running MaxSum on dynamic DCOP</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In addition to the usual run-time metrics,
+the <span class="xref std std-ref">run</span> command also outputs,
+after each event and reparation, the new distribution of the system.
+The <a class="reference internal" href="../usage/fileformat_ref.html#usage-file-formats-distribution"><span class="std std-ref">format</span></a>   is the same as with the
+<span class="xref std std-ref">distribute</span> command.</p>
+<p>With our example, 3 distribution files are created:
+<code class="docutils literal notranslate"><span class="pre">evtdist_0.yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">evtdist_1.yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">evtdist_2.yaml</span></code>.
+You can open them and see how computations were moved from one agent to
+another after each event.</p>
+<p>Notice that we use here
+<a class="reference internal" href="../implementation/reference/algorithms/maxsum.html#implementation-reference-algorithms-maxsum"><span class="std std-ref">maxsum</span></a> to solve our
+distributed DCOP ;
+as we remove agents at run-time, the algorithm must be able to cope with
+message loss, which is not the case with synchronous algorithms like DSA or MGM.</p>
+<p>Finally, you may have noticed that
+the end results contains some variables
+that were not part of our initial DCOP , like for example
+<code class="docutils literal notranslate"><span class="pre">Bc001_005_a002</span></code>.</p>
+<p>These are binary variables used to select the agent
+where an orphaned computation should be migrated.
+As a matter of fact, the reparation of our DCOP is a distributed problem,
+which is it-self implemented with another DCOP !
+See. <span id="id2">[<a class="reference internal" href="../zbibliography.html#id9" title="Pierre Rust, Gauthier Picard, and Fano Ramparany. Self-Organized and Resilient Distribution of Decisions over Dynamic Multi-Agent Systems. In OPTMAS 2018. 2018.">RPR18</a>]</span> for more details:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="o">...</span>
+  <span class="s2">&quot;assignment&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;Bc001_005_a002&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc001_005_a008&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc001_005_a015&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc001_010_a002&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc001_010_a011&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc001_010_a018&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc003_004_a002&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc003_004_a014&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc003_004_a018&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc003_010_a013&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc003_010_a016&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc003_010_a018&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc005_016_a004&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc005_016_a005&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc005_016_a013&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_011_a000&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_011_a005&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_011_a011&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_012_a004&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_012_a005&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_012_a011&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_017_a002&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_017_a004&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_017_a007&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_019_a000&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_019_a003&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bc010_019_a013&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv001_a005&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv001_a009&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bv001_a018&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv005_a005&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bv005_a009&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv005_a016&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv010_a009&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv010_a015&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv010_a018&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bv017_a011&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv017_a016&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv017_a017&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bv019_a012&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;Bv019_a014&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;Bv019_a019&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;v000&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;v001&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;v002&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;v003&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="s2">&quot;v004&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;v005&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;v006&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;v007&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;v008&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;v009&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;v010&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;v011&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s2">&quot;v012&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;v013&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="s2">&quot;v014&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s2">&quot;v015&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s2">&quot;v016&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="s2">&quot;v017&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="s2">&quot;v018&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;v019&quot;</span><span class="p">:</span> <span class="mi">3</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;cost&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span>
+  <span class="s2">&quot;cycle&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="s2">&quot;msg_count&quot;</span><span class="p">:</span> <span class="mi">23529</span><span class="p">,</span>
+  <span class="s2">&quot;msg_size&quot;</span><span class="p">:</span> <span class="mi">470580</span><span class="p">,</span>
+  <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;TIMEOUT&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mf">120.01458694699977</span><span class="p">,</span>
+  <span class="s2">&quot;violation&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="problem_modeling.html" class="btn btn-neutral float-left" title="Modeling problems as DCOPs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="agent_gui.html" class="btn btn-neutral float-right" title="Agent’s GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2017, Pierre Rust; 2022, Robert P. Goldman and SIFT, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
