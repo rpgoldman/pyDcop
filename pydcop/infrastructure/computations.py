@@ -633,16 +633,16 @@ class SynchronizationMsg(Message):
 class SynchronousComputationMixin:
     """
     This mixin can be used with `MessagePassingComputation` classes (and classes
-    deriving from it) and implements synchronous communications for these computations.
+    deriving from it) and implements synchronous behavior for these computations.
 
-    A computations that uses the `SynchronousComputationMixin` is a synchronous
+    A computation that uses the `SynchronousComputationMixin` is a synchronous
     computation that respects the synchronous network model (see Distributed
     Algorithms); these computations operate in rounds: at each round i,
     a computation collects messages sent at i-1 and send messages that will be
     received at i+1.
 
     Due to method resolution order, the mixin MUST be declared first in the list
-    of classes your are deriving from:
+    of classes from which your class is derived:
 
     >   class MyComp( SynchronousComputationMixin,  MessagePassingComputation):
     >       ...
@@ -651,7 +651,7 @@ class SynchronousComputationMixin:
     handler registered with @register, instead it must handle them when the
     on_new_cycle is called.
     However, this decorator must still be used in order to declare the message
-    types supported by the computation, but the bodu of the method should be empty:
+    types supported by the computation, but the body of the method should be empty:
 
     >   class C( SynchronousComputationMixin,  MessagePassingComputation):
             ...
@@ -665,6 +665,12 @@ class SynchronousComputationMixin:
     example).
 
     """
+
+    _current_cycle: int
+    _cycle_messages: Dict[str, Any] # map from agent id to messages; buffer of incoming messages
+    _next_cycle_messages: Dict[str, Any] # map from agent id to messages
+    cycle_message_sent: List
+    _decorated_handlers: Dict[str, Callable] # message type name to handler
 
     def __init__(self, name, *args, **kwargs):
         super(SynchronousComputationMixin, self).__init__(name, *args, **kwargs)
@@ -681,7 +687,8 @@ class SynchronousComputationMixin:
         for msg_type, handler in self.__class__._decorated_handlers.items():
             self._decorated_handlers[msg_type] = self._sync_message_handler
 
-    def _sync_message_handler(self, _, sender, msg, t):
+    # FIXME: not sure if `sender` is computation or string.
+    def _sync_message_handler(self, _, sender: str, msg, t):
         if sender not in self.neighbors:
             raise ComputationException(
                 f"Invalid message: received a message from {sender}, which is "
@@ -692,7 +699,7 @@ class SynchronousComputationMixin:
         # meaning we might receive messages for cycle i+1 while we are still
         # at cycle i, waiting for messages from other neighbors. In that case,
         # we simply store these messages for the next cycle.
-        # If the difference is more that one cycle, there's a bug !
+        # If the difference is more than one cycle, there's a bug !
         if msg.cycle_id == self._current_cycle:
 
             if sender in self._cycle_messages:
@@ -751,6 +758,7 @@ class SynchronousComputationMixin:
 
         self._cycle_messages = self._next_cycle_messages
         self._next_cycle_messages = {}
+        # FIXME: should we be clearing the `cycle_message_sent` list?
 
     def _switch_cycle(self):
         self.logger.debug(f"Running cycle {self._current_cycle}")
@@ -858,6 +866,9 @@ class DcopComputation(MessagePassingComputation):
 
 
     """
+    logger: logging.Logger
+    computation_def: ComputationDef
+    __cycle__count: int
 
     def __init__(self, name, comp_def: ComputationDef):
         if comp_def is None or name is None:
@@ -975,6 +986,11 @@ class VariableComputation(DcopComputation):
 
 
     """
+    _variable: Variable
+    __value__: Any
+    __cost__: float
+    _previous_val: Any
+    _footprint_method: Optional[Callable]
 
     def __init__(self, variable: Variable, comp_def: ComputationDef):
         if variable is None:
@@ -1055,7 +1071,7 @@ class VariableComputation(DcopComputation):
 
         return self._footprint_method(self.computation_def.node)
 
-    def value_selection(self, val, cost=0):
+    def value_selection(self, val, cost: float = 0):
         """
         When the computation selects a value, it MUST be done by calling
         this method. This is necessary to be able to automatically monitor
@@ -1102,7 +1118,7 @@ class ExternalVariableComputation(DcopComputation):
 
     As we cannot select a value for an external variable,the role of an
     ExternalVariableComputation instance, is simply to provide an API
-    to change the value from 'outside' of the DCOp system and to
+    to change the value from 'outside' of the DCOP system and to
     notify other computations of this change.
 
     """

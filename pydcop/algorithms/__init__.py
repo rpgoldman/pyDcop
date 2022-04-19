@@ -39,6 +39,7 @@ algorithm supported by pyDCOP.
   algorithms/dsa
   algorithms/adsa
   algorithms/dsatuto
+  algorithms/kopt
   algorithms/mgm
   algorithms/mgm2
   algorithms/gdba
