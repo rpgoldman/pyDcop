@@ -200,7 +200,7 @@ for example for solving a graph coloring DCOP for 50 variables
 (:download:`graph_coloring_50.yaml<graph_coloring_50.yaml>`)
 you can use::
 
-  pydcop --timeout 10 -v 3 solve --algo dsa-tuto graph_coloring_50.yaml
+  pydcop --timeout 10 -v 3 solve --algo dsatuto graph_coloring_50.yaml
 
 Note that this tutorial only covers
 the basics of DCOP algorithms implementation,

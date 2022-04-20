@@ -32,7 +32,7 @@ Optionally, you may also
 Module
 ------
 
-An algorithm must be defined in it's own module in :py:mod:`pydcop.algorithms`.
+An algorithm must be defined in its own module in :py:mod:`pydcop.algorithms`.
 For example, ``dsa`` is implemented in the module :py:mod:`pydcop.algorithms.dsa`.
 The name of the module is the name you will use
 when running your algorithm with the ``pydcop``
