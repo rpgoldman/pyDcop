@@ -36,7 +36,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',  # for numpy style documentation
-    'sphinxcontrib.bibtex'  # for bibtex based bibliography and citation
+    'sphinxcontrib.bibtex',  # for bibtex based bibliography and citation
+    'sphinx.ext.githubpages',
 ]
 
 
