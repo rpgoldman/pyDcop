@@ -1,15 +1,33 @@
-from typing import Tuple, Any, Dict
+from typing import Tuple, Any, Dict, Literal
 
-from numpy import random
-
-from pydcop.algorithms import ComputationDef
-from pydcop.dcop.relations import assignment_cost, find_optimal
+from pydcop.algorithms import ComputationDef, AlgoParameterDef
+from pydcop.computations_graph.constraints_hypergraph import VariableComputationNode
+from pydcop.computations_graph.objects import Link
+from pydcop.dcop.relations import assignment_cost
 from pydcop.infrastructure.computations import message_type, VariableComputation, register, SynchronousComputationMixin
-
 # Type of computation graph that must be used with kopt
+from pydcop.utils.various import number_translator
+
 GRAPH_TYPE = 'constraints_hypergraph'
+HEADER_SIZE = 0
+UNIT_SIZE = 1
 
 KOPTValueMessage = message_type("kopt_value", ["value"])
+
+
+def compare_kvm(self: KOPTValueMessage, other) -> bool:
+    if type(other) != KOPTValueMessage:
+        return False
+    if self.value == other.value:
+        return True
+    return False
+
+
+KOPTValueMessage.__eq__ = compare_kvm
+
+algo_params = [
+    AlgoParameterDef("stop_cycle", "int", None, 0),
+]
 
 
 # Computation Nodes
@@ -17,6 +35,11 @@ class KoptComputation(SynchronousComputationMixin, VariableComputation):
     r"""
     Attributes
     """
+    mode: Literal['min', 'max']
+
+    @property
+    def name(self) -> str:
+        return self.variable.name
 
     current_cycle_assign: Dict[str, Any]
     """Dict representation of the current cycle's assignment to this node's neighbors"""
@@ -24,14 +47,19 @@ class KoptComputation(SynchronousComputationMixin, VariableComputation):
     next_cycle_assign: Dict[str, Any]
     """Dict representation of the next cycle's assignment to this node's neighbors"""
 
-    def __init__(self, computation_definition: ComputationDef):
+    def __init__(self, comp_def: ComputationDef):
         # Always call the super class constructor !
-        super().__init__(computation_definition.node.variable,
-                         computation_definition)
+        super().__init__(comp_def.node.variable,
+                         comp_def)
+
+        assert (comp_def.algo.mode == "min") or (comp_def.algo.mode == "max")
+
+        self.mode = comp_def.algo.mode
+        self.stop_cycle = comp_def.algo.param_value("stop_cycle")
 
         # Constraints involving this variable are available on the
         # ComputationNode:
-        self.constraints = computation_definition.node.constraints
+        self.constraints = comp_def.node.constraints
 
         # The assignment of our neighbors for the current and next cycle
         self.current_cycle_assign = {}
@@ -42,7 +70,7 @@ class KoptComputation(SynchronousComputationMixin, VariableComputation):
         self.random_value_selection()
 
         # The currently selected value is available through self.current_value.
-        self.post_to_all_neighbors(KOPTValueMessage(self.current_value))
+        self.post_to_all_neighbors(KOPTValueMessage(number_translator(self.current_value)))
         self.evaluate_cycle()  # Defined later
 
     @register("kopt_value")
@@ -88,3 +116,33 @@ class KoptComputation(SynchronousComputationMixin, VariableComputation):
             if cost < min_cost:
                 min_cost, arg_min = cost, value
         return arg_min, min_cost
+
+
+def communication_load(_src: VariableComputationNode, _target: str):
+    # FIXME: placeholder, since we are not concerned with actual distribution RN
+    return 0
+
+
+def computation_memory(computation: VariableComputationNode) -> float:
+    """Return the memory footprint of a DSA computation.
+
+    Notes
+    -----
+    With KOPT, a computation must only remember the current value for each
+    of its neighbors.
+
+    Parameters
+    ----------
+    computation: VariableComputationNode
+        a computation in the hyper-graph computation graph
+
+    Returns
+    -------
+    float:
+        the memory footprint of the computation.
+
+    """
+    neighbors = set(
+        (n for l in computation.links for n in l.nodes if n not in computation.name)
+    )
+    return len(neighbors) * UNIT_SIZE
