@@ -37,10 +37,10 @@ from importlib import import_module
 
 import sys
 from queue import Queue, Empty
-from types import FunctionType
-from typing import List
+from typing import List, Optional, Literal
 
 from pydcop.algorithms import AlgorithmDef, prepare_algo_params, load_algorithm_module
+from pydcop.utils.various import NumpyEncoder
 
 logger = logging.getLogger("pydcop")
 
@@ -227,3 +227,47 @@ def collect_tread(collect_queue: Queue, csv_cb):
         except Empty:
             pass
         # FIXME : end of run ?
+
+
+def dump_results(
+    orchestrator,
+    status,
+    output_file: Optional[str] = None,
+    collect_on: Optional[Literal["value_change", "cycle_change", "period"]] = None,
+    end_metrics: Optional[str] = None,
+    run_metrics: Optional[str] = None,
+):
+    r"""
+    Outputs results and metrics on stdout and trace last metrics in csv
+    files if requested.
+
+    Parameters
+    ----------
+    end_metrics : str, optional
+      If not None, filename for writing final metrics.
+    run_metrics : str, optional
+      If not None, filename for writing run metrics.
+    collect_on : str, optional
+      On what condition should statistics be collected, `value_change`, `cycle_change`,
+      or `period`. Defaults to None.
+    output_file : str, optional
+      Write output to this file. Otherwise write to stdout.
+    status: str
+      Description of final status of the run.
+    orchestrator:
+      the runner...
+
+    """
+
+    metrics = orchestrator.end_metrics()
+    metrics["status"] = status
+    if end_metrics is not None:
+        add_csvline(end_metrics, collect_on, metrics)
+    if run_metrics is not None:
+        add_csvline(run_metrics, collect_on, metrics)
+
+    if output_file:
+        with open(output_file, encoding="utf-8", mode="w") as fo:
+            fo.write(json.dumps(metrics, sort_keys=True, indent="  ", cls=NumpyEncoder))
+    else:
+        print(json.dumps(metrics, sort_keys=True, indent="  ", cls=NumpyEncoder))
