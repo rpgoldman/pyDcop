@@ -1,6 +1,7 @@
 # BSD-3-Clause License
 #
 # Copyright 2017 Orange
+# Copyright 2022 SIFT, LLC and Robert P. Goldman
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -74,7 +75,7 @@ setup(
         "License :: OSI Approved :: BSD License",
 
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.5",    
+        "Programming Language :: Python :: 3.8",
 
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
@@ -86,6 +87,8 @@ setup(
     install_requires=install_reqs,
     tests_require=test_deps,
     extras_require=extras,
+
+    python_requires='>=3.8'
 
     scripts=[
         'pydcop/pydcop',
