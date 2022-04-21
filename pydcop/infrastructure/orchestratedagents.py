@@ -30,13 +30,12 @@
 
 
 import logging
-from time import perf_counter
 from typing import Dict, List, Set
 
 from pydcop.algorithms import ComputationDef
 from pydcop.dcop.objects import AgentDef
 from pydcop.infrastructure.agents import ResilientAgent
-from pydcop.infrastructure.communication import CommunicationLayer, MSG_VALUE, MSG_MGT
+from pydcop.infrastructure.communication import CommunicationLayer, MSG_MGT
 from pydcop.infrastructure.computations import (
     MessagePassingComputation,
     Message,
@@ -170,7 +169,7 @@ class OrchestratedAgent(ResilientAgent):
         # Overwritten from ResilientAgent
         self._mgt_computation.on_replication_done(replica_hosts)
 
-    def _on_repair_done(self, selected_computation: List[str], metrics):
+    def _on_repair_done(self, selected_computation: List[str], metrics, **_kwargs):
         # Overwritten from ResilientAgent
         self._mgt_computation.on_repair_done(selected_computation, metrics)
 

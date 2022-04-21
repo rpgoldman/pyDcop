@@ -117,7 +117,7 @@ def test_on_start_is_a_cycle_both_message_during_startup():
 
     c2.on_start = types.MethodType(on_start_c2, c2)
 
-    # Only C1 is started, all computations stays in cycle 0 until all
+    # Only C1 is started, all other computations stay in cycle 0 until all
     # computations have started
     c1.start()
     assert c1.current_cycle == 0 and c1.started == True

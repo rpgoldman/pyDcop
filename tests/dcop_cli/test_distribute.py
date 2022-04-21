@@ -113,7 +113,7 @@ class GraphColoring1(unittest.TestCase):
         dist = result['distribution']
 
         # ILP-FGDP requires that each agent hosts at least one computation
-        # and we have eaxctly 5 computations and 5 agents here:
+        # and we have exactly 5 computations and 5 agents here:
         for a in dist:
             self.assertEqual(len(dist[a]), 1)
 

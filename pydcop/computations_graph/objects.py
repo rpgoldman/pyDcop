@@ -29,7 +29,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-from typing import Iterable
+from typing import Iterable, Optional, List
 
 from pydcop.utils.simple_repr import SimpleRepr
 
@@ -48,7 +48,7 @@ class ComputationNode(SimpleRepr):
     It must be possible to transfer (e.g. network) the definitions of a
     computation node (a serialized `ComputationNode` instance) and all edges
     (a serialized `Link` instances) where it is the source to a remote agent
-    where the actual computation will be instantiated. This means a a
+    where the actual computation will be instantiated. This means a
     concrete computation node instance must be serializable (using the
     `SimpleRepr` mixin) and must include all information required for the
     computation (e.g. Variable and associated domain, Relation for the
@@ -62,22 +62,26 @@ class ComputationNode(SimpleRepr):
         the name of the computation node, usually the name of the variable (
         or constraint) the computation is responsible for.
     node_type: str
-        type of the node, usefull when the computation has several type of
+        type of the node, useful when the computation has several type of
         nodes (e.g. factor graphs)
     neighbors: Iterable of neighbors' names, as string
-        The name of of the neighbors node. The neighbors can also be given
+        The name of the neighbor's node. The neighbors can also be given
         with the `links` argument, but you cannot use `links` and `neighbors`
         arguments simultaneously.
     links: Iterable of Links
         Link objects pointing to the neighbors in the graph. For complex
-        graph it can necessary to give links instead of neighbors names,
+        graph it can be necessary to give links instead of neighbors names,
         as it allow attaching a type to the link (like pseudo child in
-        pseudo-Tree graph) or use hyper-link.
+        pseudo-Tree graph) or use hyperlink.
 
     """
-    def __init__(self, name: str, node_type: str=None,
-                 links: Iterable['Link']=None,
-                 neighbors: Iterable[str]=None)-> None:
+
+    _neighbors: List[str]
+    _links: List['Link']
+
+    def __init__(self, name: str, node_type: str = None,
+                 links: Optional[Iterable['Link']] = None,
+                 neighbors: Optional[Iterable[str]] = None) -> None:
         self._name = name
         self._node_type = node_type
 
@@ -86,7 +90,7 @@ class ComputationNode(SimpleRepr):
             raise ValueError('ComputationNode supports giving neighbors or '
                              'links but not both ')
         elif neighbors is not None:
-            self._neighbors = neighbors
+            self._neighbors = list(neighbors)
             self._links = [Link([name, n]) for n in self.neighbors]
         elif links is not None:
             self._links = list(links)
@@ -105,11 +109,11 @@ class ComputationNode(SimpleRepr):
         return self._node_type
 
     @property
-    def neighbors(self) -> Iterable[str]:
+    def neighbors(self) -> List[str]:
         return self._neighbors
 
     @property
-    def links(self) ->Iterable['Link']:
+    def links(self) -> List['Link']:
         return self._links
 
     def __eq__(self, other):
@@ -138,8 +142,8 @@ class Link(SimpleRepr):
     A Computation link represent an edge, in a computation graph, from one 
     computation node to another.
 
-    To accommodate various type of graphs, the `Link` base class models an
-    hyper-edge (i.e. an edge which can have more that two vertices) and
+    To accommodate various type of graphs, the `Link` base class models a
+    hyper-edge (i.e. an edge which can have more than two vertices) and
     has a type attribute, which can be used to represent different kinds of
     relation between the nodes involved in the edge (e.g. parent, children,
     pseudo children, neighbor, ...)
@@ -151,11 +155,15 @@ class Link(SimpleRepr):
     mixin, and must implement `__hash__()` and `__eq__()`.
     """
 
-    def __init__(self, nodes: Iterable[str], link_type: str = None)-> None:
-        """
+    def __init__(self, nodes: Iterable[str], link_type: str = None) -> None:
+        r"""
 
-        :param link_type: type of link
-        :param nodes: iterable of computation names
+        Parameters
+        ----------
+        link_type : str
+          type of link
+        nodes : Iterable[str]
+          iterable of computation names
         """
         self._link_type = link_type
         self._nodes = frozenset(nodes)
@@ -197,7 +205,7 @@ class Link(SimpleRepr):
 class ComputationGraph(object):
     """
     A ComputationGraph represents a graph of computation for a dcop.
-    Many different graph can be defined from the same dcop, depending on the 
+    Many different graphs can be defined from the same dcop, depending on the
     kind of algorithm that will be used to solve the dcop. For example, 
     max-sum is based on a factor graph while dpop is based on a DFS 
     pseudo-tree.
@@ -205,7 +213,7 @@ class ComputationGraph(object):
     flexible and generic, so that it can accommodate and represents many  
     kind of graph models.
 
-    Concrete sub-classes MUST provide `nodes` and `links` attributes (or
+    Concrete subclasses MUST provide `nodes` and `links` attributes (or
     properties) that return respectively the list of `ComputationNode`s and
     the list of  `Link`s of the graph
 
@@ -213,7 +221,7 @@ class ComputationGraph(object):
     ----------
     graph_type:
     nodes: ComputationNodes
-        an iterable of ComputationNode objects of None
+        an iterable of ComputationNode objects or None
 
     Examples
     --------
@@ -227,8 +235,8 @@ class ComputationGraph(object):
     [ComputationNode(a1), ComputationNode(a2)]
     """
 
-    def __init__(self, graph_type: str=None,
-                 nodes: Iterable[ComputationNode]=None)-> None:
+    def __init__(self, graph_type: str = None,
+                 nodes: Iterable[ComputationNode] = None) -> None:
         self.type = graph_type
         self.nodes = [] if nodes is None else list(nodes)
 
@@ -242,7 +250,7 @@ class ComputationGraph(object):
     def node_names(self):
         return [n.name for n in self.nodes]
 
-    def computation(self, node_name: str)-> ComputationNode:
+    def computation(self, node_name: str) -> ComputationNode:
         """Return a computation node from its name.
 
         Parameters
@@ -294,7 +302,7 @@ class ComputationGraph(object):
         for n in self.nodes:
             if n.name == node_name:
                 return n.links
-        raise KeyError('No node named '+node_name)
+        raise KeyError('No node named ' + node_name)
 
     def neighbors(self, node_name: str) -> Iterable[str]:
         """Return the neighbors of a computation node.
@@ -323,7 +331,7 @@ class ComputationGraph(object):
         for n in self.nodes:
             if n.name == node_name:
                 return n.neighbors
-        raise KeyError('No node named '+node_name)
+        raise KeyError('No node named ' + node_name)
 
     def density(self):
         raise NotImplementedError('Abstract class')

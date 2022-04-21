@@ -209,6 +209,7 @@ class GraphColoring10(unittest.TestCase):
         assignment = results['assignment']
         self.assertEqual(results['cost'], 0)
 
+
 class GraphColoringCsp(unittest.TestCase):
 
     def check_results(self, results):
@@ -243,13 +244,15 @@ class GraphColoringCsp(unittest.TestCase):
 
 
 def run_solve(algo, distribution, filename, timeout: int, mode='thread',
-              algo_params=''):
+              algo_params: Optional[List[str]] = None):
     filename = instance_path(filename)
     param_str = ''
+    if algo_params is None:
+        algo_params = []
     for p in algo_params:
-        param_str += ' --algo_param '+ p
-    cmd = 'pydcop -v 0 -t {timeout} solve -a {algo} {params} -d {' \
-          'distribution} ' \
+        param_str += ' --algo_param ' + p
+    cmd = 'pydcop -v 0 -t {timeout} solve -a {algo} {params} -d ' \
+          '{distribution} ' \
           '-m {mode} ' \
           '{file}'.format(timeout=timeout,
                           algo=algo,
@@ -260,7 +263,7 @@ def run_solve(algo, distribution, filename, timeout: int, mode='thread',
     extra = 4 if mode == 'thread' else 5
     print("Running command ", cmd)
     try:
-        output = check_output(cmd, stderr=STDOUT, timeout=timeout+extra, shell=True)
+        output = check_output(cmd, stderr=STDOUT, timeout=timeout + extra, shell=True)
     except CalledProcessError as e:
         print(f'Command {cmd} raised CalledProcessError {e.output}')
         raise e from e
