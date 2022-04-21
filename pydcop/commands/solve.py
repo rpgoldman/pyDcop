@@ -178,7 +178,7 @@ Options
 
 ``<dcop_files>``
   One or several paths to the files containing the dcop. If several paths are
-  given, their content is concatenated as used a the
+  given, their content is concatenated as in the
   :ref:`yaml definition<usage_file_formats_dcop>` for the
   DCOP.
 
@@ -196,35 +196,34 @@ need to be stopped with CTRL+C::
 
 Solving with MGM, with two algorithm parameter and a log configuration file::
 
-  pydcop --log log.conf solve --algo mgm --algo_params stop_cycle:20 \\
+    pydcop --log log.conf solve --algo mgm --algo_params stop_cycle:20 \\
                               --algo_params break_mode:random  \\
                               graph_coloring.yaml \\
 
 """
 import csv
-import json
 import logging
-import os
 import multiprocessing
+import os
 import sys
 import threading
 import traceback
 from functools import partial
 from queue import Queue, Empty
 from threading import Thread
+from typing import Optional, Literal
 
 from pydcop.algorithms import list_available_algorithms
-from pydcop.commands._utils import build_algo_def, _error, _load_modules
+from pydcop.commands._utils import build_algo_def, _error, _load_modules, dump_results
 from pydcop.dcop.yamldcop import load_dcop_from_file
 from pydcop.distribution.yamlformat import load_dist_from_file
+from pydcop.infrastructure.orchestrator import Orchestrator
 from pydcop.infrastructure.run import run_local_thread_dcop, run_local_process_dcop
-
 
 logger = logging.getLogger("pydcop.cli.solve")
 
 
 def set_parser(subparsers):
-
     algorithms = list_available_algorithms()
     logger.debug("Available DCOP algorithms %s", algorithms)
 
@@ -254,8 +253,8 @@ def set_parser(subparsers):
         type=str,
         action="append",
         help="Optional parameters for the algorithm, given as "
-        "name:value. Use this option several times "
-        "to set several parameters.",
+             "name:value. Use this option several times "
+             "to set several parameters.",
     )
 
     parser.add_argument(
@@ -264,9 +263,9 @@ def set_parser(subparsers):
         type=str,
         default="oneagent",
         help="A yaml file with the distribution or algorithm "
-        "for distributing the computation graph, if not "
-        "given the `oneagent` will be used (one "
-        "computation for each agent)",
+             "for distributing the computation graph, if not "
+             "given the `oneagent` will be used (one "
+             "computation for each agent)",
     )
     parser.add_argument(
         "-m",
@@ -289,8 +288,8 @@ def set_parser(subparsers):
         type=float,
         default=None,
         help="Period for collecting metrics. only available "
-        "when using --collect_on period. Defaults to 1 "
-        "second if not specified",
+             "when using --collect_on period. Defaults to 1 "
+             "second if not specified",
     )
 
     parser.add_argument(
@@ -298,9 +297,9 @@ def set_parser(subparsers):
         type=str,
         default=None,
         help="Path to a file or file name. Run-time metrics will "
-        "be written to that file (csv format). If the value is a "
-        "path, the directory will be created if it does not exist. "
-        "Otherwise the file will be created in the current directory.",
+             "be written to that file (csv format). If the value is a "
+             "path, the directory will be created if it does not exist. "
+             "Otherwise the file will be created in the current directory.",
     )
 
     parser.add_argument(
@@ -308,9 +307,9 @@ def set_parser(subparsers):
         type=str,
         default=None,
         help="Path to a file or file name. Result's metrics will "
-        "be appended to that file (csv format). If the value is a "
-        "path, the directory will be created if it does not exist. "
-        "Otherwise the file will be created in the current directory.",
+             "be appended to that file (csv format). If the value is a "
+             "path, the directory will be created if it does not exist. "
+             "Otherwise the file will be created in the current directory.",
     )
 
     parser.add_argument(
@@ -319,9 +318,9 @@ def set_parser(subparsers):
         default=float("inf"),
         type=float,
         help="Argument to determine the value used for "
-        "infinity in case of hard constraints, "
-        "for algorithms that do not use symbolic "
-        "infinity. Defaults to 10 000",
+             "infinity in case of hard constraints, "
+             "for algorithms that do not use symbolic "
+             "infinity. Defaults to 10 000",
     )
 
     parser.add_argument(
@@ -329,10 +328,10 @@ def set_parser(subparsers):
         default=None,
         type=float,
         help="an optional delay between message delivery, "
-        " in second. This delay only applies to "
-        "algorithm's messages and is useful when you "
-        "want to observe (for example with the UI) the "
-        "behavior of the algorithm at runtime",
+             " in second. This delay only applies to "
+             "algorithm's messages and is useful when you "
+             "want to observe (for example with the UI) the "
+             "behavior of the algorithm at runtime",
     )
 
     parser.add_argument(
@@ -340,17 +339,18 @@ def set_parser(subparsers):
         type=int,
         default=None,
         help="The port on which the ui-server will be "
-        "listening. This port is used for the orchestrator"
-        "and incremented for each following agent. If not "
-        "given, no ui-server will be started for any "
-        "agent.",
+             "listening. This port is used for the orchestrator"
+             "and incremented for each following agent. If not "
+             "given, no ui-server will be started for any "
+             "agent.",
     )
 
-DISTRIBUTION_METHODS = ["oneagent", "adhoc", "ilp_fgdp", "heur_comhost", "oilp_secp_fgdp", "gh_secp_fgdp", "gh_secp_cgdp", "oilp_cgdp", "gh_cgdp"]
 
+DISTRIBUTION_METHODS = ["oneagent", "adhoc", "ilp_fgdp", "heur_comhost", "oilp_secp_fgdp", "gh_secp_fgdp",
+                        "gh_secp_cgdp", "oilp_cgdp", "gh_cgdp"]
 
 dcop = None
-orchestrator = None
+orchestrator: Optional[Orchestrator] = None
 INFINITY = None
 
 # Files for logging metrics
@@ -376,7 +376,7 @@ columns = {
     "period": ["time", "cycle", "cost", "violation", "msg_count", "msg_size", "status"],
 }
 
-collect_on = None
+collect_on: Optional[Literal["value_change", "cycle_change", "period"]] = None
 run_metrics = None
 end_metrics = None
 
@@ -548,19 +548,19 @@ def run_cmd(args, timer=None, timeout=None):
             timer.cancel()
         if not timeout_stopped:
             if orchestrator.status == "TIMEOUT":
-                _results("TIMEOUT")
+                dump_results(orchestrator, "TIMEOUT", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
                 sys.exit(0)
             elif orchestrator.status != "STOPPED":
-                _results("FINISHED")
+                dump_results(orchestrator, "FINISHED", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
                 sys.exit(0)
 
         # in case it did not stop, dump remaining threads
 
     except Exception as e:
-        logger.error(e, exc_info=1)
+        logger.error("While handling timeout, received error %s", e, exc_info=True)
         orchestrator.stop_agents(5)
         orchestrator.stop()
-        _results("ERROR")
+        dump_results(orchestrator, "ERROR", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
         sys.exit(1)
 
 
@@ -570,7 +570,7 @@ def on_timeout():
     # has been reached, something is probably wrong : dump threads.
     for th in threading.enumerate():
         print(th)
-        traceback.print_stack(sys._current_frames()[th.ident])
+        traceback.print_stack(sys._current_frames()[th.ident])  # noqa
         print()
 
     if orchestrator is None:
@@ -583,52 +583,16 @@ def on_timeout():
     orchestrator.stop_agents(20)
     logger.debug("stop orchestrator on cli timeout ")
     orchestrator.stop()
-    _results("TIMEOUT")
+    dump_results(orchestrator, "TIMEOUT", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
     # sys.exit(0)
-    os._exit(2)
+    os._exit(2)  # noqa
 
 
-def on_force_exit(sig, frame):
+def on_force_exit(_sig, _frame):
     if orchestrator is None:
         return
     orchestrator.status = "STOPPED"
     orchestrator.stop_agents(5)
     orchestrator.stop()
-    _results("STOPPED")
-    os._exit(2)
-
-
-import numpy as np
-
-
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        if isinstance(obj, np.int64):
-            return int(obj)
-        return json.JSONEncoder.default(self, obj)
-
-
-def _results(status):
-    """
-    Outputs results and metrics on stdout and trace last metrics in csv
-    files if requested.
-
-    :param status:
-    :return:
-    """
-
-    metrics = orchestrator.end_metrics()
-    metrics["status"] = status
-    global end_metrics, run_metrics
-    if end_metrics is not None:
-        add_csvline(end_metrics, collect_on, metrics)
-    if run_metrics is not None:
-        add_csvline(run_metrics, collect_on, metrics)
-
-    if output_file:
-        with open(output_file, encoding="utf-8", mode="w") as fo:
-            fo.write(json.dumps(metrics, sort_keys=True, indent="  ", cls=NumpyEncoder))
-    else:
-        print(json.dumps(metrics, sort_keys=True, indent="  ", cls=NumpyEncoder))
+    dump_results(orchestrator, "STOPPED", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
+    os._exit(2)  # noqa

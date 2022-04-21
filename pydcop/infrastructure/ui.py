@@ -1,6 +1,7 @@
 # BSD-3-Clause License
 #
 # Copyright 2017 Orange
+# Updates Copyright 2022 SIFT, LLC and Robert P. Goldman
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -35,6 +36,7 @@ from threading import Thread
 
 from websocket_server.websocket_server import WebsocketServer
 
+from pydcop.utils.various import NumpyEncoder
 from pydcop.infrastructure.computations import MessagePassingComputation, \
     VariableComputation, DcopComputation
 from pydcop.infrastructure.Events import event_bus
@@ -52,12 +54,12 @@ class UiServer(MessagePassingComputation):
         super().__init__('_ui_' + agent.name)
         self._agent = agent
         self.port = port
-        self.logger = logging.getLogger('pydcop.agent.ui.'+agent.name)
-        self.server = WebsocketServer(self.port, host='0.0.0.0')
+        self.logger = logging.getLogger('pydcop.agent.ui.' + agent.name)
+        self.server = WebsocketServer(port=self.port, host='0.0.0.0')
         self.server.set_fn_new_client(self._new_client)
         self.server.set_fn_client_left(self._client_left)
         self.server.set_fn_message_received(self._message_received)
-        self.t = Thread(target=self.server.run_forever, name='ws-'+agent.name)
+        self.t = Thread(target=self.server.run_forever, name='ws-' + agent.name)
         self.t.setDaemon(True)
 
         # Multicast is currently buggy in WebsocketServer, until it is fixed,
@@ -94,7 +96,7 @@ class UiServer(MessagePassingComputation):
         self.server.server_close()
 
     def _new_client(self, client, server):
-        self.logger.debug('new client %s on %s', client , server)
+        self.logger.debug('new client %s on %s', client, server)
         self._clients.append(client)
 
     def _client_left(self, client, server):
@@ -106,7 +108,6 @@ class UiServer(MessagePassingComputation):
     def _message_received(self, client, server, message):
         self.logger.debug('msg from %s :  %s', client, message)
 
-        cmd = None
         try:
             message = json.loads(message)
             cmd = message['cmd']
@@ -121,7 +122,9 @@ class UiServer(MessagePassingComputation):
             server.send_message(
                 client,
                 json.dumps({'cmd': 'agent',
-                            'agent': self._agent_data(self._agent)}))
+                            'agent': self._agent_data(self._agent)},
+                           cls=NumpyEncoder
+                           ))
 
         elif cmd == 'computations':
             computations = []
@@ -131,12 +134,13 @@ class UiServer(MessagePassingComputation):
             server.send_message(
                 client,
                 json.dumps({'cmd': 'computations',
-                            'computations': self._computations()}))
+                            'computations': self._computations()},
+                           cls=NumpyEncoder))
 
     def _agent_data(self, agent):
 
         agt = {
-            'name' : agent.name,
+            'name': agent.name,
             'extra': agent.agent_def.extra_attr(),
             'computations': self._computations(),
             'replicas': [],  # TODO !!
@@ -158,7 +162,7 @@ class UiServer(MessagePassingComputation):
         c_value = None
         c_name = computation.name
         neighbors = []
-        c_algo, c_type= None, None
+        c_algo, c_type = None, None
         c_msg_count, c_msg_size, c_cycles, footprint = 0, 0, 0, 0
 
         if isinstance(computation, DcopComputation):
@@ -182,7 +186,7 @@ class UiServer(MessagePassingComputation):
 
         return {
             'id': computation.name,
-            'name' : c_name,
+            'name': c_name,
             'type': c_type,
             'value': c_value,
             'neighbors': neighbors,
@@ -190,10 +194,10 @@ class UiServer(MessagePassingComputation):
             'msg_count': c_msg_count,
             'msg_size': c_msg_size,
             'cycles': c_cycles,
-            'footprint' : footprint
+            'footprint': footprint
         }
 
-    def _cb_cycle(self, topic, cycle_event):
+    def _cb_cycle(self, _topic, cycle_event):
         computation, cycles = cycle_event
         if self.is_local_computation(computation):
             self.logger.debug('send cycle event %s ', cycle_event)
@@ -201,9 +205,10 @@ class UiServer(MessagePassingComputation):
                 json.dumps({'evt': 'cycle',
                             'computation': computation,
                             'cycles': cycles
-                            }))
+                            },
+                           cls=NumpyEncoder))
 
-    def _cb_value(self, topic, value_event):
+    def _cb_value(self, _topic, value_event):
         computation, value = value_event
         if self.is_local_computation(computation):
             self.logger.debug('send value event %s ', value_event)
@@ -211,9 +216,10 @@ class UiServer(MessagePassingComputation):
                 json.dumps({'evt': 'value',
                             'computation': computation,
                             'value': value
-                            }))
+                            },
+                           cls=NumpyEncoder))
 
-    def _cb_msg_rcv(self, topic: str, msg_event):
+    def _cb_msg_rcv(self, _topic: str, msg_event):
         computation, msg_size = msg_event
         if self.is_local_computation(computation):
             # self.logger.debug('send msg_rcv event %s ', msg_event)
@@ -221,19 +227,21 @@ class UiServer(MessagePassingComputation):
                 json.dumps({'evt': 'msg_rcv',
                             'computation': computation,
                             'msg_size': msg_size
-                            }))
+                            },
+                           cls=NumpyEncoder))
 
-    def _cb_msg_snd(self, topic, msg_event):
-        computation, msg_size= msg_event
+    def _cb_msg_snd(self, _topic, msg_event):
+        computation, msg_size = msg_event
         if self.is_local_computation(computation):
             # self.logger.debug('send msg_snd event %s ', msg_event)
             self._send_to_all_clients(
                 json.dumps({'evt': 'msg_snd',
                             'computation': computation,
                             'msg_size': msg_size
-                            }))
+                            },
+                           cls=NumpyEncoder))
 
-    def _cb_add_comp(self, topic: str, comp_evt):
+    def _cb_add_comp(self, _topic: str, comp_evt):
         agent, computation = comp_evt
         if agent == self._agent.name and \
                 self.is_local_computation(computation.name):
@@ -241,7 +249,8 @@ class UiServer(MessagePassingComputation):
             self._send_to_all_clients(
                 json.dumps({'evt': 'add_comp',
                             'computation': self._computation(computation),
-                            }))
+                            },
+                           cls=NumpyEncoder))
 
     def _cb_rem_comp(self, topic: str, comp_evt):
         self.logger.debug(f"remove com evt {comp_evt} on topic {topic} , agent {self._agent.name}")
@@ -251,7 +260,8 @@ class UiServer(MessagePassingComputation):
             self._send_to_all_clients(
                 json.dumps({'evt': 'rem_comp',
                             'computation': computation,
-                            }))
+                            },
+                           cls=NumpyEncoder))
 
     def is_local_computation(self, computation: str):
         comp_names = [c.name for c in self._agent.computations()]

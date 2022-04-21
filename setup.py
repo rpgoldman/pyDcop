@@ -1,6 +1,7 @@
 # BSD-3-Clause License
 #
 # Copyright 2017 Orange
+# Copyright 2022 SIFT, LLC and Robert P. Goldman
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -28,6 +29,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from setuptools import setup, find_packages
+from os import path
+
+
 # from StackOverflow
 def parse_requirements(filename):
     """ load requirements from a pip requirements file """
@@ -40,17 +45,12 @@ install_reqs = parse_requirements('requirements.txt')
 test_deps = parse_requirements('test-requirements.txt')
 doc_deps = parse_requirements('doc-requirements.txt')
 
-
-# Required to install dev dependencies with pip
+# Required to install dev dependencies with pip:
 #    pip install -e .[test]
 extras = {
     'test': test_deps,
     'doc': doc_deps
 }
-
-
-from setuptools import setup, find_packages
-from os import path
 
 here = path.abspath(path.dirname(__file__))
 # Get the long description from the README file
@@ -62,11 +62,11 @@ with open(path.join(here, 'pydcop', 'version.py'), encoding='utf-8') as f:
 
 setup(
     name='pydcop',
-    version=__version__,
+    version=__version__,  # noqa
     description='Several dcop algo implementation',
 
     long_description=long_description,
-    long_description_content_type='text/markdown', 
+    long_description_content_type='text/markdown',
 
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -74,7 +74,7 @@ setup(
         "License :: OSI Approved :: BSD License",
 
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.5",    
+        "Programming Language :: Python :: 3.8",
 
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
@@ -87,16 +87,18 @@ setup(
     tests_require=test_deps,
     extras_require=extras,
 
+    python_requires='>=3.8',
+
     scripts=[
         'pydcop/pydcop',
         'pydcop/dcop_cli.py'
     ],
 
-    packages =find_packages(),
+    packages=find_packages(),
 
     project_urls={
-        'Documentation':  'http://pydcop.readthedocs.io',
-        'Source': 'https://github.com/Orange-OpenSource/pyDcop',
-        'Bug Reports': 'https://github.com/Orange-OpenSource/pyDcop/issues'
-    }    
+        'Documentation': 'https://rpgoldman.github.io/pydcopio',
+        'Source': 'https://github.com/rpgoldman/pyDcop',
+        'Bug Reports': 'https://github.com/rpgoldman/pyDcop/issues'
+    }
 )

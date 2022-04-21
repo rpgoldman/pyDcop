@@ -2,8 +2,7 @@ networkx>=2.3; python_version < "3.9"
 networkx>=2.5; python_version >= "3.9"
 pydot
 numpy>=1.16.3
-PuLP==1.6.9; python_version <= "3.7"
-PuLP>=2; python_version > "3.7"
+PuLP>=2
 pytest>=4.4.1
 PyYAML>=5.4.1
 requests>=2.21.0

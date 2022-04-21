@@ -27,9 +27,12 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import json
+from numbers import Real, Integral
+from typing import Iterable, Any
 
+import numpy as np
 
-from typing import Iterable
 
 def func_args(f):
     """
@@ -52,3 +55,20 @@ def func_args(f):
         var_list = [a for a in original_args if a not in f.keywords]
         return var_list
 
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, np.int64):
+            return int(obj)
+        return json.JSONEncoder.default(self, obj)
+
+
+def number_translator(v: Any) -> Any:
+    if isinstance(v, Real):
+        return float(v)
+    elif isinstance(v, Integral):
+        return int(v)
+    else:
+        return v

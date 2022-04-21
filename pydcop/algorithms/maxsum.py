@@ -467,7 +467,7 @@ class MaxSumVariableComputation(SynchronousComputationMixin, VariableComputation
         self.start_messages = comp_def.algo.params["start_messages"]
         self.logger.info(f"Running maxsum with params: {comp_def.algo.params}")
 
-        # The list of factors (names) this variables is linked with
+        # The list of factors (names) this variable is linked with
         self.factors = [link.factor_node for link in comp_def.node.links]
 
         # costs : this dict is used to store, for each value of the domain,
@@ -690,15 +690,25 @@ def apply_damping(costs_f, prev_costs, damping):
     return costs_f
 
 
-def approx_match(costs, prev_costs, stability_coef):
+def approx_match(costs: Dict[Any, float], prev_costs: Dict[Any, float], stability_coef: float) -> bool:
     """
     Check if a cost message match the previous message.
 
     Costs are considered to match if the variation is bellow STABILITY_COEFF.
 
-    :param costs: costs as a dict val -> cost
-    :param prev_costs: previous costs as a dict val -> cost
-    :return: True if the cost match
+    Parameters
+    ----------
+    costs : Dict[val, cost]
+      Cost information as a dictionary mapping values to costs
+    prev_costs : Dict[val, cost]
+      Previous costs as a dict val -> cost
+    stability_coef : float
+      If the difference between the two is less than this value, the
+      costs are considered to match.
+
+    Returns
+    -------
+    bool : True if `costs` match `prev_costs`
     """
     if prev_costs is None:
         return False

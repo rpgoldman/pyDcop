@@ -31,7 +31,7 @@
 
 import importlib
 import types
-from numbers import Number
+from numbers import Number, Integral, Real
 from typing import Callable
 
 from pydcop.utils.various import func_args
@@ -195,8 +195,14 @@ def simple_repr(o):
             r['__module__'] = o.__class__.__module__
             r['__qualname__'] = o.__class__.__qualname__
         return r
-    elif isinstance(o, str) or isinstance(o, Number) or isinstance(o, bool):
+    elif isinstance(o, str) or isinstance(o, bool):
         return o
+    elif isinstance(o, Integral):
+        return int(o)
+    elif isinstance(o, Real):
+        return float(o)
+    elif isinstance(o, Number):
+        raise TypeError(f"Unexpected numerical type: {type(o)}")
     elif isinstance(o, list) or isinstance(o, tuple) or isinstance(o, set) \
             or isinstance(o, frozenset):
         return [simple_repr(i) for i in o]

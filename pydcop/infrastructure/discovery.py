@@ -31,7 +31,7 @@
 
 """
 The discovery module provide an implementation for a discovery mechanism.
-This mechanism allows any agent to discover other agents, their address and
+This mechanism allows any agent to discover other agents, their address,
 and the computations they host.
 
 The current implementation relies on a central directory, which will
@@ -351,7 +351,7 @@ class Directory(object):
         self.on_register_computation = None  # type: Optional[Callable]
         self.on_unregister_computation = None  # type: Optional[Callable]
 
-    def agent_address(self, agent: AgentName)-> Address:
+    def agent_address(self, agent: AgentName) -> Address:
         """
         Get an agent's address.
 
@@ -434,8 +434,7 @@ class Directory(object):
             pass
 
         # notify interested agents
-        interested_agents = self._subscription_agents[agent] | \
-            self._subscription_all_agents
+        interested_agents = self._subscription_agents[agent] | self._subscription_all_agents
         self.logger.debug('notifying register agent for removal of %s : %s',
                           agent, interested_agents)
         for interested in interested_agents:
@@ -473,7 +472,7 @@ class Directory(object):
             self.logger.warning('Unknown subscriber %s when un-subscribing '
                                 'from an agent %s ', subscriber, agent)
 
-    def computation_agent(self, computation: ComputationName)-> AgentName:
+    def computation_agent(self, computation: ComputationName) -> AgentName:
         try:
             return self._computations_data[computation]
         except KeyError:
@@ -481,7 +480,7 @@ class Directory(object):
 
     def register_computation(self, computation: ComputationName,
                              agent: AgentName,
-                             address: Address=None):
+                             address: Address = None):
         self._computations_data[computation] = agent
         self.discovery.register_computation(
             computation, agent, address, publish=False)
@@ -493,7 +492,7 @@ class Directory(object):
             self.on_register_computation(agent, computation)
 
     def unregister_computation(self, computation: ComputationName,
-                               agent: AgentName=None):
+                               agent: AgentName = None):
         try:
             self._computations_data.pop(computation)
             self.discovery.unregister_computation(computation)
@@ -676,10 +675,11 @@ class Discovery(object):
         mandatory for this Discovery instance to be able to receive message
         from the directory.
     """
+
     def __init__(self, agent_name: AgentName, address: Address):
         super().__init__()
         self.own_agent = agent_name
-        self.logger = logging.getLogger('pydcop.discovery.'+agent_name)
+        self.logger = logging.getLogger('pydcop.discovery.' + agent_name)
 
         # agent_name -> agent_address
         self._agents_data = {}  # type: Dict[AgentName, Address]
@@ -708,7 +708,7 @@ class Discovery(object):
         """
         Set the address of the directory to be used by this Discovery instance.
 
-        This mus be called before starting the agent holding this discovery
+        This must be called before starting the agent holding this discovery
         instance.
 
         Parameters
@@ -768,9 +768,9 @@ class Discovery(object):
             raise UnknownAgent('Unknown agent ' + str(agent))
 
     def register_agent(self, agent: AgentName, address: Address,
-                       publish: bool=True):
+                       publish: bool = True):
         """
-        Registers a an agent.
+        Registers an agent.
 
         Callback for this agent are fired, if any.
 
@@ -817,7 +817,7 @@ class Discovery(object):
         for cb in self._all_agents_cbs:
             cb('agent_added', agent, address)
 
-    def unregister_agent(self, agent: AgentName, publish: bool=True):
+    def unregister_agent(self, agent: AgentName, publish: bool = True):
         """
         Un-registers an agent.
 
@@ -836,7 +836,7 @@ class Discovery(object):
         Raises
         ------
         DiscoveryException:
-            If the are still some (non-technical) computation registred for
+            If there are still some (non-technical) computations registered for
             this agent.
         """
         try:
@@ -878,8 +878,8 @@ class Discovery(object):
             self.logger.info('Unknown agent %s , on unregister', agent)
 
     def subscribe_agent(self, agent: AgentName,
-                        cb: Optional[DiscoveryCallBack]=None,
-                        one_shot: bool=False)\
+                        cb: Optional[DiscoveryCallBack] = None,
+                        one_shot: bool = False) \
             -> DiscoveryCallBack:
         """
         Subscribe to an agent on the directory.
@@ -890,7 +890,7 @@ class Discovery(object):
         the directory to find the address of the agent.
 
         The agent may or may not be registered on the directory. If it is
-        already registered, the discovery instance will notified immediately,
+        already registered, the discovery instance will be notified immediately,
         if it is not registered yet, this discovery instance will be
         notified (and updated) once the agent is registered (which may never
         happen).
@@ -933,7 +933,7 @@ class Discovery(object):
                 SubscribeAgentMessage(agent, True))
         return cb
 
-    def subscribe_all_agents(self, cb: Optional[Callable]=None):
+    def subscribe_all_agents(self, cb: Optional[Callable] = None):
         self.logger.debug('Subscribe to all agents events')
         if not self._all_agents_cbs:
             self.logger.debug('send all subscription to directory')
@@ -948,7 +948,7 @@ class Discovery(object):
         return cb
 
     def unsubscribe_agent(self, agent: AgentName,
-                          cb: Optional[DiscoveryCallBack]=None)-> int:
+                          cb: Optional[DiscoveryCallBack] = None) -> int:
         """
         Cancel subscription for an agent.
 
@@ -1004,7 +1004,7 @@ class Discovery(object):
                 SubscribeAgentMessage(agent, False))
         return removed
 
-    def computations(self, include_technical=False)-> List[str]:
+    def computations(self, include_technical=False) -> List[str]:
         """
         List of computations.
 
@@ -1031,7 +1031,7 @@ class Discovery(object):
             return list(c for c in self._computations_data
                         if not _is_technical(c))
 
-    def computation_agent(self, computation: ComputationName)-> AgentName:
+    def computation_agent(self, computation: ComputationName) -> AgentName:
         """
         The agent hosting a computation
 
@@ -1054,7 +1054,7 @@ class Discovery(object):
             raise UnknownComputation(computation)
 
     def agent_computations(self, agent: AgentName,
-                           include_technical=False)-> List[str]:
+                           include_technical=False) -> List[str]:
         """
         List of computations hosted on an agent.
 
@@ -1081,9 +1081,9 @@ class Discovery(object):
         return computations
 
     def register_computation(self, computation: ComputationName,
-                             agent: Optional[AgentName]=None,
-                             address: Optional[Address]=None,
-                             publish: bool=True):
+                             agent: Optional[AgentName] = None,
+                             address: Optional[Address] = None,
+                             publish: bool = True):
         """
         Registers a computation hosted on an agent.
 
@@ -1118,7 +1118,7 @@ class Discovery(object):
         is_change = agent != self._computations_data.get(computation, None)
 
         self._computations_data[computation] = agent
-        # If we do not known this agent and the address is given, register it
+        # If we do not know this agent and the address is given, register it
         # at the same time.
         if address is not None:
             if agent not in self._agents_data:
@@ -1149,7 +1149,7 @@ class Discovery(object):
                  if not oneshot]
 
     def unregister_computation(self, computation: ComputationName,
-                               agent: AgentName=None, publish: bool=True):
+                               agent: AgentName = None, publish: bool = True):
         """
         Un-registers a computation.
 
@@ -1210,12 +1210,12 @@ class Discovery(object):
                              'computation %s', computation)
 
     def subscribe_computation(self, computation: ComputationName,
-                              cb: Optional[DiscoveryCallBack]= None,
-                              one_shot: bool=False)-> DiscoveryCallBack:
+                              cb: Optional[DiscoveryCallBack] = None,
+                              one_shot: bool = False) -> DiscoveryCallBack:
         """
         Subscribe to a computation on the directory.
 
-        When subscribed to an computation, the discovery instance is will be
+        When subscribed to a computation, the discovery instance is will be
         notified of any registration or un-registration for this computation.
 
         The computation may or may not be registered on the directory,
@@ -1265,7 +1265,7 @@ class Discovery(object):
         return cb
 
     def unsubscribe_computation(self, computation: ComputationName,
-                                cb: Optional[DiscoveryCallBack]=None):
+                                cb: Optional[DiscoveryCallBack] = None):
         """
         Unsubscribe callbacks for a computation
 
@@ -1302,7 +1302,7 @@ class Discovery(object):
         return removed
 
     def register_replica(self, replica: ComputationName, agent: AgentName,
-                         publish=True)\
+                         publish=True) \
             -> None:
         """
         Publish replica for `computation` hosted on `agent`
@@ -1348,7 +1348,7 @@ class Discovery(object):
                  if not oneshot]
 
     def unregister_replica(self, replica: ComputationName, agent: AgentName,
-                           publish: bool=True):
+                           publish: bool = True):
         """
         Un-registers a replica hosted on `agent`.
 
@@ -1395,8 +1395,8 @@ class Discovery(object):
                              'agent %s', replica, agent)
 
     def subscribe_replica(self, replica: ComputationName,
-                          cb: Optional[DiscoveryCallBack]=None,
-                          one_shot: bool=False) -> DiscoveryCallBack:
+                          cb: Optional[DiscoveryCallBack] = None,
+                          one_shot: bool = False) -> DiscoveryCallBack:
         """
         Subscribe to replicas of computation named `replica`
         Parameters
@@ -1434,7 +1434,7 @@ class Discovery(object):
         return cb
 
     def unsubscribe_replica(self, replica: ComputationName,
-                            cb: Optional[DiscoveryCallBack]=None):
+                            cb: Optional[DiscoveryCallBack] = None):
         """
         Unsubscribe callbacks for a replicas of a computation
 
@@ -1464,7 +1464,7 @@ class Discovery(object):
                     self.discovery_computation.send_to_directory(
                         SubscribeComputationMessage(replica, False))
                     # remove all knowledge of current replicas as we are not
-                    #  subscribed any more
+                    #  subscribed anymore
                     self._replicas_data.pop(replica)
             elif cb is not None:
                 raise ValueError(
@@ -1474,7 +1474,7 @@ class Discovery(object):
             self.discovery_computation.send_to_directory(
                 SubscribeReplicaMessage(replica, False))
             # remove all knowledge of current replicas as we are not
-            #  subscribed any more
+            #  subscribed anymore
             self._replicas_data.pop(replica)
         return removed
 

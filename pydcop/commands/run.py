@@ -163,17 +163,13 @@ Runnig the DCOP from the file ``dcop.yaml``, using the initial ditribution from
                     dcop.yaml
 
 """
-import json
 import logging
 import multiprocessing
+import sys
 import threading
 import traceback
-from functools import partial
-from queue import Queue, Empty
+from queue import Queue
 from threading import Thread
-import numpy as np
-
-import sys
 
 from pydcop.algorithms import list_available_algorithms
 from pydcop.commands._utils import (
@@ -182,19 +178,17 @@ from pydcop.commands._utils import (
     _load_modules,
     build_algo_def,
     collect_tread,
-    add_csvline,
+    dump_results,
 )
 from pydcop.dcop.dcop import filter_dcop
 from pydcop.dcop.yamldcop import load_dcop_from_file, load_scenario_from_file
 from pydcop.distribution.yamlformat import load_dist_from_file
 from pydcop.infrastructure.run import run_local_thread_dcop, run_local_process_dcop
-from pydcop.replication.yamlformat import load_replica_dist, load_replica_dist_from_file
 
 logger = logging.getLogger("pydcop.cli.run")
 
 
 def set_parser(subparsers):
-
     algorithms = list_available_algorithms()
     logger.debug("Available DCOP algorithms %s", algorithms)
     parser = subparsers.add_parser("run", help="run a dcop")
@@ -218,8 +212,8 @@ def set_parser(subparsers):
         type=str,
         action="append",
         help="Optional parameters for the algorithm, given as "
-        "name:value. Use this option several times "
-        "to set several parameters.",
+             "name:value. Use this option several times "
+             "to set several parameters.",
     )
 
     parser.add_argument(
@@ -268,8 +262,8 @@ def set_parser(subparsers):
         type=float,
         default=None,
         help="Period for collecting metrics. only available "
-        "when using --collect_on period. Defaults to 1 "
-        "second if not specified",
+             "when using --collect_on period. Defaults to 1 "
+             "second if not specified",
     )
     parser.add_argument(
         "--run_metrics",
@@ -282,7 +276,7 @@ def set_parser(subparsers):
         type=str,
         default=None,
         help="Use this option to append the metrics of the "
-        "end of the run to a csv file.",
+             "end of the run to a csv file.",
     )
 
     # TODO : remove, this should no be at this level
@@ -292,9 +286,9 @@ def set_parser(subparsers):
         default=float("inf"),
         type=float,
         help="Argument to determine the value used for "
-        "infinity in case of hard constraints, "
-        "for algorithms that do not use symbolic "
-        "infinity. Defaults to 10 000",
+             "infinity in case of hard constraints, "
+             "for algorithms that do not use symbolic "
+             "infinity. Defaults to 10 000",
     )
 
 
@@ -309,7 +303,9 @@ end_metrics = None
 timeout_stopped = False
 output_file = None
 
-DISTRIBUTION_METHODS = ["oneagent", "adhoc", "ilp_fgdp", "heur_comhost", "oilp_secp_fgdp", "gh_secp_fgdp", "gh_secp_cgdp", "oilp_cgdp", "gh_cgdp"]
+DISTRIBUTION_METHODS = ["oneagent", "adhoc", "ilp_fgdp", "heur_comhost", "oilp_secp_fgdp", "gh_secp_fgdp",
+                        "gh_secp_cgdp", "oilp_cgdp", "gh_cgdp"]
+
 
 def run_cmd(args, timer=None, timeout=None):
     logger.debug('dcop command "run" with arguments {}'.format(args))
@@ -415,61 +411,27 @@ def run_cmd(args, timer=None, timeout=None):
                 timer.cancel()
             if not timeout_stopped:
                 if orchestrator.status == "TIMEOUT":
-                    _results("TIMEOUT")
+                    dump_results(orchestrator, "TIMEOUT", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
                     sys.exit(0)
                 elif orchestrator.status != "STOPPED":
-                    _results("FINISHED")
+                    dump_results(orchestrator, "FINISHED", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
                     sys.exit(0)
 
     except Exception as e:
-        logger.error(e, exc_info=1)
+        logger.error("While handling timeout, recevied exception %s", e, exc_info=True)
         print(e)
         for th in threading.enumerate():
             print(th)
-            traceback.print_stack(sys._current_frames()[th.ident])
+            traceback.print_stack(sys._current_frames()[th.ident]) # noqa
             print()
         orchestrator.stop_agents(5)
         orchestrator.stop()
-        _results("ERROR")
+        dump_results(orchestrator, "ERROR", output_file, end_metrics=end_metrics, run_metrics=run_metrics)
 
 
 def _orchestrator_error(e):
     print("Error in orchestrator: \n ", e)
     sys.exit(2)
-
-import numpy as np
-
-
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        if isinstance(obj, np.int64):
-            return int(obj)
-        return json.JSONEncoder.default(self, obj)
-
-
-def _results(status):
-    """
-    Outputs results and metrics on stdout and trace last metrics in csv
-    files if requested.
-
-    :param status:
-    :return:
-    """
-    metrics = orchestrator.end_metrics()
-    metrics["status"] = status
-    global end_metrics, run_metrics
-    if end_metrics is not None:
-        add_csvline(end_metrics, collect_on, metrics)
-    if run_metrics is not None:
-        add_csvline(run_metrics, collect_on, metrics)
-
-    if output_file:
-        with open(output_file, encoding="utf-8", mode="w") as fo:
-            fo.write(json.dumps(metrics, sort_keys=True, indent="  ", cls=NumpyEncoder))
-    else:
-        print(json.dumps(metrics, sort_keys=True, indent="  ", cls=NumpyEncoder))
 
 
 def on_timeout():
@@ -490,7 +452,7 @@ def on_timeout():
     # Stopping agents can be rather long, we need a big timeout !
     orchestrator.stop_agents(20)
     orchestrator.stop()
-    _results("TIMEOUT")
+    dump_results(orchestrator, "TIMEOUT", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
     sys.exit(0)
 
 
@@ -500,7 +462,7 @@ def on_force_exit(sig, frame):
     orchestrator.status = "STOPPED"
     orchestrator.stop_agents(5)
     orchestrator.stop()
-    _results("STOPPED")
+    dump_results(orchestrator, "STOPPED", output_file, run_metrics=run_metrics, end_metrics=end_metrics)
     # for th in threading.enumerate():
     #     print(th)
     #     traceback.print_stack(sys._current_frames()[th.ident])

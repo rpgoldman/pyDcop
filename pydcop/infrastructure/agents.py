@@ -50,7 +50,7 @@ from functools import partial
 from importlib import import_module
 from threading import Thread
 from time import perf_counter, sleep
-from typing import Dict, List, Optional, Union, Callable, Tuple
+from typing import Dict, List, Optional, Union, Callable, Tuple, Mapping
 
 from collections import defaultdict
 
@@ -69,6 +69,7 @@ from pydcop.infrastructure.ui import UiServer
 from pydcop.reparation import create_computation_hosted_constraint, \
     create_agent_capacity_constraint, create_agent_hosting_constraint, \
     create_agent_comp_comm_constraint
+from pydcop.computations_graph import constraints_hypergraph as chg
 
 
 class AgentException(Exception):
@@ -114,12 +115,13 @@ class Agent(object):
     MessagePassingComputation, CommunicationLayer
 
     """
+
     def __init__(self, name,
                  comm: CommunicationLayer,
-                 agent_def: AgentDef=None,
-                 ui_port: int=None,
-                 delay: float=None,
-                 daemon: bool=False):
+                 agent_def: AgentDef = None,
+                 ui_port: int = None,
+                 delay: float = None,
+                 daemon: bool = False):
         self._name = name
         self.agent_def = agent_def
         self.logger = logging.getLogger('pydcop.agent.' + name)
@@ -137,7 +139,7 @@ class Agent(object):
         self._ui_port = ui_port
         self._ui_server = None
 
-        self.t = Thread(target=self._run, name='thread_'+name)
+        self.t = Thread(target=self._run, name='thread_' + name)
         self.t.daemon = daemon
         self._stopping = threading.Event()
         self._shutdown = threading.Event()
@@ -161,7 +163,7 @@ class Agent(object):
         self.paused_computations = []
 
     @property
-    def communication(self)-> CommunicationLayer:
+    def communication(self) -> CommunicationLayer:
         """
         The communication used by this agent.
 
@@ -199,7 +201,7 @@ class Agent(object):
         computation.message_sender = self._messaging.post_msg
         computation.periodic_action_handler = self
         self._computations[comp_name] = computation
-        self.discovery.register_computation(comp_name, self.name,self.address,
+        self.discovery.register_computation(comp_name, self.name, self.address,
                                             publish=publish)
 
         # start lookup for agent hosting a neighbor computation
@@ -221,7 +223,7 @@ class Agent(object):
             computation.finished,
             partial(self._on_computation_finished, computation.name))
 
-        event_bus.send("agents.add_computation."+self.name,
+        event_bus.send("agents.add_computation." + self.name,
                        (self.name, computation))
 
     def remove_computation(self, computation: str) -> None:
@@ -251,10 +253,10 @@ class Agent(object):
         self.logger.debug('Removing computation %s', comp)
         self.discovery.unregister_computation(computation, self.name)
 
-        event_bus.send("agents.rem_computation."+self.name,
+        event_bus.send("agents.rem_computation." + self.name,
                        (self.name, computation))
 
-    def computations(self, include_technical=False)-> \
+    def computations(self, include_technical=False) -> \
             List[MessagePassingComputation]:
         """
         Computations hosted on this agent.
@@ -289,7 +291,7 @@ class Agent(object):
 
         Returns
         -------
-            The Messaging passing corresponding to the given name.
+            The Message passing corresponding to the given name.
 
         Raises
         ------
@@ -321,7 +323,7 @@ class Agent(object):
         """
         return self._comm.address
 
-    def start(self, run_computations = False):
+    def start(self, run_computations=False):
         """
         Starts the agent.
 
@@ -351,7 +353,7 @@ class Agent(object):
         self._start_t = perf_counter()
         self.t.start()
 
-    def run(self, computations: Optional[Union[str, List[str]]]=None):
+    def run(self, computations: Optional[Union[str, List[str]]] = None):
         """
         Run computations hosted on this agent.
 
@@ -420,7 +422,7 @@ class Agent(object):
                                      computations)
 
     @property
-    def start_time(self)-> float:
+    def start_time(self) -> float:
         """
         float:
             timestamp for the first run computation call. This timestamp is
@@ -545,13 +547,13 @@ class Agent(object):
             if computations is None:
                 if not c.is_paused:
                     self.logger.warning('Do not resume computation %s, not '
-                                      'paused', c.name)
+                                        'paused', c.name)
                 else:
                     c.pause(False)
             elif c.name in computations:
                 if not c.is_paused:
                     self.logger.warning('Do not resume computation %s, not '
-                                      'paused', c.name)
+                                        'paused', c.name)
                 else:
                     c.pause(False)
                 computations.remove(c.name)
@@ -569,7 +571,7 @@ class Agent(object):
         return self._name
 
     @property
-    def is_stopping(self)-> bool:
+    def is_stopping(self) -> bool:
         """
         bool:
             True if the agent is currently stopping (i.e. handling its last
@@ -719,8 +721,8 @@ class Agent(object):
             activity_ratio = 0
         else:
             total_t = perf_counter() - self._run_t
-            activity_ratio = self.t_active / (total_t)
-        own_computations = { c.name for c in self.computations(include_technical=True)}
+            activity_ratio = self.t_active / total_t
+        own_computations = {c.name for c in self.computations(include_technical=True)}
         m = {
             'count_ext_msg': {k: v
                               for k, v in self._messaging.count_ext_msg.items()
@@ -763,8 +765,8 @@ class Agent(object):
             This handle is actually the callback object itself.
 
         """
-        assert period != None
-        assert cb != None
+        assert period is not None
+        assert cb is not None
         self.logger.debug("Add periodic action %s - %s ", period, cb)
         self._periodic_cb[cb] = (period, perf_counter())
         return cb
@@ -841,7 +843,7 @@ class Agent(object):
         # Process periodic action. Only once the agents runs the
         # computations (i.e. self._run_t is not None)
         ct = perf_counter()
-        if self._start_t is not None :
+        if self._start_t is not None:
             for cb, (p, last_t) in list(self._periodic_cb.items()):
                 if ct - last_t >= p:
                     # self.logger.debug('periodic cb %s, %s %s ', cb, ct, last_t)
@@ -861,17 +863,17 @@ class Agent(object):
         return self._idle
 
     def __str__(self):
-        return 'Agent: '+self._name
+        return 'Agent: ' + self._name
 
     def __repr__(self):
         return 'Agent: ' + self._name
 
 
 def notify_wrap(f, cb):
-
     def wrapped(*args, **kwargs):
         f(*args, **kwargs)
         cb(*args, **kwargs)
+
     return wrapped
 
 
@@ -882,14 +884,13 @@ class AgentMetrics(object):
     """
 
     def __init__(self):
-        self._computation_msg_rcv = defaultdict(lambda : (0,0))
-        self._computation_msg_snd = defaultdict(lambda : (0,0))
+        self._computation_msg_rcv = defaultdict(lambda: (0, 0))
+        self._computation_msg_snd = defaultdict(lambda: (0, 0))
 
         event_bus.subscribe('computations.message_rcv.*',
                             self._on_computation_msg_rcv)
         event_bus.subscribe('computations.message_snd.*',
                             self._on_computation_msg_snd)
-
 
     def computation_msg_rcv(self, computation: str):
         return self._computation_msg_rcv[computation]
@@ -897,20 +898,18 @@ class AgentMetrics(object):
     def computation_msg_snd(self, computation: str):
         return self._computation_msg_snd[computation]
 
-    def _on_computation_msg_rcv(self, topic: str, msg_event):
+    def _on_computation_msg_rcv(self, _topic: str, msg_event):
         computation, msg_size = msg_event
-        prev_count , prev_size = self._computation_msg_rcv[computation]
+        prev_count, prev_size = self._computation_msg_rcv[computation]
         self._computation_msg_rcv[computation] = \
-            prev_count+1, prev_size+ msg_size
+            prev_count + 1, prev_size + msg_size
 
-    def _on_computation_msg_snd(self, topic: str, msg_event):
+    def _on_computation_msg_snd(self, _topic: str, msg_event):
         computation, msg_size = msg_event
-        prev_count , prev_size = self._computation_msg_snd[computation]
+        prev_count, prev_size = self._computation_msg_snd[computation]
         self._computation_msg_snd[computation] = \
-            prev_count+1, prev_size+ msg_size
+            prev_count + 1, prev_size + msg_size
 
-
-from pydcop.computations_graph import constraints_hypergraph as chg
 
 repair_algo = load_algorithm_module('mgm2')
 
@@ -952,7 +951,7 @@ class ResilientAgent(Agent):
 
     def __init__(self, name: str, comm: CommunicationLayer,
                  agent_def: AgentDef, replication: str, ui_port=None,
-                 delay: float=None):
+                 delay: float = None):
         super().__init__(name, comm, agent_def, ui_port=ui_port, delay=delay)
         self.replication_comp = None
         if replication is not None:
@@ -968,7 +967,7 @@ class ResilientAgent(Agent):
             # self.add_computation(self.replication_comp)
             # Do not start the computation yet, the agent is not event started
 
-            self._repair_computations =\
+            self._repair_computations = \
                 {}  # type: Dict[str, RepairComputationRegistration]
             # the replication level will be set by the when requested to
             # replicate, by the ReplicateComputationsMessage
@@ -1026,7 +1025,7 @@ class ResilientAgent(Agent):
         """
         super().add_computation(computation, comp_name, publish)
         if self.replication_comp is not None \
-                and not computation.name.startswith('_')\
+                and not computation.name.startswith('_') \
                 and not computation.name.startswith('B'):
             # FIXME : find a better way to filter out repair computation than
             # looking at the first character (B).
@@ -1114,8 +1113,7 @@ class ResilientAgent(Agent):
                 'B', ([candidate_comp], candidate_info[0]))
             # Set initial values for binary decision variable
             for v in v_binvar.values():
-                v._intial_value = 1 if random.random() < 1/3 else 0
-
+                v._intial_value = 1 if random.random() < 1 / 3 else 0
 
             orphaned_binvars.update(v_binvar)
 
@@ -1125,7 +1123,7 @@ class ResilientAgent(Agent):
                 v_binvar[(candidate_comp, own_name)]
 
             # the 'hosted' hard constraint for this candidate variable:
-            hosted_cs[candidate_comp] =\
+            hosted_cs[candidate_comp] = \
                 create_computation_hosted_constraint(candidate_comp, v_binvar)
             self.logger.debug('Hosted hard constraint for computation %s : %r',
                               candidate_comp, hosted_cs[candidate_comp])
@@ -1152,7 +1150,7 @@ class ResilientAgent(Agent):
         # many candidate computations. This constraints depends on the binary
         # variables for the candidate computations.
         remaining_capacity = self.agent_def.capacity - \
-            sum(c.footprint() for c in self.computations())
+                             sum(c.footprint() for c in self.computations())
         self.logger.debug('Remaining capacity on agent %s : %s',
                           self.name, remaining_capacity)
 
@@ -1226,7 +1224,7 @@ class ResilientAgent(Agent):
             comp_def = ComputationDef(node, algo_def)
             computation = repair_algo.build_computation(comp_def)
             self.logger.debug('Computation for %s : %r ',
-                          candidate_var, computation)
+                              candidate_var, computation)
 
             # add the computation on this agents and register the neighbors
             self.add_computation(computation, publish=True)
@@ -1247,6 +1245,7 @@ class ResilientAgent(Agent):
                         if evt == 'agent_added':
                             self.discovery.register_computation(
                                 comp, evt_agt, publish=False)
+
                     self.discovery.subscribe_agent(
                         neighbor_agt,
                         partial(_agt_lookup_done, neighbor_comp),
@@ -1264,7 +1263,7 @@ class ResilientAgent(Agent):
             c.computation.start()
             c.status = 'started'
 
-    def _on_replication_done(self, replica_hosts: Dict[str, List[str]]):
+    def _on_replication_done(self, replica_hosts: Mapping[str, List[str]]):
         """
         Called when all computations have been replicated.
 
@@ -1287,7 +1286,7 @@ class ResilientAgent(Agent):
                     for level in rep_levels.values()]):
             self.logger.warning('Insufficient replication for computations: '
                                 '%s ',
-                               rep_levels)
+                                rep_levels)
 
     def _on_computation_finished(self, computation: str,
                                  *args, **kwargs):
@@ -1328,7 +1327,7 @@ class ResilientAgent(Agent):
 
             metrics = self.metrics()
             print(f" metrics repair {self.name} - {metrics}")
-            repair_metrics = {'count_ext_msg' : {}, 'size_ext_msg': {} , 'cycles' :{}}
+            repair_metrics = {'count_ext_msg': {}, 'size_ext_msg': {}, 'cycles': {}}
 
             for c in self._repair_computations.values():
                 c_name = c.computation.name
@@ -1346,7 +1345,7 @@ class ResilientAgent(Agent):
                     repair_metrics['cycles'][c_name] = 0
 
             print(f" {self.name} : metrics after repair  {repair_metrics}")
-            self._on_repair_done(selected_computations, repair_metrics)
+            self._on_repair_done(selected_computations, repair_metrics=repair_metrics)
 
             if selected_computations:
                 self.logger.info('Re-replicate newly activated computations '
@@ -1371,11 +1370,11 @@ class ResilientAgent(Agent):
                 self.remove_computation(repair_comp.computation.name)
             self._repair_computations.clear()
 
-    def _on_repair_done(self, selected_computations: List[str]):
+    def _on_repair_done(self, selected_computations: List[str], **kwargs):
         """
         Called when all repair computations have finished.
 
-        This method method is meant to the overwritten in subclasses.
+        This method is meant to be overwritten in subclasses.
 
         """
         pass
@@ -1389,9 +1388,9 @@ class RepairComputation(MessagePassingComputation):
     def __init__(self, agent: ResilientAgent):
         super().__init__('_resilience_' + self.agent.name)
         self.agent = agent
-        self.logger = logging.getLogger('pydcop.agent.repair.'+agent.name)
+        self.logger = logging.getLogger('pydcop.agent.repair.' + agent.name)
         self._handlers = {
-            #'replication': self._on_replication,
+            # 'replication': self._on_replication,
             # 'setup_repair': self._on_setup_repair,
             # 'repair_run': self._on_repair_run,
         }

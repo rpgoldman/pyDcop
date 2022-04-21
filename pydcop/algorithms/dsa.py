@@ -94,10 +94,7 @@ implementation of DSA.
 import logging
 import random
 
-
 from pydcop.algorithms import AlgoParameterDef, ComputationDef
-from pydcop.infrastructure.computations import Message, VariableComputation, register
-
 from pydcop.computations_graph.constraints_hypergraph import VariableComputationNode
 from pydcop.dcop.relations import (
     find_optimum,
@@ -106,6 +103,8 @@ from pydcop.dcop.relations import (
     find_optimal,
     optimal_cost_value,
 )
+from pydcop.infrastructure.computations import Message, VariableComputation, register
+from pydcop.utils.various import number_translator
 
 HEADER_SIZE = 0
 UNIT_SIZE = 1
@@ -187,7 +186,8 @@ def communication_load(src: VariableComputationNode, target: str) -> float:
 class DsaMessage(Message):
     def __init__(self, value):
         super().__init__("dsa_value", None)
-        self._value = value
+        # need to avoid sending messages with numpy numerals in it
+        self._value = number_translator(value)
 
     @property
     def value(self):

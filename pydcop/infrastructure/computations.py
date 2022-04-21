@@ -633,7 +633,7 @@ class SynchronizationMsg(Message):
 class SynchronousComputationMixin:
     """
     This mixin can be used with `MessagePassingComputation` classes (and classes
-    deriving from it) and implements synchronicity for these computation.
+    deriving from it) and implements synchronous communications for these computations.
 
     A computations that uses the `SynchronousComputationMixin` is a synchronous
     computation that respects the synchronous network model (see Distributed
@@ -667,7 +667,7 @@ class SynchronousComputationMixin:
     """
 
     def __init__(self, name, *args, **kwargs):
-        super().__init__(name, *args, **kwargs)
+        super(SynchronousComputationMixin, self).__init__(name, *args, **kwargs)
         self._current_cycle = 0
         self._cycle_messages = {}
         self._next_cycle_messages = {}
