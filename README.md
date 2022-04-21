@@ -14,5 +14,5 @@ I am patching the module up for my own use, and am happy to share, but *I do not
 Nor have I put it on PyPI, so if you try to use `pip install` you will get a library that is sinking into bit-rot.
 
 Documentation is hosted on
-[my personal website](https://rpgoldman.goldman-tribe.org/pyDcop/)
+[GitHub Pages](https://rpgoldman.github.io/pyDcop/)
  
