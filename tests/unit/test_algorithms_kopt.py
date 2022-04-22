@@ -28,8 +28,7 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
-
+from datetime import datetime
 from unittest.mock import MagicMock, call
 
 from pydcop.algorithms import kopt, AlgorithmDef, ComputationDef
@@ -236,6 +235,36 @@ def test_select_and_send_random_value_when_starting():
          call('v1', 'v3', expected_message, None, None)],
         any_order=True
     )
+
+def test_terminate_cycle():
+    # When starting, a kopt computation select a random value and send it to
+    # all neighbors
+    v1 = Variable('v1', [0, 1, 2, 3, 4])
+    v2 = Variable('v2', [0, 1, 2, 3, 4])
+    v3 = Variable('v3', [0, 1, 2, 3, 4])
+
+    @AsNAryFunctionRelation(v1, v2, v3)
+    def c1(v1_, v2_, v3_):
+        return abs(v1_ - v2_ + v3_)
+
+    node = VariableComputationNode(v1, [c1])
+    comp_def = ComputationDef(node,
+                              AlgorithmDef.build_with_default_param('kopt'))
+
+    computation = KoptComputation(comp_def=comp_def)
+    message_sender = MagicMock()
+    computation.message_sender = message_sender
+    update_neighbor_values = MagicMock()
+    computation.update_neighbor_values = update_neighbor_values
+    computation.start()
+    computation.on_value_msg('v2', KOPTValueMessage(2), datetime.now().time())
+    computation.on_value_msg('v3', KOPTValueMessage(3), datetime.now().time())
+
+
+    # if the agent receives messages from both its neighbors, its cycle should end
+    update_neighbor_values.assert_has_calls([call()])
+    assert computation.current_cycle_assign['v2'] == 2
+    assert computation.current_cycle_assign['v3'] == 3
 
 
 ################################################################################
