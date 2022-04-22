@@ -66,9 +66,9 @@ class NumpyEncoder(json.JSONEncoder):
 
 
 def number_translator(v: Any) -> Any:
-    if isinstance(v, Real):
-        return float(v)
-    elif isinstance(v, Integral):
+    if isinstance(v, Integral):
         return int(v)
+    elif isinstance(v, Real):
+        return float(v)
     else:
         return v
