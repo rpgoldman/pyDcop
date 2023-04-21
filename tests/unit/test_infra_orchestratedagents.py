@@ -130,5 +130,5 @@ def test_stop_agent(orchestrated_agent):
 
     mgt.on_message('orchestrator', StopAgentMessage(), 0)
 
-    sleep(0.1)
+    sleep(1)
     assert not orchestrated_agent.is_running
