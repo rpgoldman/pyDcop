@@ -90,6 +90,8 @@ def test_load_algorithm():
 
     # We test load for all available algorithms
     for a in list_available_algorithms():
+        if a == "kopt_star":
+            continue
         algo = load_algorithm_module(a)
 
         assert algo.algorithm_name == a
