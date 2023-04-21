@@ -13,6 +13,9 @@ from subprocess import check_output, STDOUT
 
 from pydcop.dcop.yamldcop import load_dcop_from_file, load_dcop
 
+from tests.dcop_cli.utils import dcop_invoke_path
+
+
 
 def test_random_soft():
     dcop = run_generate("random", 10, 3, soft=True, p_edge=0.5)
@@ -40,7 +43,8 @@ def run_generate(graph, variables_count, colors_count, intentional=False,
                  p_edge=None, m_edge=None):
 
     # filename = instance_path(filename)
-    cmd = f"pydcop generate graph_coloring --graph {graph} " \
+    pathexpr = dcop_invoke_path()
+    cmd = f"{pathexpr} pydcop generate graph_coloring --graph {graph} " \
           f" --variables_count {variables_count} " \
           f" --colors_count {colors_count} "
     if p_edge:

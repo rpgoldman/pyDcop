@@ -34,7 +34,7 @@ from subprocess import check_output, STDOUT, CalledProcessError
 
 import yaml
 
-from tests.dcop_cli.utils import instance_path
+from tests.dcop_cli.utils import instance_path, dcop_invoke_path
 
 
 class GraphColoring1(unittest.TestCase):
@@ -89,7 +89,6 @@ class SecpSimple1(unittest.TestCase):
 
 def run_graph(filename, graph):
     filename = instance_path(filename)
-    cmd = 'pydcop graph -g {graph} {file}'.format(graph=graph,
-                                                   file=filename)
+    cmd = f'{dcop_invoke_path()} pydcop graph -g {graph} {filename}'
     output = check_output(cmd, stderr=STDOUT, timeout=10, shell=True)
     return yaml.load(output.decode(encoding='utf-8'), Loader=yaml.FullLoader)

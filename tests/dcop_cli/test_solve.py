@@ -30,10 +30,16 @@
 
 
 import json
+import os.path
 import unittest
 from subprocess import STDOUT, check_output, CalledProcessError
+from typing import Optional, List
 
-from tests.dcop_cli.utils import instance_path
+from tests.dcop_cli.utils import instance_path, dcop_invoke_path
+
+from logging.config import fileConfig
+
+fileConfig(os.path.join(os.path.dirname(__file__), '../../kopt_logging.conf'))
 
 
 class SimpleSecpDCOP1(unittest.TestCase):
@@ -251,15 +257,10 @@ def run_solve(algo, distribution, filename, timeout: int, mode='thread',
         algo_params = []
     for p in algo_params:
         param_str += ' --algo_param ' + p
-    cmd = 'pydcop -v 0 -t {timeout} solve -a {algo} {params} -d ' \
-          '{distribution} ' \
-          '-m {mode} ' \
-          '{file}'.format(timeout=timeout,
-                          algo=algo,
-                          params=param_str,
-                          distribution=distribution,
-                          file=filename,
-                          mode=mode)
+    cmd = f'{dcop_invoke_path()} pydcop -v 0 -t {timeout} solve -a {algo} {param_str} -d ' \
+          f'{distribution} ' \
+          f'-m {mode} ' \
+          f'{filename}'
     extra = 4 if mode == 'thread' else 5
     print("Running command ", cmd)
     try:
