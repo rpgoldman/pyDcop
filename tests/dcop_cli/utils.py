@@ -33,6 +33,8 @@
 import sys
 from os import path
 
+import pydcop
+
 
 def instance_path(instance_filename):
     """
@@ -44,3 +46,10 @@ def instance_path(instance_filename):
     dir_name = path.dirname(cur_dir)
     test_file_path = path.join(dir_name, '..', 'instances', instance_filename)
     return test_file_path
+
+def dcop_invoke_path():
+    """
+    This string sets the path to make the pydcop commands available.
+    """
+    return f"PATH={path.dirname(pydcop.__file__)}:$PATH"
+    
